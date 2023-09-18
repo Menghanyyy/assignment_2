@@ -1,4 +1,4 @@
-package com.latti31.springeventserver.controllers;
+package com.latti31.springeventserver.objects;
 
 public class Location {
     private final double longitude;
