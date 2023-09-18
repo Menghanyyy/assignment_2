@@ -66,11 +66,6 @@ public class EventRESTController {
         return isInside;
     }
 
-    @GetMapping("/greet")
-    public String greetMessage(){
-        return "Hello Friend";
-    }
-
     @GetMapping("/location/{param}")
     public String getDummyDataWithPathParam(@PathVariable String param) {
 
@@ -87,11 +82,6 @@ public class EventRESTController {
         return "Your shape is inside: " + inPolygon(new Location(lat, lon), poly);
     }
 
-    @GetMapping("/location")
-    public String getDummyDataWithRequestParam(@RequestParam String param) {
-        return "Received parameter: " + param;
-    }
-
     @GetMapping("/test_push/{param}")
     public String greetMessage(@PathVariable String param) {
         // create the SQL insert statement
@@ -106,4 +96,7 @@ public class EventRESTController {
             return "Error inserting data: " + e.getMessage();
         }
     }
+
+
+    // Server functions
 }

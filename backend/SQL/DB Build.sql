@@ -8,19 +8,15 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema EventsDB
 -- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `EventsDB` DEFAULT CHARACTER SET utf8 ;
+USE `EventsDB` ;
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Table `EventsDB`.`Organisation`
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
-
--- -----------------------------------------------------
--- Table `mydb`.`Organisation`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Organisation` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Organisation` (
   `idOrganisation` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idOrganisation`),
@@ -29,9 +25,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Creator Account`
+-- Table `EventsDB`.`Creator Account`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Creator Account` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Creator Account` (
   `creatorID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   `email` VARCHAR(45) NULL,
@@ -40,9 +36,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Organisation Creator`
+-- Table `EventsDB`.`Organisation Creator`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Organisation Creator` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Organisation Creator` (
   `Organisation_idOrganisation` INT NOT NULL,
   `Creator Account_creatorID` INT NOT NULL,
   PRIMARY KEY (`Organisation_idOrganisation`, `Creator Account_creatorID`),
@@ -50,21 +46,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Organisation Creator` (
   INDEX `fk_Organisation_has_Creator Account_Organisation_idx` (`Organisation_idOrganisation` ASC) VISIBLE,
   CONSTRAINT `fk_Organisation_has_Creator Account_Organisation`
     FOREIGN KEY (`Organisation_idOrganisation`)
-    REFERENCES `mydb`.`Organisation` (`idOrganisation`)
+    REFERENCES `EventsDB`.`Organisation` (`idOrganisation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Organisation_has_Creator Account_Creator Account1`
     FOREIGN KEY (`Creator Account_creatorID`)
-    REFERENCES `mydb`.`Creator Account` (`creatorID`)
+    REFERENCES `EventsDB`.`Creator Account` (`creatorID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Event`
+-- Table `EventsDB`.`Event`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Event` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Event` (
   `eventID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `bbox` POLYGON NULL,
@@ -73,16 +69,16 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Event` (
   INDEX `fk_Event_Organisation1_idx` (`Organisation_idOrganisation` ASC) VISIBLE,
   CONSTRAINT `fk_Event_Organisation1`
     FOREIGN KEY (`Organisation_idOrganisation`)
-    REFERENCES `mydb`.`Organisation` (`idOrganisation`)
+    REFERENCES `EventsDB`.`Organisation` (`idOrganisation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Activity`
+-- Table `EventsDB`.`Activity`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Activity` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Activity` (
   `activityID` INT NOT NULL AUTO_INCREMENT,
   `centreLocation` POINT NOT NULL,
   `polygonLocation` POLYGON NOT NULL,
@@ -97,16 +93,16 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Activity` (
   INDEX `fk_Activity_Event1_idx` (`Event_eventID` ASC, `Event_Organisation_idOrganisation` ASC) VISIBLE,
   CONSTRAINT `fk_Activity_Event1`
     FOREIGN KEY (`Event_eventID` , `Event_Organisation_idOrganisation`)
-    REFERENCES `mydb`.`Event` (`eventID` , `Organisation_idOrganisation`)
+    REFERENCES `EventsDB`.`Event` (`eventID` , `Organisation_idOrganisation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Activity Creator`
+-- Table `EventsDB`.`Activity Creator`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Activity Creator` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Activity Creator` (
   `Activity_activityID` INT NOT NULL,
   `Creator Account_creatorID` INT NOT NULL,
   PRIMARY KEY (`Activity_activityID`, `Creator Account_creatorID`),
@@ -114,30 +110,30 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Activity Creator` (
   INDEX `fk_Activity_has_Creator Account_Activity1_idx` (`Activity_activityID` ASC) VISIBLE,
   CONSTRAINT `fk_Activity_has_Creator Account_Activity1`
     FOREIGN KEY (`Activity_activityID`)
-    REFERENCES `mydb`.`Activity` (`activityID`)
+    REFERENCES `EventsDB`.`Activity` (`activityID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Activity_has_Creator Account_Creator Account1`
     FOREIGN KEY (`Creator Account_creatorID`)
-    REFERENCES `mydb`.`Creator Account` (`creatorID`)
+    REFERENCES `EventsDB`.`Creator Account` (`creatorID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`User Account`
+-- Table `EventsDB`.`User Account`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User Account` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`User Account` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`userID`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Join`
+-- Table `EventsDB`.`Join`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Join` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Join` (
   `User Account_userID` INT NOT NULL,
   `Event_eventID` INT NOT NULL,
   `Event_Organisation_idOrganisation` INT NOT NULL,
@@ -146,21 +142,21 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Join` (
   INDEX `fk_User Account_has_Event_User Account1_idx` (`User Account_userID` ASC) VISIBLE,
   CONSTRAINT `fk_User Account_has_Event_User Account1`
     FOREIGN KEY (`User Account_userID`)
-    REFERENCES `mydb`.`User Account` (`userID`)
+    REFERENCES `EventsDB`.`User Account` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_User Account_has_Event_Event1`
     FOREIGN KEY (`Event_eventID` , `Event_Organisation_idOrganisation`)
-    REFERENCES `mydb`.`Event` (`eventID` , `Organisation_idOrganisation`)
+    REFERENCES `EventsDB`.`Event` (`eventID` , `Organisation_idOrganisation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Visit`
+-- Table `EventsDB`.`Visit`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Visit` (
+CREATE TABLE IF NOT EXISTS `EventsDB`.`Visit` (
   `User Account_userID` INT NOT NULL,
   `Activity_activityID` INT NOT NULL,
   `Activity_Event_eventID` INT NOT NULL,
@@ -170,12 +166,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Visit` (
   INDEX `fk_User Account_has_Activity_User Account1_idx` (`User Account_userID` ASC) VISIBLE,
   CONSTRAINT `fk_User Account_has_Activity_User Account1`
     FOREIGN KEY (`User Account_userID`)
-    REFERENCES `mydb`.`User Account` (`userID`)
+    REFERENCES `EventsDB`.`User Account` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_User Account_has_Activity_Activity1`
     FOREIGN KEY (`Activity_activityID` , `Activity_Event_eventID` , `Activity_Event_Organisation_idOrganisation`)
-    REFERENCES `mydb`.`Activity` (`activityID` , `Event_eventID` , `Event_Organisation_idOrganisation`)
+    REFERENCES `EventsDB`.`Activity` (`activityID` , `Event_eventID` , `Event_Organisation_idOrganisation`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
