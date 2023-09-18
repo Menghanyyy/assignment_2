@@ -1,15 +1,8 @@
 package com.latti31.springeventserver.controllers;
 
-import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -96,7 +89,4 @@ public class EventRESTController {
             return "Error inserting data: " + e.getMessage();
         }
     }
-
-
-    // Server functions
 }
