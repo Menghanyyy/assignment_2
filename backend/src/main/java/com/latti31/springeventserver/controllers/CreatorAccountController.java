@@ -21,11 +21,11 @@ public class CreatorAccountController {
     public String getCreatorAccount(@PathVariable int id) {
         String query = "SELECT name, email FROM `Creator Account` WHERE creatorID = ?";
         try {
-            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, id);
-            if (!events.isEmpty()) {
-                Map<String, Object> event = events.get(0);
+            List<Map<String, Object>> creators = jdbcTemplate.queryForList(query, id);
+            if (!creators.isEmpty()) {
+                Map<String, Object> creator = creators.get(0);
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(event);
+                return objectMapper.writeValueAsString(creator);
             } else {
                 return "Event not found";
             }
