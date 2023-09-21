@@ -27,11 +27,11 @@ public class CreatorAccountController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 return objectMapper.writeValueAsString(creator);
             } else {
-                return "Event not found";
+                return "Creator not found";
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event with the specified ID doesn't exist
-            return "Error retrieving event: " + e.getMessage();
+            return "Error retrieving creator: " + e.getMessage();
         }
     }
 
@@ -57,7 +57,6 @@ public class CreatorAccountController {
 
             return "Creator Account added successfully.";
         } catch (Exception e) {
-            // Handle exceptions, e.g., if the event creation fails
             return "Error Adding Creator Account: " + e.getMessage();
         }
     }
