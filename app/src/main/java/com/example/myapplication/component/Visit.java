@@ -13,12 +13,15 @@ public class Visit {
     private String visitActivityId;
     private String visitEventId;
 
+    private String visitOrganisationId;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Visit(String UserId, String VisitActivityId, String VisitEventId) {
+    public Visit(String UserId, String VisitActivityId, String VisitEventId, String VisitOrganisationId) {
         this.userId = UserId;
         this.visitingTime = LocalDateTime.now();
         this.visitActivityId = VisitActivityId;
         this.visitEventId = VisitEventId;
+        this.visitOrganisationId = VisitOrganisationId;
     }
 
     public String getUserId() {

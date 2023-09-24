@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("test user", abc.toString());
 
-        Visit testV = new Visit(abc.getUserId(), null, null);
+        Visit testV = new Visit(abc.getUserId(), null, null, null);
         Log.i("test visit", testV.toString());
 
     }
