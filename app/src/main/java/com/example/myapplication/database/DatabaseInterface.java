@@ -1,2 +1,4 @@
-package com.example.myapplication.database;public class DatabaseInterface {
+package com.example.myapplication.database;
+
+public class DatabaseInterface {
 }
