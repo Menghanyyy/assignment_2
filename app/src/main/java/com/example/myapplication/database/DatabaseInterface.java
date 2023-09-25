@@ -55,10 +55,13 @@ public interface DatabaseInterface {
 
     public ArrayList<GeneralUser> getAllUsers();
 
+    public boolean isPasswordCorrect(String password, User user);
+
 
 
     ///////////////// Location Methods /////////////////
 
     // Gives all the activities (in a given event) that overlap a point on the map
     public ArrayList<Activity> eventsAtLocation(GPSLocation location, Event event);
+
 }
