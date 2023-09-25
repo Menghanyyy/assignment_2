@@ -38,6 +38,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getAll")
+    public String getAll() {
+        String query = "SELECT name, email FROM `User`";
+
+        try {
+            List<Map<String, Object>> users = jdbcTemplate.queryForList(query);
+            if (!users.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.writeValueAsString(users);
+            } else {
+                return "No users found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return "Error retrieving users: " + e.getMessage();
+        }
+    }
+
     @PostMapping("/addUser")
     public String addUser(@RequestBody String jsonText) {
         String query = "INSERT INTO `User` (email, name, userName, password) VALUES (?, ?, ?, ?)";

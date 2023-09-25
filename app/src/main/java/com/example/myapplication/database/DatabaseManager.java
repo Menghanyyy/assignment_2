@@ -94,6 +94,11 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
+    public boolean verifyPassword(String password, User user) {
+        return false;
+    }
+
+    @Override
     public ArrayList<Activity> eventsAtLocation(GPSLocation location, Event event) {
         return null;
     }
