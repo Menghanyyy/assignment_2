@@ -55,7 +55,7 @@ public interface DatabaseInterface {
 
     public ArrayList<GeneralUser> getAllUsers();
 
-    public boolean isPasswordCorrect(String password, User user);
+    public boolean verifyPassword(String password, User user);
 
 
 

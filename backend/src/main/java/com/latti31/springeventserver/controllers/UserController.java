@@ -2,15 +2,12 @@ package com.latti31.springeventserver.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Blob;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/users")
@@ -65,11 +62,39 @@ public class UserController {
         }
     }
 
+    @GetMapping("/verifyPassword")
+    public String verifyPassword(@RequestBody String jsonText) {
+        String query = "SELECT password FROM `User` WHERE userID = ?";
 
-    // Additional method to retrieve all events
-//    @GetMapping("/all")
-//    public List<String> getAllEvents() {
-//        String query = "SELECT event_data FROM Event";
-//        return jdbcTemplate.queryForList(query, String.class);
-//    }
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonText);
+
+            // Extract values from JSON
+            int userID = jsonNode.get("userID").asInt();
+            String givenPassword = jsonNode.get("password").asText();
+
+            // Get actual password
+            List<Map<String, Object>> passwords = jdbcTemplate.queryForList(query, userID);
+            if (passwords.size() == 1) {
+                String correctPassword = (String) passwords.get(0).get("password");
+
+                if (correctPassword.equals(givenPassword)) {
+                    return "true";
+                }
+
+                return "false";
+            }
+
+            // Should be prevented by SQL regardless
+            else if (passwords.size() > 1) {
+                return "User not unique in system";
+            } else {
+                return "User not found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if the account creation fails
+            return "Error Adding User: " + e.getMessage();
+        }
+    }
 }
