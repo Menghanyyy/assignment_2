@@ -6,9 +6,6 @@ import java.util.ArrayList;
 
 public interface DatabaseInterface {
 
-    // Organisation
-
-
     // Event
     public boolean addEvent(Event event);
 
