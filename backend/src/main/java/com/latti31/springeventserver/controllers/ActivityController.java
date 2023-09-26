@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.latti31.springeventserver.objects.DatabaseChecker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,9 @@ public class ActivityController {
                 byte[] backgroundPictureData = (byte[]) activity.get("backgroundPicture");
 
                 // Convert the byte array to Base64 encoding
-                String backgroundPictureBase64 = Base64.getEncoder().encodeToString(backgroundPictureData);
+                String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                        backgroundPictureData
+                );
 
                 // Create a JSON object
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -162,9 +165,7 @@ public class ActivityController {
             List<Map<String, Object>> activities = jdbcTemplate.queryForList(query, event_id);
             List<ObjectNode> activityList = new ArrayList<>(); // List to store activity JSON objects
 
-            for (int i = 0; i < activities.size(); i++) {
-                Map<String, Object> activity = activities.get(i);
-
+            for (Map<String, Object> activity : activities) {
                 // Retrieve the BLOB data as a byte array
                 byte[] backgroundPictureData = (byte[]) activity.get("backgroundPicture");
 
@@ -203,4 +204,54 @@ public class ActivityController {
         }
     }
 
+    @PostMapping("/addVisit")
+    public String addVisit(@RequestBody String jsonText) {
+        String query = "INSERT INTO Visit (" +
+                "userID, " +
+                "activityID, " +
+                "time " +
+                ") VALUES (?, ?, ?)";
+
+        // Parse the JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonText);
+
+            // Extract the 'name' property from the JSON
+            int userID = jsonNode.get("userID").asInt();
+            int activityID = jsonNode.get("activityID").asInt();
+            String timeString = jsonNode.get("time").asText();
+
+            // Parse the time string into a java.util.Date object
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            Date time = dateFormat.parse(timeString);
+
+            // Database Checking
+            DatabaseChecker databaseChecks = new DatabaseChecker(jdbcTemplate);
+
+            // User ID
+            if (databaseChecks.keyNotInDB(
+                    "User",
+                    "userID",
+                    userID
+            )){
+                return ("User ID " + Integer.toString(userID) + " does not exist in the database.");
+            }
+
+            // Activity ID
+            if (databaseChecks.keyNotInDB(
+                    "Activity",
+                    "activityID",
+                    activityID
+            )){
+                return ("Activity ID " + Integer.toString(activityID) + " does not exist in the database.");
+            }
+
+            jdbcTemplate.update(query, userID, activityID, time);
+            return "Visit added successfully.";
+        } catch (Exception e) {
+            return "Error creating visit: " + e.getMessage();
+        }
+    }
 }
