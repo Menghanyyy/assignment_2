@@ -1,9 +1,7 @@
 package com.latti31.springeventserver.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +12,21 @@ import java.util.Map;
 @RequestMapping("/events")
 public class EventController {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/{id}")
+    public EventController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @GetMapping("/getByID/{id}")
     public String getEvent(@PathVariable int id) {
-        String query = "SELECT eventID, name, ST_AsText(bbox) AS bbox, Organisation_idOrganisation FROM Event WHERE eventID = ?";
+        String query = "SELECT " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event WHERE eventID = ?";
         try {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, id);
             if (!events.isEmpty()) {
@@ -35,10 +42,14 @@ public class EventController {
         }
     }
 
-
-    @PostMapping("/create")
+    @PostMapping("/addEvent")
     public String createEvent(@RequestBody String jsonText) {
-        String query = "INSERT INTO Event (bbox, name, Organisation_idOrganisation) VALUES (ST_PolygonFromText(?), ?, ?)";
+        String query = "INSERT INTO Event (" +
+                "bbox, " +
+                "name, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description) VALUES (ST_PolygonFromText(?), ?, ?, ?, ?)";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -47,14 +58,18 @@ public class EventController {
             // Extract values from JSON
             String bbox = jsonNode.get("bbox").asText();
             String name = jsonNode.get("name").asText();
-            int idOrganisation = jsonNode.get("Organisation_idOrganisation").asInt();
+            String organisationName = jsonNode.get("organisationName").asText();
+            int creatorID = jsonNode.get("creatorID").asInt();
+            String description = jsonNode.get("description").asText();
 
             // Insert values into the database
             jdbcTemplate.update(
                     query,
                     bbox,
                     name,
-                    idOrganisation
+                    organisationName,
+                    creatorID,
+                    description
             );
 
             return "Event created successfully.";
@@ -66,9 +81,27 @@ public class EventController {
 
 
     // Additional method to retrieve all events
-//    @GetMapping("/all")
-//    public List<String> getAllEvents() {
-//        String query = "SELECT event_data FROM Event";
-//        return jdbcTemplate.queryForList(query, String.class);
-//    }
+    @GetMapping("/getAll")
+    public String getAll() {
+        String query = "SELECT " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event";
+
+        try {
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query);
+            if (!events.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.writeValueAsString(events);
+            } else {
+                return "No users found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return "Error retrieving users: " + e.getMessage();
+        }
+    }
 }
