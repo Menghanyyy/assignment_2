@@ -16,11 +16,11 @@ import java.util.*;
 public class ActivityController {
 
     private final JdbcTemplate jdbcTemplate;
-    private final DatabaseChecker databaseChecks;
+    private final DatabaseChecker databaseChecker;
 
     public ActivityController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.databaseChecks = new DatabaseChecker(jdbcTemplate);
+        this.databaseChecker = new DatabaseChecker(jdbcTemplate);
     }
 
     @GetMapping("/getByID/{activity_id}")
@@ -230,7 +230,7 @@ public class ActivityController {
             Date time = dateFormat.parse(timeString);
 
             // User ID
-            if (databaseChecks.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "User",
                     "userID",
                     userID
@@ -239,7 +239,7 @@ public class ActivityController {
             }
 
             // Activity ID
-            if (databaseChecks.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "Activity",
                     "activityID",
                     activityID
@@ -248,7 +248,7 @@ public class ActivityController {
             }
 
             // Combination check (fail if already in)
-            if (!databaseChecks.keyNotInDB(
+            if (!databaseChecker.keyNotInDBInt(
                     "Visit",
                     "activityID",
                     activityID,
@@ -282,7 +282,7 @@ public class ActivityController {
             int activityID = jsonNode.get("activityID").asInt();
 
             // User ID
-            if (databaseChecks.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "User",
                     "userID",
                     userID
@@ -291,7 +291,7 @@ public class ActivityController {
             }
 
             // Activity ID
-            if (databaseChecks.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "Activity",
                     "activityID",
                     activityID

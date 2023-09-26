@@ -66,12 +66,20 @@ public class EventController {
 
             // Ensure creator exists in database
             int creatorID = jsonNode.get("creatorID").asInt();
-            if (databaseChecker.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "User",
                     "userID",
                     creatorID
                     )) {
                 return "User with ID " + creatorID + " does not exist in db.";
+            }
+
+            if (!databaseChecker.keyNotInDBString(
+                    "Event",
+                    "name",
+                    name
+            )) {
+                return "Event name already exists";
             }
 
             // Insert values into the database
@@ -143,7 +151,7 @@ public class EventController {
             int eventID = jsonNode.get("eventID").asInt();
 
             // Ensure user exists in database
-            if (databaseChecker.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "User",
                     "userID",
                     userID
@@ -152,7 +160,7 @@ public class EventController {
             }
 
             // Ensure event exists in database
-            if (databaseChecker.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "Event",
                     "eventID",
                     eventID
@@ -191,7 +199,7 @@ public class EventController {
                 "WHERE je.eventID = ?";
 
         try {
-            if (databaseChecker.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "Event",
                     "eventID",
                     event_id
@@ -227,7 +235,7 @@ public class EventController {
                 "WHERE je.userID = ?";
 
         try {
-            if (databaseChecker.keyNotInDB(
+            if (databaseChecker.keyNotInDBInt(
                     "User",
                     "userID",
                     user_id

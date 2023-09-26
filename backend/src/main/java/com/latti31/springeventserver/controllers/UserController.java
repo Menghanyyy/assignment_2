@@ -2,6 +2,7 @@ package com.latti31.springeventserver.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.latti31.springeventserver.objects.DatabaseChecker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.Map;
 public class UserController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final DatabaseChecker databaseChecker;
 
     public UserController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.databaseChecker = new DatabaseChecker(jdbcTemplate);
     }
 
     @GetMapping("getByID/{user_id}")
@@ -68,6 +71,22 @@ public class UserController {
             String name = jsonNode.get("name").asText();
             String userName = jsonNode.get("userName").asText();
             String password = jsonNode.get("password").asText();
+
+            if (!databaseChecker.keyNotInDBString(
+                    "User",
+                    "email",
+                    email
+            )) {
+                return "email already in use";
+            }
+
+            if (!databaseChecker.keyNotInDBString(
+                    "User",
+                    "userName",
+                    userName
+            )) {
+                return "Username already in use";
+            }
 
             // Insert values into the database
             jdbcTemplate.update(query, email, name, userName, password);
