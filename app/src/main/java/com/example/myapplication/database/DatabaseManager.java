@@ -49,7 +49,7 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public Activity getActivityByID(int eventID, int activityID) {
+    public Activity getActivityByID(int activityID) {
         return null;
     }
 
@@ -64,12 +64,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public Visit getVisitByID(int userID, int activityID, int eventID) {
+    public Visit getVisitByID(int userID, int activityID) {
         return null;
     }
 
     @Override
-    public int visitCountAtActivity(int eventID, int activityID) {
+    public int visitCountAtActivity(int activityID) {
         return 0;
     }
 

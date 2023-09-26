@@ -30,17 +30,17 @@ public interface DatabaseInterface {
 
     public boolean addActivity(Activity activity);
 
-    public Activity getActivityByID(int eventID, int activityID);
+    public Activity getActivityByID(int activityID);
 
     public ArrayList<Activity> getAllActivities(Event event);
 
     // Visit (Visit class includes user/event details)
     public boolean addVisit(Visit visit);
 
-    public Visit getVisitByID(int userID, int activityID, int eventID);
+    public Visit getVisitByID(int userID, int activityID);
 
     // Gives the total visits for a specific activity
-    public int visitCountAtActivity(int eventID, int activityID);
+    public int visitCountAtActivity(int activityID);
 
     // Gives the total visits at an event for a specific user
     public int visitCountForUserAtEvent(int userID, int eventID);
