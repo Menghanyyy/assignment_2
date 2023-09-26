@@ -109,11 +109,11 @@ public class EventController {
                 ObjectMapper objectMapper = new ObjectMapper();
                 return objectMapper.writeValueAsString(events);
             } else {
-                return "No users found";
+                return "No events found";
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
-            return "Error retrieving users: " + e.getMessage();
+            return "Error retrieving events: " + e.getMessage();
         }
     }
 
