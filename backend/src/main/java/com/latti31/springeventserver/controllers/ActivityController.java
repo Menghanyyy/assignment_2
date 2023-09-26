@@ -95,7 +95,7 @@ public class ActivityController {
                 "`backgroundPicture`, " +
                 "`creatorID`" +
                 ") VALUES " +
-                "(ST_PointFromText(?), ST_POLYGONFROMTEXT(?), ST_PolygonFromText(?)," +
+                "(ST_PointFromText(?), ST_PolygonFromText(?), ST_PolygonFromText(?)," +
                 "?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Parse the JSON string
@@ -392,5 +392,4 @@ public class ActivityController {
             return "Error retrieving visit count: " + e.getMessage();
         }
     }
-
 }

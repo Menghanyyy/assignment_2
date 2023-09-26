@@ -69,6 +69,11 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
+    public int visitCountForUser(int userID) {
+        return 0;
+    }
+
+    @Override
     public int visitCountAtActivity(int activityID) {
         return 0;
     }
@@ -84,12 +89,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public GeneralUser getUserByID(int userID) {
+    public User getUserByID(int userID) {
         return null;
     }
 
     @Override
-    public ArrayList<GeneralUser> getAllUsers() {
+    public ArrayList<User> getAllUsers() {
         return null;
     }
 
@@ -99,7 +104,7 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public ArrayList<Activity> eventsAtLocation(GPSLocation location, Event event) {
+    public ArrayList<Activity> activitiesAtLocation(GPSLocation location, Event event) {
         return null;
     }
 }

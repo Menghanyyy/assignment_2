@@ -39,6 +39,9 @@ public interface DatabaseInterface {
 
     public Visit getVisitByID(int userID, int activityID);
 
+    // Gives the total visits for a specific user
+    public int visitCountForUser(int userID);
+
     // Gives the total visits at an event for a specific user
     public int visitCountForUserAtEvent(int userID, int eventID);
 
@@ -51,9 +54,9 @@ public interface DatabaseInterface {
 
     public boolean addUser(User user);
 
-    public GeneralUser getUserByID(int userID);
+    public User getUserByID(int userID);
 
-    public ArrayList<GeneralUser> getAllUsers();
+    public ArrayList<User> getAllUsers();
 
     public boolean verifyPassword(String password, User user);
 
@@ -62,6 +65,6 @@ public interface DatabaseInterface {
     ///////////////// Location Methods /////////////////
 
     // Gives all the activities (in a given event) that overlap a point on the map
-    public ArrayList<Activity> eventsAtLocation(GPSLocation location, Event event);
+    public ArrayList<Activity> activitiesAtLocation(GPSLocation location, Event event);
 
 }
