@@ -182,7 +182,8 @@ public class EventController {
     @GetMapping("/getUsersAtEvent/{event_id}")
     public String getUsersAtEvent(@PathVariable int event_id) {
         String query = "SELECT " +
-                "name, " +
+                "u.userID, " +
+                "u.name, " +
                 "email, " +
                 "userName " +
                 "FROM `User` u " +
@@ -208,6 +209,42 @@ public class EventController {
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
             return "Error retrieving users: " + e.getMessage();
+        }
+    }
+
+    // Get all users who have joined a specific event
+    @GetMapping("/getJoinedEvents/{user_id}")
+    public String getJoinedEvents(@PathVariable int user_id) {
+        String query = "SELECT " +
+                "e.eventID, " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event e " +
+                "JOIN `Joined Events` je ON e.eventID = je.eventID " +
+                "WHERE je.userID = ?";
+
+        try {
+            if (databaseChecker.keyNotInDB(
+                    "User",
+                    "userID",
+                    user_id
+            )) {
+                return "User with ID " + user_id + " not found.";
+            }
+
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
+            if (!events.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.writeValueAsString(events);
+            } else {
+                return "No events found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return "Error retrieving events: " + e.getMessage();
         }
     }
 }
