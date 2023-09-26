@@ -39,11 +39,11 @@ public interface DatabaseInterface {
 
     public Visit getVisitByID(int userID, int activityID);
 
-    // Gives the total visits for a specific activity
-    public int visitCountAtActivity(int activityID);
-
     // Gives the total visits at an event for a specific user
     public int visitCountForUserAtEvent(int userID, int eventID);
+
+    // Gives the total visits for a specific activity
+    public int visitCountAtActivity(int activityID);
 
 
 

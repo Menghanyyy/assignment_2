@@ -243,8 +243,19 @@ public class ActivityController {
                     "Activity",
                     "activityID",
                     activityID
-            )){
+            )) {
                 return ("Activity ID " + Integer.toString(activityID) + " does not exist in the database.");
+            }
+
+            // Combination check (fail if already in)
+            if (!databaseChecks.keyNotInDB(
+                    "Visit",
+                    "activityID",
+                    activityID,
+                    "userID",
+                    userID
+            )) {
+                return "User " + userID + " already visited activity " + activityID;
             }
 
             jdbcTemplate.update(query, userID, activityID, time);
@@ -307,4 +318,79 @@ public class ActivityController {
             return "Error retrieving visit: " + e.getMessage();
         }
     }
+
+    @GetMapping("/visitCountForUser/{user_id}")
+    public String getUserVisitCount(@PathVariable int user_id) {
+        String query = "SELECT COUNT(*) FROM Visit WHERE `userID` = ?";
+
+        try {
+            List<Map<String, Object>> visitCountList = jdbcTemplate.queryForList(query, user_id);
+
+            if (!visitCountList.isEmpty()) {
+                Map<String, Object> visitCountMap = visitCountList.get(0);
+                int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
+                return Integer.toString(visitCount);
+            } else {
+                return "No visits found for the user.";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the query or database
+            return "Error retrieving visit count: " + e.getMessage();
+        }
+    }
+
+    @GetMapping("/visitCountForUserAtEvent")
+    public String getUserVisitEventCount(@RequestBody String jsonText) {
+        String query = "SELECT COUNT(*) " +
+                "FROM Visit v " +
+                "JOIN Activity a " +
+                "ON a.activityID = v.activityID " +
+                "WHERE `userID` = ? AND a.eventID = ?";
+
+        // Parse the JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonText);
+
+            // Extract activity properties from JSON
+            int userID = jsonNode.get("userID").asInt();
+            int eventID = jsonNode.get("eventID").asInt();
+
+            List<Map<String, Object>> visitCountList = jdbcTemplate.queryForList(query, userID, eventID);
+
+            if (!visitCountList.isEmpty()) {
+                Map<String, Object> visitCountMap = visitCountList.get(0);
+                int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
+                return Integer.toString(visitCount);
+            } else {
+                return "No visits found for the user.";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the query or database
+            return "Error retrieving visit count: " + e.getMessage();
+        }
+    }
+
+    // Get the count for a specific activity
+    @GetMapping("/visitCountAtActivity/{activity_id}")
+    public String getActivityVisitCount(@PathVariable int activity_id) {
+        String query = "SELECT COUNT(*) FROM Visit WHERE `activityID` = ?";
+
+        try {
+            List<Map<String, Object>> visitCountList = jdbcTemplate.queryForList(query, activity_id);
+
+            if (!visitCountList.isEmpty()) {
+                Map<String, Object> visitCountMap = visitCountList.get(0);
+                int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
+                return Integer.toString(visitCount);
+            } else {
+                return "No visits found for the activity.";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the query or database
+            return "Error retrieving visit count: " + e.getMessage();
+        }
+    }
+
 }
