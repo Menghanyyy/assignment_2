@@ -2,6 +2,9 @@ package com.latti31.springeventserver.objects;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
+import java.util.Map;
+
 public class DatabaseChecker {
 
     private final JdbcTemplate jdbcTemplate;
@@ -12,15 +15,16 @@ public class DatabaseChecker {
 
     public boolean keyNotInDB(String tableName, String primaryKeyColumnName, int primaryKeyValue) {
         String surroundedTableName = "`" + tableName + "`";
-        String query = "SELECT COUNT(*) FROM " + surroundedTableName + " WHERE " + primaryKeyColumnName + " = ?";
+        String query = "SELECT COUNT(*) FROM " + surroundedTableName +
+                " WHERE " + primaryKeyColumnName + " = ?";
 
         try {
-            // Execute the query and check if the count is greater than 0
-            int count = jdbcTemplate.queryForObject(query, Integer.class, primaryKeyValue);
-            return count <= 0;
+            // Execute the query and retrieve the result as a list of maps
+            List<Map<String, Object>> result = jdbcTemplate.queryForList(query, primaryKeyValue);
+
+            // Check if the result is empty or the count is not greater than 0
+            return result.isEmpty() || ((Number) result.get(0).get("COUNT(*)")).intValue() <= 0;
         } catch (Exception e) {
-            // Log or print the exception for debugging
-            e.printStackTrace(); // You can replace this with your preferred logging mechanism
             return true;
         }
     }

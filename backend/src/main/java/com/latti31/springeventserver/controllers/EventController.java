@@ -20,7 +20,7 @@ public class EventController {
         this.jdbcTemplate = jdbcTemplate;
         this.databaseChecker = new DatabaseChecker(jdbcTemplate);
     }
-    
+
     @GetMapping("/getByID/{id}")
     public String getEvent(@PathVariable int id) {
         String query = "SELECT " +
@@ -114,6 +114,66 @@ public class EventController {
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
             return "Error retrieving users: " + e.getMessage();
+        }
+    }
+
+    // Helper method to check if a user has already joined an event
+    private boolean userAlreadyJoinedEvent(int userID, int eventID) {
+        String query = "SELECT COUNT(*) FROM `Joined Events` WHERE userID = ? AND eventID = ?";
+
+        // Execute the SQL query and retrieve the result
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query, userID, eventID);
+
+        // Check if the result is not empty and the count is greater than 0
+        return !result.isEmpty() && ((Number) result.get(0).get("COUNT(*)")).intValue() > 0;
+    }
+
+    @PostMapping("/joinEvent")
+    public String joinEvent(@RequestBody String jsonText) {
+        String query = "INSERT INTO `Joined Events` (" +
+                "userID, eventID) VALUES (?, ?)";
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonText);
+
+            // Extract values from JSON
+            int userID = jsonNode.get("userID").asInt();
+            int eventID = jsonNode.get("eventID").asInt();
+
+            // Ensure user exists in database
+            if (databaseChecker.keyNotInDB(
+                    "User",
+                    "userID",
+                    userID
+            )) {
+                return "User with ID " + userID + " does not exist in db.";
+            }
+
+            // Ensure event exists in database
+            if (databaseChecker.keyNotInDB(
+                    "Event",
+                    "eventID",
+                    eventID
+            )) {
+                return "Event with ID " + eventID + " does not exist in db.";
+            }
+
+            if (userAlreadyJoinedEvent(userID, eventID)){
+                return "User already joined this event.";
+            }
+
+            // Insert values into the database
+            jdbcTemplate.update(
+                    query,
+                    userID,
+                    eventID
+            );
+
+            return "User " + userID + " joined event " + eventID + " successfully.";
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if the event creation fails
+            return "Error joining event: " + e.getMessage();
         }
     }
 }
