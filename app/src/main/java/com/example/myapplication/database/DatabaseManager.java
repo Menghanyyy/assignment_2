@@ -54,7 +54,7 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public ArrayList<Activity> getAllActivities() {
+    public ArrayList<Activity> getAllActivities(Event event) {
         return null;
     }
 

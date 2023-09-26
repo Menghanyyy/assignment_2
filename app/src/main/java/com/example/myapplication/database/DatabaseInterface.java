@@ -32,7 +32,7 @@ public interface DatabaseInterface {
 
     public Activity getActivityByID(int eventID, int activityID);
 
-    public ArrayList<Activity> getAllActivities();
+    public ArrayList<Activity> getAllActivities(Event event);
 
     // Visit (Visit class includes user/event details)
     public boolean addVisit(Visit visit);
