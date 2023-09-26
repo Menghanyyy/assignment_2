@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class DatabaseChecker {
 
-    private JdbcTemplate jdbcTemplate; // You need to inject the JdbcTemplate
+    private final JdbcTemplate jdbcTemplate;
 
     public DatabaseChecker(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

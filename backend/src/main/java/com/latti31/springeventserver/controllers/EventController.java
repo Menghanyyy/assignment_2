@@ -2,6 +2,7 @@ package com.latti31.springeventserver.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.latti31.springeventserver.objects.DatabaseChecker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +14,13 @@ import java.util.Map;
 public class EventController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final DatabaseChecker databaseChecker;
 
     public EventController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.databaseChecker = new DatabaseChecker(jdbcTemplate);
     }
-
+    
     @GetMapping("/getByID/{id}")
     public String getEvent(@PathVariable int id) {
         String query = "SELECT " +
@@ -59,8 +62,17 @@ public class EventController {
             String bbox = jsonNode.get("bbox").asText();
             String name = jsonNode.get("name").asText();
             String organisationName = jsonNode.get("organisationName").asText();
-            int creatorID = jsonNode.get("creatorID").asInt();
             String description = jsonNode.get("description").asText();
+
+            // Ensure creator exists in database
+            int creatorID = jsonNode.get("creatorID").asInt();
+            if (databaseChecker.keyNotInDB(
+                    "User",
+                    "userID",
+                    creatorID
+                    )) {
+                return "User with ID " + creatorID + " does not exist in db.";
+            }
 
             // Insert values into the database
             jdbcTemplate.update(
