@@ -16,9 +16,11 @@ import java.util.*;
 public class ActivityController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final DatabaseChecker databaseChecks;
 
     public ActivityController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.databaseChecks = new DatabaseChecker(jdbcTemplate);
     }
 
     @GetMapping("/getByID/{activity_id}")
@@ -227,9 +229,6 @@ public class ActivityController {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             Date time = dateFormat.parse(timeString);
 
-            // Database Checking
-            DatabaseChecker databaseChecks = new DatabaseChecker(jdbcTemplate);
-
             // User ID
             if (databaseChecks.keyNotInDB(
                     "User",
@@ -252,6 +251,60 @@ public class ActivityController {
             return "Visit added successfully.";
         } catch (Exception e) {
             return "Error creating visit: " + e.getMessage();
+        }
+    }
+
+    @GetMapping("/getVisitByID")
+    public String getActivity(@RequestBody String jsonText) {
+        String query = "SELECT " +
+                "time " +
+                "FROM Visit WHERE userID = ? AND activityID = ?";
+
+        // Parse the JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonText);
+
+            // Extract activity properties from JSON
+            int userID = jsonNode.get("userID").asInt();
+            int activityID = jsonNode.get("activityID").asInt();
+
+            // User ID
+            if (databaseChecks.keyNotInDB(
+                    "User",
+                    "userID",
+                    userID
+            )){
+                return ("User ID " + Integer.toString(userID) + " does not exist in the database.");
+            }
+
+            // Activity ID
+            if (databaseChecks.keyNotInDB(
+                    "Activity",
+                    "activityID",
+                    activityID
+            )){
+                return ("Activity ID " + Integer.toString(activityID) + " does not exist in the database.");
+            }
+
+            List<Map<String, Object>> visits = jdbcTemplate.queryForList(query, userID, activityID);
+            System.out.println("V " + userID + " A " + activityID);
+            System.out.println(visits);
+
+            if (!visits.isEmpty()) {
+                Map<String, Object> visit = visits.get(0);
+                ObjectNode jsonObject = objectMapper.createObjectNode();
+                jsonObject.put("time", visit.get("time").toString());
+
+                // Convert JSON object to a JSON string
+                return jsonObject.toString();
+            } else {
+                return "Visit not found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if the activity with the specified ID doesn't exist
+            return "Error retrieving visit: " + e.getMessage();
         }
     }
 }
