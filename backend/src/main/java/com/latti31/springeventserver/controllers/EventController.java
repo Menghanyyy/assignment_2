@@ -128,6 +128,7 @@ public class EventController {
         return !result.isEmpty() && ((Number) result.get(0).get("COUNT(*)")).intValue() > 0;
     }
 
+    // Allows user to join an event (sign up for)
     @PostMapping("/joinEvent")
     public String joinEvent(@RequestBody String jsonText) {
         String query = "INSERT INTO `Joined Events` (" +
@@ -174,6 +175,39 @@ public class EventController {
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
             return "Error joining event: " + e.getMessage();
+        }
+    }
+
+    // Get all users who have joined a specific event
+    @GetMapping("/getUsersAtEvent/{event_id}")
+    public String getUsersAtEvent(@PathVariable int event_id) {
+        String query = "SELECT " +
+                "name, " +
+                "email, " +
+                "userName " +
+                "FROM `User` u " +
+                "JOIN `Joined Events` je ON u.userID = je.userID " +
+                "WHERE je.eventID = ?";
+
+        try {
+            if (databaseChecker.keyNotInDB(
+                    "Event",
+                    "eventID",
+                    event_id
+            )) {
+                return "Event with ID " + event_id + " not found.";
+            }
+
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, event_id);
+            if (!events.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.writeValueAsString(events);
+            } else {
+                return "No users found";
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return "Error retrieving users: " + e.getMessage();
         }
     }
 }
