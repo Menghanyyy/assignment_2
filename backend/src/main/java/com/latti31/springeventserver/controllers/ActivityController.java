@@ -3,11 +3,9 @@ package com.latti31.springeventserver.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -15,15 +13,27 @@ import java.util.*;
 @RequestMapping("/activities")
 public class ActivityController {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/{activity_id}")
+    public ActivityController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @GetMapping("/getByID/{activity_id}")
     public String getActivity(@PathVariable int activity_id) {
-        String query = "SELECT activityID, ST_AsText(centreLocation) AS centreLocation, " +
+        String query = "SELECT " +
+                "activityID, " +
+                "ST_AsText(centreLocation) AS centreLocation, " +
                 "ST_AsText(polygonLocation) AS polygonLocation, " +
-                "ST_AsText(bbox) AS bbox, description, startTime, endTime, name, " +
-                "Event_eventID, Event_Organisation_idOrganisation, backgroundPicture " +
+                "ST_AsText(bbox) AS bbox, " +
+                "description, " +
+                "startTime, " +
+                "endTime, " +
+                "name, " +
+                "eventID, " +
+                "locationName," +
+                "backgroundPicture, " +
+                "creatorID " +
                 "FROM Activity WHERE activityID = ?";
 
         try {
@@ -48,9 +58,10 @@ public class ActivityController {
                 jsonObject.put("startTime", activity.get("startTime").toString());
                 jsonObject.put("endTime", activity.get("endTime").toString());
                 jsonObject.put("name", (String) activity.get("name"));
-                jsonObject.put("Event_eventID", (Integer) activity.get("Event_eventID"));
-                jsonObject.put("Event_Organisation_idOrganisation", (Integer) activity.get("Event_Organisation_idOrganisation"));
+                jsonObject.put("eventID", (Integer) activity.get("eventID"));
+                jsonObject.put("locationName", (String) activity.get("locationName"));
                 jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                jsonObject.put("creatorID", (Integer) activity.get("creatorID"));
 
                 // Convert JSON object to a JSON string
                 return jsonObject.toString();
@@ -63,13 +74,23 @@ public class ActivityController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addActivity")
     public String addActivity(@RequestBody String jsonText) {
-        String query = "INSERT INTO Activity (`centreLocation`, `polygonLocation`, `bbox`, " +
-                "`description`, `startTime`, `endTime`, `name`, `Event_eventID`, " +
-                "`Event_Organisation_idOrganisation`, `backgroundPicture`) VALUES " +
+        String query = "INSERT INTO Activity (" +
+                "`centreLocation`, " +
+                "`polygonLocation`, " +
+                "`bbox`, " +
+                "`description`, " +
+                "`startTime`, " +
+                "`endTime`, " +
+                "`name`, " +
+                "`eventID`, " +
+                "`locationName`, " +
+                "`backgroundPicture`, " +
+                "`creatorID`" +
+                ") VALUES " +
                 "(ST_PointFromText(?), ST_POLYGONFROMTEXT(?), ST_PolygonFromText(?)," +
-                "?, ?, ?, ?, ?, ?, ?)";
+                "?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Parse the JSON string
         ObjectMapper objectMapper = new ObjectMapper();
@@ -85,9 +106,10 @@ public class ActivityController {
             String startTimeString = jsonNode.get("startTime").asText();
             String endTimeString = jsonNode.get("endTime").asText();
             String name = jsonNode.get("name").asText();
-            int eventID = jsonNode.get("Event_eventID").asInt();
-            int organisationID = jsonNode.get("Event_Organisation_idOrganisation").asInt();
+            int eventID = jsonNode.get("eventID").asInt();
+            String locationName = jsonNode.get("locationName").asText();
             String backgroundPictureBase64 = jsonNode.get("backgroundPicture").asText();
+            int creatorID = jsonNode.get("creatorID").asInt();
 
             // Convert Base64 string to byte array
             byte[] backgroundPictureData = Base64.getDecoder().decode(backgroundPictureBase64);
@@ -97,17 +119,22 @@ public class ActivityController {
             Date startTime = dateFormat.parse(startTimeString);
             Date endTime = dateFormat.parse(endTimeString);
 
-            System.out.println(centreLocation);
-            System.out.println(polygonLocation);
-            System.out.println(bbox);
-
-            jdbcTemplate.update(query, centreLocation, polygonLocation, bbox, description,
-                    startTime, endTime, name, eventID, organisationID, backgroundPictureData);
-
+            jdbcTemplate.update(
+                    query,
+                    centreLocation,
+                    polygonLocation,
+                    bbox,
+                    description,
+                    startTime,
+                    endTime,
+                    name,
+                    eventID,
+                    locationName,
+                    backgroundPictureData,
+                    creatorID
+            );
             return "Activity added successfully.";
         } catch (Exception e) {
-            // Handle exceptions, e.g., if the activity creation fails
-            e.printStackTrace();
             return "Error creating activity: " + e.getMessage();
         }
     }
