@@ -1,5 +1,11 @@
 package com.example.myapplication.database;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
 import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
@@ -8,22 +14,63 @@ import com.example.myapplication.component.User;
 import com.example.myapplication.component.Visit;
 import com.example.myapplication.location.GPSLocation;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 // Will implement the java interface
 public class DatabaseManager implements DatabaseInterface {
 
-    HttpURLConnection urlConnection = null;
+    private RequestQueue requestQueue;
+    private Context context;
+
     String baseUrl = "http://comp90018.us.to:8080";
+
+    public DatabaseManager(Context context) {
+        // Initialize the Volley RequestQueue
+        requestQueue = Volley.newRequestQueue(context);
+        this.context = context;
+    }
+
+    public void dummy(final DatabaseCallback<Integer> callback) {
+
+        String url = baseUrl + "/activities/visitCountForUser/1";
+
+        // Create a RequestQueue if it's not already initialized
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+
+        // Create a StringRequest for the GET request
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    if (response != null) {
+                        try {
+                            int result = Integer.parseInt(response);
+                            callback.onSuccess(result);
+                        } catch (NumberFormatException e) {
+                            callback.onError("Did not receive integer from DB");
+                        }
+                    } else {
+                        callback.onError("Received nothing from DB");
+                    }
+                },
+                e -> {
+                    callback.onError(e.getMessage());
+                });
+
+        // Add the request to the RequestQueue
+        requestQueue.add(stringRequest);
+    }
 
     @Override
     public boolean addEvent(Event event) {
@@ -37,34 +84,7 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public ArrayList<Event> getAllEvents() {
-        try {
-            URL url = new URL(baseUrl + "/events/addEvent");
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setReadTimeout(10000 /* milliseconds */ );
-            urlConnection.setConnectTimeout(15000 /* milliseconds */ );
-            urlConnection.setDoOutput(true);
-            urlConnection.connect();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuilder sb = new StringBuilder();
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            br.close();
-
-            String jsonString = sb.toString();
-            System.out.println("JSON: " + jsonString);
-
-            System.out.println(new JSONObject(jsonString));
-
-            return null;
-
-        } catch (Exception e) {
-            return null;
-        }
+        return null;
     }
 
     @Override
