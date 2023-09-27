@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,8 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.example.myapplication.MapActivity;
+import com.example.myapplication.component.*;
 
 public class MainActivity extends AppCompatActivity {
 
