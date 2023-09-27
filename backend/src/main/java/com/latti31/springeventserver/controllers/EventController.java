@@ -104,6 +104,7 @@ public class EventController {
     @GetMapping("/getAll")
     public String getAll() {
         String query = "SELECT " +
+                "eventID, " +
                 "name, " +
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
