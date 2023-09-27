@@ -15,6 +15,8 @@ import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,20 +54,33 @@ public class MainActivity extends AppCompatActivity {
         Visit testV = new Visit(abc.getUserId(), null, null, null);
         Log.i("test visit", testV.toString());
 
-        // TESTING
+        // Testing Database Connection
         DatabaseManager databaseManager = new DatabaseManager(this);
-        databaseManager.dummy(new DatabaseCallback<Integer>() {
+        databaseManager.visitCountForUser(1, new DatabaseCallback<Integer>() {
             @Override
             public void onSuccess(Integer result) {
-                Log.println(Log.ASSERT, "Good result", String.valueOf(result));
+                Log.i("Visit Count for user 1", String.valueOf(result));
             }
 
             @Override
             public void onError(String error) {
-                Log.println(Log.ASSERT, "Good result", error);
+                Log.println(Log.ASSERT, "Error getting count", error);
             }
         });
-//        Log.println(Log.ASSERT, "Test DBManager", Integer.toString(databaseManager.dummy()));
-//        Log.println(Log.ASSERT, "Get All Events", databaseManager.getAllEvents().toString());
+
+        databaseManager.getAllEvents(new DatabaseCallback<ArrayList<Event>>() {
+            @Override
+            public void onSuccess(ArrayList<Event> result) {
+                Log.i("Arraylist Size", String.valueOf(result.size()));
+
+                Log.i("Got Arraylist: ", result.get(0).getEventId());
+                Log.i("Got Arraylist: ", result.get(0).getEventName());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error getting count", error);
+            }
+        });
     }
 }

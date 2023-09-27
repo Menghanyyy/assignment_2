@@ -13,7 +13,7 @@ public interface DatabaseInterface {
 
     public void getEventByID(int eventID, final DatabaseCallback<Integer> callback);
 
-    public void getAllEvents(final DatabaseCallback<Integer> callback);
+    public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
 
     // Users signing up to attend an event
     public void joinEvent(User user, Event event, final DatabaseCallback<Integer> callback);
