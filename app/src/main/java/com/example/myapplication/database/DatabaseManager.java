@@ -60,97 +60,97 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public boolean addEvent(Event event, DatabaseCallback<Integer> callback) {
-        return false;
+    public void addEvent(Event event, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public Event getEventByID(int eventID, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getEventByID(int eventID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<Event> getAllEvents(DatabaseCallback<Integer> callback) {
-        return null;
+    public void getAllEvents(DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public boolean joinEvent(User user, Event event, DatabaseCallback<Integer> callback) {
-        return false;
+    public void joinEvent(User user, Event event, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<User> getUsersAtEvent(Event event, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getUsersAtEvent(Event event, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<Event> getJoinedEvents(User user, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getJoinedEvents(User user, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public boolean addActivity(Activity activity, DatabaseCallback<Integer> callback) {
-        return false;
+    public void addActivity(Activity activity, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public Activity getActivityByID(int activityID, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getActivityByID(int activityID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<Activity> getAllActivities(Event event, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getAllActivities(Event event, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public boolean addVisit(Visit visit, DatabaseCallback<Integer> callback) {
-        return false;
+    public void addVisit(Visit visit, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public Visit getVisitByID(int userID, int activityID, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getVisitByID(int userID, int activityID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public int visitCountForUser(int userID, DatabaseCallback<Integer> callback) {
-        return 0;
+    public void visitCountForUser(int userID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public int visitCountForUserAtEvent(int userID, int eventID, DatabaseCallback<Integer> callback) {
-        return 0;
+    public void visitCountForUserAtEvent(int userID, int eventID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public int visitCountAtActivity(int activityID, DatabaseCallback<Integer> callback) {
-        return 0;
+    public void visitCountAtActivity(int activityID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public boolean addUser(User user, DatabaseCallback<Integer> callback) {
-        return false;
+    public void addUser(User user, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public User getUserByID(int userID, DatabaseCallback<Integer> callback) {
-        return null;
+    public void getUserByID(int userID, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<User> getAllUsers(DatabaseCallback<Integer> callback) {
-        return null;
+    public void getAllUsers(DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public boolean verifyPassword(String password, User user, DatabaseCallback<Integer> callback) {
-        return false;
+    public void verifyPassword(String password, User user, DatabaseCallback<Integer> callback) {
+
     }
 
     @Override
-    public ArrayList<Activity> activitiesAtLocation(GPSLocation location, Event event, DatabaseCallback<Integer> callback) {
-        return null;
+    public void activitiesAtLocation(GPSLocation location, Event event, DatabaseCallback<Integer> callback) {
+
     }
 }
