@@ -2,6 +2,6 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.0.209</domain>
-        <!-- You can add more domains if needed -->
+        <domain includeSubdomains="true">comp90018.us.to</domain>
     </domain-config>
 </network-security-config>
