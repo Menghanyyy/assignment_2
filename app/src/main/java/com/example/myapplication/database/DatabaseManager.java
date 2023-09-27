@@ -8,10 +8,22 @@ import com.example.myapplication.component.User;
 import com.example.myapplication.component.Visit;
 import com.example.myapplication.location.GPSLocation;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 
 // Will implement the java interface
 public class DatabaseManager implements DatabaseInterface {
+
+    HttpURLConnection urlConnection = null;
+    String baseUrl = "http://comp90018.us.to:8080";
 
     @Override
     public boolean addEvent(Event event) {
@@ -25,7 +37,34 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public ArrayList<Event> getAllEvents() {
-        return null;
+        try {
+            URL url = new URL(baseUrl + "/events/addEvent");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setReadTimeout(10000 /* milliseconds */ );
+            urlConnection.setConnectTimeout(15000 /* milliseconds */ );
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            br.close();
+
+            String jsonString = sb.toString();
+            System.out.println("JSON: " + jsonString);
+
+            System.out.println(new JSONObject(jsonString));
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
