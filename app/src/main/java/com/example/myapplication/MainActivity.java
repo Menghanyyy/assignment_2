@@ -11,7 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.component.*;
+import com.example.myapplication.database.DatabaseCallback;
+import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,5 +52,20 @@ public class MainActivity extends AppCompatActivity {
         Visit testV = new Visit(abc.getUserId(), null, null, null);
         Log.i("test visit", testV.toString());
 
+        // TESTING
+        DatabaseManager databaseManager = new DatabaseManager(this);
+        databaseManager.dummy(new DatabaseCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                Log.println(Log.ASSERT, "Good result", String.valueOf(result));
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Good result", error);
+            }
+        });
+//        Log.println(Log.ASSERT, "Test DBManager", Integer.toString(databaseManager.dummy()));
+//        Log.println(Log.ASSERT, "Get All Events", databaseManager.getAllEvents().toString());
     }
 }
