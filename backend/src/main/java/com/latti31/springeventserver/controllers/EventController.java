@@ -3,6 +3,8 @@ package com.latti31.springeventserver.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.latti31.springeventserver.objects.DatabaseChecker;
+import com.latti31.springeventserver.objects.JSONResponseWrapper;
+import org.json.JSONObject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ public class EventController {
 
     private final JdbcTemplate jdbcTemplate;
     private final DatabaseChecker databaseChecker;
+    private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
 
     public EventController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -71,7 +74,8 @@ public class EventController {
                     "userID",
                     creatorID
                     )) {
-                return "User with ID " + creatorID + " does not exist in db.";
+                return jsonWrapper.wrapStringJSON(false, "User with ID "
+                        + creatorID + " does not exist in db.");
             }
 
             if (!databaseChecker.keyNotInDBString(
@@ -79,7 +83,7 @@ public class EventController {
                     "name",
                     name
             )) {
-                return "Event name already exists";
+                return jsonWrapper.wrapStringJSON(false, "Event name already exists");
             }
 
             // Insert values into the database
@@ -92,10 +96,10 @@ public class EventController {
                     description
             );
 
-            return "Event created successfully.";
+            return jsonWrapper.wrapStringJSON(true, "Event created successfully.");
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
-            return "Error creating event: " + e.getMessage();
+            return jsonWrapper.wrapStringJSON(false, "Error creating event: " + e.getMessage());
         }
     }
 
