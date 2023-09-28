@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.myapplication.component.*;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
+import com.example.myapplication.database.dbTesting;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
@@ -58,5 +59,6 @@ public class MainActivity extends AppCompatActivity {
         Visit testV = new Visit(abc.getUserId(), null, null, null);
         Log.i("test visit", testV.toString());
 
+        new dbTesting().runTests(this);
     }
 }

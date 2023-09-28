@@ -1,23 +1,23 @@
 package com.example.myapplication.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
-import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.User;
 import com.example.myapplication.component.Visit;
 import com.example.myapplication.location.GPSLocation;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,8 +44,41 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void addEvent(Event event, DatabaseCallback<Integer> callback) {
+    public void addEvent(Event event, final DatabaseCallback<Boolean> callback) {
+        String url = baseUrl + "/events/addEvent";
 
+        // Create a JSON object from the Event object using your JSON serialization method
+        JSONObject eventJson = JSONObjectParsing.unpackEvent(event);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                eventJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.get("status") == "success"){
+                                callback.onSuccess(true);
+                            } else{
+                                callback.onError((String) response.get("message"));
+                            }
+                        } catch (JSONException e) {
+                            callback.onError(e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle the error response
+                        String errorMessage = "Error adding event: " + error.getMessage();
+                        callback.onError(errorMessage);
+                    }
+                });
+
+        // Add the request to the Volley request queue
+        Volley.newRequestQueue(this.context).add(jsonObjectRequest);
     }
 
     @Override
@@ -135,11 +168,9 @@ public class DatabaseManager implements DatabaseInterface {
         requestQueue.add(jsonRequest);
     }
 
-
-
     @Override
     public void joinEvent(User user, Event event, DatabaseCallback<Integer> callback) {
-
+        String url = baseUrl + "/events/getAll";
     }
 
     @Override

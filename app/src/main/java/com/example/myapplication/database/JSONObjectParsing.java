@@ -1,6 +1,7 @@
 package com.example.myapplication.database;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.example.myapplication.component.Event;
 
@@ -14,6 +15,47 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JSONObjectParsing {
+
+    public static String convertPoints(List<Point> points){
+        StringBuilder polygonString = new StringBuilder("POLYGON((");
+
+        if (points.size() > 0){
+            points.add(points.get(0));
+        } else{
+            return "No points, cannot create SQL statement";
+        }
+
+        for (int i = 0; i < points.size(); i++) {
+            Point point = points.get(i);
+            polygonString.append(point.x).append(" ").append(point.y);
+
+            if (i < points.size() - 1) {
+                polygonString.append(", ");
+            }
+        }
+
+        polygonString.append("))");
+
+        return polygonString.toString();
+    }
+
+    public static JSONObject unpackEvent(Event event) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            // Add individual fields to the JSON object
+            jsonObject.put("bbox", convertPoints(event.getEventRange()));
+            jsonObject.put("name", event.getEventName());
+            jsonObject.put("organisationName", event.getOrganisationName());
+            jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
+            jsonObject.put("description", event.getDescription());
+
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static List<Point> extractPointsFromPolygon(String polygonString) {
         List<Point> pointList = new ArrayList<>();
@@ -70,6 +112,7 @@ public class JSONObjectParsing {
             String eventName = jsonEvent.getString("name");
             int creatorID = jsonEvent.getInt("creatorID");
             String organisationName = jsonEvent.getString("organisationName");
+            String description = jsonEvent.getString("description");
 
             String bboxString = jsonEvent.getString("bbox");
             List<Point> bbox = extractPointsFromPolygon(bboxString);
@@ -81,7 +124,8 @@ public class JSONObjectParsing {
                     null,
                     null,
                     bbox,
-                    organisationName
+                    organisationName,
+                    description
             );
         } catch (JSONException e) {
             e.printStackTrace();
