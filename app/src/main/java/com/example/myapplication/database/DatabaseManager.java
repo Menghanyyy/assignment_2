@@ -49,8 +49,47 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void getEventByID(int eventID, DatabaseCallback<Integer> callback) {
+    public void getEventByID(int eventID, DatabaseCallback<Event> callback) {
+        String url = baseUrl + "/events/getByID/" + Integer.valueOf(eventID);
 
+        // Create a RequestQueue if it's not already initialized
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
+
+        // Create a JsonRequest for the GET request
+        JsonRequest<JSONObject> jsonRequest = new JsonRequest<JSONObject>(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        if (response != null) {
+                            Event event = null;
+                            event = objectParser.parseEvent(response, eventID);
+                            callback.onSuccess(event);
+                        } else {
+                            callback.onError("Received nothing from DB");
+                        }
+                    }
+                },
+                e -> callback.onError(e.getMessage())) {
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String jsonString = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                    return Response.success(new JSONObject(jsonString),
+                            HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException | JSONException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+        };
+
+        // Add the JsonRequest to the RequestQueue
+        requestQueue.add(jsonRequest);
     }
 
     @Override
@@ -71,7 +110,7 @@ public class DatabaseManager implements DatabaseInterface {
                     @Override
                     public void onResponse(JSONArray response) {
                         if (response != null) {
-                            ArrayList<Event> events = parseEvents(response);
+                            ArrayList<Event> events = objectParser.parseEvents(response);
                             callback.onSuccess(events);
                         } else {
                             callback.onError("Received nothing from DB");
@@ -96,23 +135,7 @@ public class DatabaseManager implements DatabaseInterface {
         requestQueue.add(jsonRequest);
     }
 
-    private ArrayList<Event> parseEvents(JSONArray jsonArray) {
-        ArrayList<Event> events = new ArrayList<>();
 
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonEvent = jsonArray.getJSONObject(i);
-                Event event = objectParser.parseEvent(jsonEvent);
-                if (event != null) {
-                    events.add(event);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return events;
-    }
 
     @Override
     public void joinEvent(User user, Event event, DatabaseCallback<Integer> callback) {

@@ -11,7 +11,7 @@ public interface DatabaseInterface {
 
     public void addEvent(Event event, final DatabaseCallback<Integer> callback);
 
-    public void getEventByID(int eventID, final DatabaseCallback<Integer> callback);
+    public void getEventByID(int eventID, final DatabaseCallback<Event> callback);
 
     public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
 

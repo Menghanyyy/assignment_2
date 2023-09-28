@@ -68,13 +68,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        databaseManager.getEventByID(1, new DatabaseCallback<Event>() {
+            @Override
+            public void onSuccess(Event result) {
+                Log.i("get event by id", String.valueOf(result.getEventName()));
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error Retrieving json", error);
+            }
+        });
+
         databaseManager.getAllEvents(new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
-                Log.i("Arraylist Size", String.valueOf(result.size()));
-
-                Log.i("Got Arraylist: ", result.get(0).getEventId());
-                Log.i("Got Arraylist: ", result.get(0).getEventName());
+                Log.i("get all events", String.valueOf(result.size()));
             }
 
             @Override

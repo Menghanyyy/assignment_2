@@ -14,7 +14,11 @@ public class Event {
     private List<Activity> eventActivity;
     private List<Visit> eventVisit;
 
-    public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation, List<Point> EventRange) {
+    // Optional, refers to company/organisation running event
+    private String organisationName;
+
+    public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation,
+                 List<Point> EventRange, String organisationName) {
 
         this.eventId = EventID;
         this.eventName = EventName;
@@ -23,8 +27,7 @@ public class Event {
         this.eventRange = EventRange;
         this.eventActivity = new ArrayList<Activity>();
         this.eventVisit = new ArrayList<Visit>();
-
-
+        this.organisationName = organisationName;
     }
 
     public String getEventId() {
