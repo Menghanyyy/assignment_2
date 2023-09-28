@@ -40,6 +40,10 @@ public class MapActivity extends AppCompatActivity{
     private FillManager fillManager;
     private CircleManager circleManager;
     private List<LatLng> polygonVertices = new ArrayList<>();
+    private List<LatLng> clickedPoints = new ArrayList<>();
+    private long downTime;
+    private static final long LONG_PRESS_TIME = 3000; // Set the time for a long press
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +89,19 @@ public class MapActivity extends AppCompatActivity{
 
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
 
-//                        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-//                            @Override
-//                            public boolean onMapClick(@NonNull LatLng point) {
-//                                handleMapClick(point);
-//                                return true;
-//                            }
-//                        });
-//
+                        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                            @Override
+                            public boolean onMapClick(@NonNull LatLng point) {
+                                // Draw a circle at the touched position
+                                CircleOptions circleOptions = new CircleOptions();
+                                circleOptions.withLatLng(point);
+                                circleManager.create(circleOptions);
+
+                                handleMapClick(point);
+                                return true;
+                            }
+                        });
+
                         mapboxMap.addOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
                             @Override
                             public boolean onMapLongClick(@NonNull LatLng point) {
@@ -101,25 +110,33 @@ public class MapActivity extends AppCompatActivity{
                             }
                         });
 
-//                        mapView.setOnTouchListener(new View.OnTouchListener() {
-//                            @Override
-//                            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-//                                    android.graphics.PointF pointF = new android.graphics.PointF(motionEvent.getX(), motionEvent.getY());
-//                                    LatLng touchedPoint = mapboxMap.getProjection().fromScreenLocation(
-//                                            new android.graphics.PointF(motionEvent.getX(), motionEvent.getY()));
-//                                    handleMapTouch(touchedPoint);
-//                                }
-//                                return mapView.onTouchEvent(motionEvent); // return mapView.onTouchEvent to let mapView handle other touch events like zoom
-//                            }
-//                        });
+
                         mapView.setOnTouchListener(new View.OnTouchListener() {
                             @Override
                             public boolean onTouch(View view, MotionEvent motionEvent) {
                                 switch (motionEvent.getAction()) {
                                     case MotionEvent.ACTION_DOWN:
                                         polygonVertices.clear(); // 清空点列表
+                                        downTime = System.currentTimeMillis();
                                         break;
+
+                                    case MotionEvent.ACTION_UP:
+                                        if (System.currentTimeMillis() - downTime > LONG_PRESS_TIME) {
+                                            // Handle long click
+                                            handleMapLongClick();
+                                        } else if(polygonVertices.size() <= 0) {
+
+                                            LatLng point = mapboxMap.getProjection().fromScreenLocation(
+                                                    new android.graphics.PointF(motionEvent.getX(), motionEvent.getY()));
+
+                                            CircleOptions circleOptions = new CircleOptions();
+                                            circleOptions.withLatLng(point);
+                                            circleManager.create(circleOptions);
+
+                                            handleMapClick(point);
+                                        }
+                                        break;
+
                                     case MotionEvent.ACTION_MOVE:
                                         LatLng touchedPoint = mapboxMap.getProjection().fromScreenLocation(
                                                 new android.graphics.PointF(motionEvent.getX(), motionEvent.getY()));
@@ -131,7 +148,19 @@ public class MapActivity extends AppCompatActivity{
                             }
                         });
 
+                    }
 
+                    private void handleMapClick(LatLng point) {
+                        clickedPoints.add(point);
+                        drawPolygon_click();
+                    }
+
+                    private void drawPolygon_click() {
+//                        fillManager.deleteAll();
+                        FillOptions fillOptions = new FillOptions()
+                                .withLatLngs(Collections.singletonList(clickedPoints))
+                                .withFillColor("rgba(255,0,0,0.5)"); // semi-transparent red fill
+                        fillManager.create(fillOptions);
                     }
 
 
