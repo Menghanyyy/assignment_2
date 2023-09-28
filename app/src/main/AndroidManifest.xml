@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myapplication">
-
     <!-- Permission to access the internet (required for HTTP connections) -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:networkSecurityConfig="@xml/network_security_config">
-
+        <activity
+            android:name=".insertLinkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity2"
+            android:exported="false" /> <!-- Reference network security config here -->
         <!-- Your main activity -->
         <activity
             android:name=".MainActivity"
@@ -22,8 +26,10 @@
             <!-- Intent filter for the main action -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

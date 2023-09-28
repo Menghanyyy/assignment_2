@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (username.getText().toString().equals("admin") &&
                         password.getText().toString().equals("123")){
-                    Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+                    TextView password = (TextView)findViewById(R.id.password);
+                    Intent i = new Intent(MainActivity.this,MainActivity2.class);
+                    startActivity(i);
                 }else{
                     Toast.makeText(MainActivity.this, "Failed Login", Toast.LENGTH_LONG).show();
                 }
