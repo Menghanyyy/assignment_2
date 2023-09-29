@@ -16,7 +16,7 @@ public interface DatabaseInterface {
     public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
 
     // Users signing up to attend an event
-    public void joinEvent(User user, Event event, final DatabaseCallback<Integer> callback);
+    public void joinEvent(User user, Event event, final DatabaseCallback<String> callback);
 
     // Returns all users currently signed up for an event
     public void getUsersAtEvent(Event event, final DatabaseCallback<Integer> callback);

@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.util.Log;
 
 import com.example.myapplication.component.Event;
+import com.example.myapplication.component.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +50,21 @@ public class JSONObjectParsing {
             jsonObject.put("organisationName", event.getOrganisationName());
             jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
             jsonObject.put("description", event.getDescription());
+
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject buildJoinObject(Event event, User user) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            // Add individual fields to the JSON object
+            jsonObject.put("userID", user.getUserId());
+            jsonObject.put("eventID", event.getEventId());
 
             return jsonObject;
         } catch (JSONException e) {

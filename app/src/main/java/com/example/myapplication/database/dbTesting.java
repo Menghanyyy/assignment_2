@@ -36,7 +36,7 @@ public class dbTesting {
         dummyRange.add(new Point(4, 4));
 
         Event testEvent = new Event(
-                null,
+                "4",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
@@ -90,6 +90,18 @@ public class dbTesting {
             @Override
             public void onError(String error) {
                 Log.println(Log.ASSERT, "Error getting count", error);
+            }
+        });
+
+        databaseManager.joinEvent(testUser, testEvent, new DatabaseCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.i("On success", result.toString());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error joining", error);
             }
         });
     }

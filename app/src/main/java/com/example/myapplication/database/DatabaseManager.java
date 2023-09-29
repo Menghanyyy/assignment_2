@@ -168,8 +168,14 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void joinEvent(User user, Event event, DatabaseCallback<Integer> callback) {
-        String url = baseUrl + "/events/getAll";
+    public void joinEvent(User user, Event event, DatabaseCallback<String> callback) {
+        sendJsonObjectRequest(
+                Request.Method.POST,
+                "/events/joinEvent",
+                objectParser.buildJoinObject(event, user),
+                callback,
+                ClassCodes.STRING_CLASS
+        );
     }
 
     @Override
