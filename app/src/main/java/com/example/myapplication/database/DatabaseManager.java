@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -33,9 +32,11 @@ public class DatabaseManager implements DatabaseInterface {
 
     private RequestQueue requestQueue;
     private Context context;
+    private ClassCodes classCodes;
 
     JSONObjectParsing objectParser = new JSONObjectParsing();
-    private static String baseUrl = "http://comp90018.us.to:8080";
+
+    private static String baseUrl = "http://192.168.0.247:8080";
 
     public DatabaseManager(Context context) {
         // Initialize the Volley RequestQueue
@@ -43,71 +44,53 @@ public class DatabaseManager implements DatabaseInterface {
         this.context = context;
     }
 
-    @Override
-    public void addEvent(Event event, final DatabaseCallback<Boolean> callback) {
-        String url = baseUrl + "/events/addEvent";
-
-        // Create a JSON object from the Event object using your JSON serialization method
-        JSONObject eventJson = JSONObjectParsing.unpackEvent(event);
+    private <T> void sendJsonObjectRequest(
+            int method,
+            String urlExtension,
+            JSONObject jsonRequest,
+            DatabaseCallback<T> callback,
+            ClassCode messageClassCode
+    ) {
+        String url = baseUrl + urlExtension;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                url,
-                eventJson,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            if (response.get("status") == "success"){
-                                callback.onSuccess(true);
-                            } else{
+            method,
+            url,
+            jsonRequest,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if (response != null) {
+                            if (response.get("status").equals("success")) {
+                                T parsedResponse = parseSuccess(
+                                    response.get("message"),
+                                    messageClassCode
+                                );
+                                if (parsedResponse != null){
+                                    callback.onSuccess(parsedResponse);
+                                } else{
+                                    callback.onError("Could not parse response.");
+                                }
+                            } else {
                                 callback.onError((String) response.get("message"));
                             }
-                        } catch (JSONException e) {
-                            callback.onError(e.getMessage());
+                        } else{
+                            callback.onError("Received empty response");
                         }
+                    } catch (JSONException e) {
+                        callback.onError("Bad Json: " + e.getMessage());
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle the error response
-                        String errorMessage = "Error adding event: " + error.getMessage();
-                        callback.onError(errorMessage);
-                    }
-                });
-
-        // Add the request to the Volley request queue
-        Volley.newRequestQueue(this.context).add(jsonObjectRequest);
-    }
-
-    @Override
-    public void getEventByID(int eventID, DatabaseCallback<Event> callback) {
-        String url = baseUrl + "/events/getByID/" + Integer.valueOf(eventID);
-
-        // Create a RequestQueue if it's not already initialized
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
-
-        // Create a JsonRequest for the GET request
-        JsonRequest<JSONObject> jsonRequest = new JsonRequest<JSONObject>(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        if (response != null) {
-                            Event event = null;
-                            event = objectParser.parseEvent(response, eventID);
-                            callback.onSuccess(event);
-                        } else {
-                            callback.onError("Received nothing from DB");
-                        }
-                    }
-                },
-                e -> callback.onError(e.getMessage())) {
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // Handle the error response
+                    String errorMessage = "VolleyError adding event: " + error.getMessage();
+                    callback.onError(errorMessage);
+                }
+            }) {
             @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -120,52 +103,68 @@ public class DatabaseManager implements DatabaseInterface {
                 }
             }
         };
+        // Add the request to the Volley request queue
+        requestQueue.add(jsonObjectRequest);
+    }
 
-        // Add the JsonRequest to the RequestQueue
-        requestQueue.add(jsonRequest);
+    private <T> T parseSuccess(Object message, ClassCode classCode){
+        switch (classCode.getCode()) {
+            case ClassCodes.STRING_CLASS_VALUE:
+                return (T) String.valueOf(message);
+            case ClassCodes.INT_CLASS_VALUE:
+                return (T) (Integer) message;
+            case ClassCodes.EVENT_CLASS_VALUE:
+                return (T) objectParser.parseEvent((JSONObject) message);
+            case ClassCodes.ACTIVITY_CLASS_VALUE:
+                return null;
+            case ClassCodes.USER_CLASS_VALUE:
+                return null;
+            case ClassCodes.VISIT_CLASS_VALUE:
+                return null;
+            case ClassCodes.ACTIVITY_ARRAYLIST_CLASS_VALUE:
+                return null;
+            case ClassCodes.USER_ARRAYLIST_CLASS_VALUE:
+                return null;
+            case ClassCodes.VISIT_ARRAYLIST_CLASS_VALUE:
+                return null;
+            case ClassCodes.EVENT_ARRAYLIST_CLASS_VALUE:
+                return (T) objectParser.parseEvents((JSONArray) message);
+            default:
+                return null;
+        }
     }
 
     @Override
-    public void getAllEvents(DatabaseCallback<ArrayList<Event>> callback) {
-        String url = baseUrl + "/events/getAll";
+    public void addEvent(Event event, final DatabaseCallback<String> callback) {
+        sendJsonObjectRequest(
+            Request.Method.POST,
+            "/events/addEvent",
+            JSONObjectParsing.unpackEvent(event),
+            callback,
+            ClassCodes.STRING_CLASS
+        );
+    }
 
-        // Create a RequestQueue if it's not already initialized
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
-
-        // Create a JsonRequest for the GET request
-        JsonRequest<JSONArray> jsonRequest = new JsonRequest<JSONArray>(
+    @Override
+    public void getEventByID(int eventID, DatabaseCallback<Event> callback) {
+        sendJsonObjectRequest(
                 Request.Method.GET,
-                url,
+                "/events/getByID/" + Integer.valueOf(eventID),
                 null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        if (response != null) {
-                            ArrayList<Event> events = objectParser.parseEvents(response);
-                            callback.onSuccess(events);
-                        } else {
-                            callback.onError("Received nothing from DB");
-                        }
-                    }
-                },
-                e -> callback.onError(e.getMessage())) {
-            @Override
-            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                    return Response.success(new JSONArray(jsonString),
-                            HttpHeaderParser.parseCacheHeaders(response));
-                } catch (UnsupportedEncodingException | JSONException e) {
-                    return Response.error(new ParseError(e));
-                }
-            }
-        };
+                callback,
+                ClassCodes.EVENT_CLASS
+        );
+    }
 
-        // Add the JsonRequest to the RequestQueue
-        requestQueue.add(jsonRequest);
+    @Override
+    public void getAllEvents(DatabaseCallback<ArrayList<Event>> callback){
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/events/getAll",
+                null,
+                callback,
+                ClassCodes.EVENT_ARRAYLIST_CLASS
+        );
     }
 
     @Override
@@ -210,39 +209,59 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void visitCountForUser(int userID, DatabaseCallback<Integer> callback) {
-        String url = baseUrl + "/activities/visitCountForUser/" + Integer.toString(userID);
-
-        // Create a RequestQueue if it's not already initialized
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
-
-        // Create a StringRequest for the GET request
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    if (response != null) {
-                        try {
-                            int result = Integer.parseInt(response);
-                            callback.onSuccess(result);
-                        } catch (NumberFormatException e) {
-                            callback.onError("Did not receive integer from DB");
-                        }
-                    } else {
-                        callback.onError("Received nothing from DB");
-                    }
-                },
-                e -> {
-                    callback.onError(e.getMessage());
-                });
-
-        // Add the request to the RequestQueue
-        requestQueue.add(stringRequest);
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/visitCountForUser/" + Integer.toString(userID),
+                null,
+                callback,
+                ClassCodes.INT_CLASS
+        );
     }
 
     @Override
     public void visitCountForUserAtEvent(int userID, int eventID, DatabaseCallback<Integer> callback) {
 
     }
+
+//    @Override
+//    public void visitCountForUser(int userID, DatabaseCallback<Integer> callback) {
+//        String url = baseUrl + "/activities/visitCountForUser/" + Integer.toString(userID);
+//
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+//                Request.Method.GET,
+//                url,
+//                null,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                        try {
+//                            if (response.get("status").equals("success")){
+//                                try {
+//                                    callback.onSuccess((Integer) response.get("message"));
+//                                } catch (NumberFormatException e){
+//                                    callback.onError("Did not receive integer from db");
+//                                }
+//                            } else{
+//                                callback.onError((String) response.get("message"));
+//                            }
+//                        } catch (JSONException e) {
+//                            callback.onError(e.getMessage());
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        // Handle the error response
+//                        String errorMessage = "VolleyError adding event: " + error.getMessage();
+//                        callback.onError(errorMessage);
+//                    }
+//                });
+//
+//        // Add the request to the RequestQueue
+//        requestQueue.add(jsonObjectRequest);
+//    }
 
     @Override
     public void visitCountAtActivity(int activityID, DatabaseCallback<Integer> callback) {

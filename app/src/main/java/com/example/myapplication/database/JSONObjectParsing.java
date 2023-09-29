@@ -97,18 +97,8 @@ public class JSONObjectParsing {
     }
 
     public Event parseEvent(JSONObject jsonEvent) {
-        return parseEvent(jsonEvent, -1); // Call the overloaded method with a default value for eventID
-    }
-
-    public Event parseEvent(JSONObject jsonEvent, int eventID) {
         try {
-            String eventId;
-            if (eventID == -1){
-               eventId = jsonEvent.getString("eventID");
-            }
-            else{
-                eventId = String.valueOf(eventID);
-            }
+            String eventId = jsonEvent.getString("eventID");
             String eventName = jsonEvent.getString("name");
             int creatorID = jsonEvent.getInt("creatorID");
             String organisationName = jsonEvent.getString("organisationName");

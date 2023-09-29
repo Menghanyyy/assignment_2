@@ -2,6 +2,7 @@ package com.latti31.springeventserver.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.latti31.springeventserver.objects.JSONResponseWrapper;
 import com.latti31.springeventserver.objects.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,12 +13,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @RestController
 @RequestMapping("/locations")
 public class LocationController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
 
     @Autowired
     public LocationController(JdbcTemplate jdbcTemplate) {
@@ -107,13 +108,15 @@ public class LocationController {
 
             try {
                 // Convert the ArrayList to a JSON string
-                return objectMapper.writeValueAsString(activities);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(activities));
 
             } catch (Exception e) {
-                return "Error getting events: " + e.getMessage();
+                return jsonWrapper.wrapString(false, "Error parsing activities: " +
+                        e.getMessage());
             }
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error getting activities: " +
+                    e.getMessage());
         }
     }
 }

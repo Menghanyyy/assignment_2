@@ -9,7 +9,7 @@ public interface DatabaseInterface {
 
     ///////////////// Event Methods /////////////////
 
-    public void addEvent(Event event, final DatabaseCallback<Boolean> callback);
+    public void addEvent(Event event, final DatabaseCallback<String> callback);
 
     public void getEventByID(int eventID, final DatabaseCallback<Event> callback);
 

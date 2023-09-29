@@ -10,10 +10,11 @@ import com.example.myapplication.component.GeneralUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Random;
+
 public class dbTesting {
 
     JSONObjectParsing jp = new JSONObjectParsing();
-
 
     public void runTests(Context context){
         // Testing Database Connection
@@ -36,7 +37,7 @@ public class dbTesting {
 
         Event testEvent = new Event(
                 null,
-                "Festival 4",
+                "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
                 dummyRange,
@@ -44,18 +45,17 @@ public class dbTesting {
                 "A big event"
         );
 
-        databaseManager.addEvent(testEvent, new DatabaseCallback<Boolean>() {
+        databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
             @Override
-            public void onSuccess(Boolean result) {
-                Log.i("Added event", String.valueOf(result));
+            public void onSuccess(String result) {
+                Log.i("On success", result);
             }
 
             @Override
             public void onError(String error) {
-                Log.println(Log.ASSERT, "Error adding event", error);
+                Log.println(Log.ASSERT, "Error adding event:", error);
             }
         });
-
 
         databaseManager.visitCountForUser(1, new DatabaseCallback<Integer>() {
             @Override

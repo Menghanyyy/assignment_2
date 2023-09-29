@@ -3,6 +3,7 @@ package com.latti31.springeventserver.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.latti31.springeventserver.objects.DatabaseChecker;
+import com.latti31.springeventserver.objects.JSONResponseWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ public class UserController {
 
     private final JdbcTemplate jdbcTemplate;
     private final DatabaseChecker databaseChecker;
+    private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
 
     public UserController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -30,13 +32,14 @@ public class UserController {
             if (!users.isEmpty()) {
                 Map<String, Object> user = users.get(0);
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(user);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(user));
             } else {
-                return "User not found";
+                return jsonWrapper.wrapString(false, "User not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event with the specified ID doesn't exist
-            return "Error retrieving user: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving user: " +
+                    e.getMessage());
         }
     }
 
@@ -48,13 +51,14 @@ public class UserController {
             List<Map<String, Object>> users = jdbcTemplate.queryForList(query);
             if (!users.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(users);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(users));
             } else {
-                return "No users found";
+                return jsonWrapper.wrapString(false, "No users found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
-            return "Error retrieving users: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving users: " +
+                    e.getMessage());
         }
     }
 
@@ -77,7 +81,7 @@ public class UserController {
                     "email",
                     email
             )) {
-                return "email already in use";
+                return jsonWrapper.wrapString(false, "email already in use");
             }
 
             if (!databaseChecker.keyNotInDBString(
@@ -85,16 +89,16 @@ public class UserController {
                     "userName",
                     userName
             )) {
-                return "Username already in use";
+                return jsonWrapper.wrapString(false, "Username already in use");
             }
 
             // Insert values into the database
             jdbcTemplate.update(query, email, name, userName, password);
 
-            return "User added successfully.";
+            return jsonWrapper.wrapString(true, "User added successfully.");
         } catch (Exception e) {
-            // Handle exceptions, e.g., if the account creation fails
-            return "Error Adding User: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error Adding User: " +
+                    e.getMessage());
         }
     }
 
@@ -116,21 +120,21 @@ public class UserController {
                 String correctPassword = (String) passwords.get(0).get("password");
 
                 if (correctPassword.equals(givenPassword)) {
-                    return "true";
+                    return jsonWrapper.wrapString(true, "true");
                 }
 
-                return "false";
+                return jsonWrapper.wrapString(true, "false");
             }
 
             // Should be prevented by SQL regardless
             else if (passwords.size() > 1) {
-                return "User not unique in system";
+                return jsonWrapper.wrapString(false, "User not unique in system");
             } else {
-                return "User not found";
+                return jsonWrapper.wrapString(false, "User not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the account creation fails
-            return "Error Adding User: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error Adding User: " + e.getMessage());
         }
     }
 }

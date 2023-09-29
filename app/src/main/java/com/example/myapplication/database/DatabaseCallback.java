@@ -1,6 +1,6 @@
 package com.example.myapplication.database;
 
-public interface DatabaseCallback<T> {
-    void onSuccess(T result);
+public interface DatabaseCallback<Object> {
+    void onSuccess(Object result);
     void onError(String error);
 }

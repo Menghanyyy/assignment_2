@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.latti31.springeventserver.objects.DatabaseChecker;
+import com.latti31.springeventserver.objects.JSONResponseWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ public class ActivityController {
 
     private final JdbcTemplate jdbcTemplate;
     private final DatabaseChecker databaseChecker;
+
+    private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
 
     public ActivityController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -70,13 +73,14 @@ public class ActivityController {
                 jsonObject.put("creatorID", (Integer) activity.get("creatorID"));
 
                 // Convert JSON object to a JSON string
-                return jsonObject.toString();
+                return jsonWrapper.wrapJsonNode(true, jsonObject);
             } else {
-                return "Activity not found";
+                return jsonWrapper.wrapString(false, "Activity not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the activity with the specified ID doesn't exist
-            return "Error retrieving activity: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving activity: " +
+                    e.getMessage());
         }
     }
 
@@ -139,9 +143,10 @@ public class ActivityController {
                     backgroundPictureData,
                     creatorID
             );
-            return "Activity added successfully.";
+            return jsonWrapper.wrapString(true, "Activity added successfully.");
         } catch (Exception e) {
-            return "Error creating activity: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error creating activity: " +
+                    e.getMessage());
         }
     }
 
@@ -199,10 +204,11 @@ public class ActivityController {
             ArrayNode jsonArray = objectMapper.valueToTree(activityList);
 
             // Convert JSON array to a JSON string
-            return jsonArray.toString();
+            return jsonWrapper.wrapJsonNode(true, jsonArray);
         } catch (Exception e) {
             // Handle exceptions, e.g., if there are no activities for the specified event
-            return "Error retrieving activities: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving activities: " +
+                    e.getMessage());
         }
     }
 
@@ -235,7 +241,8 @@ public class ActivityController {
                     "userID",
                     userID
             )){
-                return ("User ID " + Integer.toString(userID) + " does not exist in the database.");
+                return jsonWrapper.wrapString(false, ("User ID " + Integer.toString(userID) +
+                        " does not exist in the database."));
             }
 
             // Activity ID
@@ -244,7 +251,8 @@ public class ActivityController {
                     "activityID",
                     activityID
             )) {
-                return ("Activity ID " + Integer.toString(activityID) + " does not exist in the database.");
+                return jsonWrapper.wrapString(false, ("Activity ID " + Integer.toString(activityID) +
+                        " does not exist in the database."));
             }
 
             // Combination check (fail if already in)
@@ -255,13 +263,15 @@ public class ActivityController {
                     "userID",
                     userID
             )) {
-                return "User " + userID + " already visited activity " + activityID;
+                return jsonWrapper.wrapString(false, "User " + userID +
+                        " already visited activity " + activityID);
             }
 
             jdbcTemplate.update(query, userID, activityID, time);
-            return "Visit added successfully.";
+            return jsonWrapper.wrapString(true, "Visit added successfully.");
         } catch (Exception e) {
-            return "Error creating visit: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error creating visit: " +
+                    e.getMessage());
         }
     }
 
@@ -287,7 +297,8 @@ public class ActivityController {
                     "userID",
                     userID
             )){
-                return ("User ID " + Integer.toString(userID) + " does not exist in the database.");
+                return jsonWrapper.wrapString(false, ("User ID " + Integer.toString(userID) +
+                        " does not exist in the database."));
             }
 
             // Activity ID
@@ -296,7 +307,8 @@ public class ActivityController {
                     "activityID",
                     activityID
             )){
-                return ("Activity ID " + Integer.toString(activityID) + " does not exist in the database.");
+                return jsonWrapper.wrapString(false, ("Activity ID " + Integer.toString(activityID) +
+                        " does not exist in the database."));
             }
 
             List<Map<String, Object>> visits = jdbcTemplate.queryForList(query, userID, activityID);
@@ -309,13 +321,14 @@ public class ActivityController {
                 jsonObject.put("time", visit.get("time").toString());
 
                 // Convert JSON object to a JSON string
-                return jsonObject.toString();
+                return jsonWrapper.wrapJsonNode(true, jsonObject);
             } else {
-                return "Visit not found";
+                return jsonWrapper.wrapString(false, "Visit not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the activity with the specified ID doesn't exist
-            return "Error retrieving visit: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving visit: " +
+                    e.getMessage());
         }
     }
 
@@ -329,13 +342,14 @@ public class ActivityController {
             if (!visitCountList.isEmpty()) {
                 Map<String, Object> visitCountMap = visitCountList.get(0);
                 int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
-                return Integer.toString(visitCount);
+                return jsonWrapper.wrapInt(true, visitCount);
             } else {
-                return "No visits found for the user.";
+                return jsonWrapper.wrapString(false, "No visits found for the user.");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the query or database
-            return "Error retrieving visit count: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving visit count: " +
+                    e.getMessage());
         }
     }
 
@@ -362,13 +376,14 @@ public class ActivityController {
             if (!visitCountList.isEmpty()) {
                 Map<String, Object> visitCountMap = visitCountList.get(0);
                 int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
-                return Integer.toString(visitCount);
+                return jsonWrapper.wrapInt(true, visitCount);
             } else {
-                return "No visits found for the user.";
+                return jsonWrapper.wrapString(false, "No visits found for the user.");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the query or database
-            return "Error retrieving visit count: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving visit count: " +
+                    e.getMessage());
         }
     }
 
@@ -383,13 +398,14 @@ public class ActivityController {
             if (!visitCountList.isEmpty()) {
                 Map<String, Object> visitCountMap = visitCountList.get(0);
                 int visitCount = ((Number) visitCountMap.get("COUNT(*)")).intValue();
-                return Integer.toString(visitCount);
+                return jsonWrapper.wrapInt(true, visitCount);
             } else {
-                return "No visits found for the activity.";
+                return jsonWrapper.wrapString(false, "No visits found for the activity.");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the query or database
-            return "Error retrieving visit count: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving visit count: " +
+                    e.getMessage());
         }
     }
 }

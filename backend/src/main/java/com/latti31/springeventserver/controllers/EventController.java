@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.latti31.springeventserver.objects.DatabaseChecker;
 import com.latti31.springeventserver.objects.JSONResponseWrapper;
-import org.json.JSONObject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +26,7 @@ public class EventController {
     @GetMapping("/getByID/{id}")
     public String getEvent(@PathVariable int id) {
         String query = "SELECT " +
+                "eventID, " +
                 "name, " +
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
@@ -38,13 +38,14 @@ public class EventController {
             if (!events.isEmpty()) {
                 Map<String, Object> event = events.get(0);
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(event);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(event));
             } else {
-                return "Event not found";
+                return jsonWrapper.wrapString(false, "Event not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event with the specified ID doesn't exist
-            return "Error retrieving event: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving event: " +
+                    e.getMessage());
         }
     }
 
@@ -74,7 +75,7 @@ public class EventController {
                     "userID",
                     creatorID
                     )) {
-                return jsonWrapper.wrapStringJSON(false, "User with ID "
+                return jsonWrapper.wrapString(false, "User with ID "
                         + creatorID + " does not exist in db.");
             }
 
@@ -83,7 +84,7 @@ public class EventController {
                     "name",
                     name
             )) {
-                return jsonWrapper.wrapStringJSON(false, "Event name already exists");
+                return jsonWrapper.wrapString(false, "Event name already exists");
             }
 
             // Insert values into the database
@@ -96,13 +97,12 @@ public class EventController {
                     description
             );
 
-            return jsonWrapper.wrapStringJSON(true, "Event created successfully.");
+            return jsonWrapper.wrapString(true, "Event created successfully.");
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
-            return jsonWrapper.wrapStringJSON(false, "Error creating event: " + e.getMessage());
+            return jsonWrapper.wrapString(false, "Error creating event: " + e.getMessage());
         }
     }
-
 
     // Additional method to retrieve all events
     @GetMapping("/getAll")
@@ -120,13 +120,13 @@ public class EventController {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query);
             if (!events.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(events);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
             } else {
-                return "No events found";
+                return jsonWrapper.wrapString(false, "No events found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
-            return "Error retrieving events: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving events: " + e.getMessage());
         }
     }
 
@@ -161,7 +161,8 @@ public class EventController {
                     "userID",
                     userID
             )) {
-                return "User with ID " + userID + " does not exist in db.";
+                return jsonWrapper.wrapString(false, "User with ID " +
+                        userID + " does not exist in db.");
             }
 
             // Ensure event exists in database
@@ -170,11 +171,12 @@ public class EventController {
                     "eventID",
                     eventID
             )) {
-                return "Event with ID " + eventID + " does not exist in db.";
+                return jsonWrapper.wrapString(false, "Event with ID " +
+                        eventID + " does not exist in db.");
             }
 
             if (userAlreadyJoinedEvent(userID, eventID)){
-                return "User already joined this event.";
+                return jsonWrapper.wrapString(false, "User already joined this event.");
             }
 
             // Insert values into the database
@@ -184,10 +186,11 @@ public class EventController {
                     eventID
             );
 
-            return "User " + userID + " joined event " + eventID + " successfully.";
+            return jsonWrapper.wrapString(true, "User " +
+                    userID + " joined event " + eventID + " successfully.");
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
-            return "Error joining event: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error joining event: " + e.getMessage());
         }
     }
 
@@ -209,19 +212,20 @@ public class EventController {
                     "eventID",
                     event_id
             )) {
-                return "Event with ID " + event_id + " not found.";
+                return jsonWrapper.wrapString(false, "Event with ID " +
+                        event_id + " not found.");
             }
 
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, event_id);
             if (!events.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(events);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
             } else {
-                return "No users found";
+                return jsonWrapper.wrapString(false, "No users found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
-            return "Error retrieving users: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving users: " + e.getMessage());
         }
     }
 
@@ -245,19 +249,21 @@ public class EventController {
                     "userID",
                     user_id
             )) {
-                return "User with ID " + user_id + " not found.";
+                return jsonWrapper.wrapString(false, "User with ID " +
+                        user_id + " not found.");
             }
 
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
             if (!events.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(events);
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
             } else {
-                return "No events found";
+                return jsonWrapper.wrapString(false, "No events found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if there's an issue with the database query
-            return "Error retrieving events: " + e.getMessage();
+            return jsonWrapper.wrapString(false, "Error retrieving events: " +
+                    e.getMessage());
         }
     }
 }
