@@ -104,5 +104,29 @@ public class dbTesting {
                 Log.println(Log.ASSERT, "Error joining", error);
             }
         });
+
+        databaseManager.visitCountForUserAtEvent(testUser, testEvent, new DatabaseCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                Log.i("user at event count:", result.toString());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error finding count", error);
+            }
+        });
+
+        databaseManager.visitCountAtActivity(1, new DatabaseCallback<Integer>() {
+            @Override
+            public void onSuccess(Integer result) {
+                Log.i("Visit count act 1", result.toString());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error getting act count", error);
+            }
+        });
     }
 }

@@ -8,22 +8,22 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema EventsDB
+-- Schema EventsDBCopy
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `EventsDB` ;
+DROP SCHEMA IF EXISTS `EventsDBCopy` ;
 
 -- -----------------------------------------------------
--- Schema EventsDB
+-- Schema EventsDBCopy
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `EventsDB` DEFAULT CHARACTER SET utf8 ;
-USE `EventsDB` ;
+CREATE SCHEMA IF NOT EXISTS `EventsDBCopy` DEFAULT CHARACTER SET utf8 ;
+USE `EventsDBCopy` ;
 
 -- -----------------------------------------------------
--- Table `EventsDB`.`User`
+-- Table `EventsDBCopy`.`User`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `EventsDB`.`User` ;
+DROP TABLE IF EXISTS `EventsDBCopy`.`User` ;
 
-CREATE TABLE IF NOT EXISTS `EventsDB`.`User` (
+CREATE TABLE IF NOT EXISTS `EventsDBCopy`.`User` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(45) NULL,
   `name` VARCHAR(45) NULL,
@@ -37,11 +37,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `EventsDB`.`Event`
+-- Table `EventsDBCopy`.`Event`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `EventsDB`.`Event` ;
+DROP TABLE IF EXISTS `EventsDBCopy`.`Event` ;
 
-CREATE TABLE IF NOT EXISTS `EventsDB`.`Event` (
+CREATE TABLE IF NOT EXISTS `EventsDBCopy`.`Event` (
   `eventID` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `bbox` POLYGON NULL,
@@ -54,18 +54,18 @@ CREATE TABLE IF NOT EXISTS `EventsDB`.`Event` (
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
   CONSTRAINT `fk_Event_User Account1`
     FOREIGN KEY (`creatorID`)
-    REFERENCES `EventsDB`.`User` (`userID`)
+    REFERENCES `EventsDBCopy`.`User` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `EventsDB`.`Activity`
+-- Table `EventsDBCopy`.`Activity`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `EventsDB`.`Activity` ;
+DROP TABLE IF EXISTS `EventsDBCopy`.`Activity` ;
 
-CREATE TABLE IF NOT EXISTS `EventsDB`.`Activity` (
+CREATE TABLE IF NOT EXISTS `EventsDBCopy`.`Activity` (
   `activityID` INT NOT NULL AUTO_INCREMENT,
   `centreLocation` POINT NOT NULL,
   `polygonLocation` POLYGON NOT NULL,
@@ -84,23 +84,23 @@ CREATE TABLE IF NOT EXISTS `EventsDB`.`Activity` (
   UNIQUE INDEX `activityID_UNIQUE` (`activityID` ASC) VISIBLE,
   CONSTRAINT `fk_Activity_Event1`
     FOREIGN KEY (`eventID`)
-    REFERENCES `EventsDB`.`Event` (`eventID`)
+    REFERENCES `EventsDBCopy`.`Event` (`eventID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Activity_User Account1`
     FOREIGN KEY (`creatorID`)
-    REFERENCES `EventsDB`.`User` (`userID`)
+    REFERENCES `EventsDBCopy`.`User` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `EventsDB`.`Visit`
+-- Table `EventsDBCopy`.`Visit`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `EventsDB`.`Visit` ;
+DROP TABLE IF EXISTS `EventsDBCopy`.`Visit` ;
 
-CREATE TABLE IF NOT EXISTS `EventsDB`.`Visit` (
+CREATE TABLE IF NOT EXISTS `EventsDBCopy`.`Visit` (
   `time` DATETIME NULL,
   `userID` INT NOT NULL,
   `activityID` INT NOT NULL,
@@ -108,23 +108,23 @@ CREATE TABLE IF NOT EXISTS `EventsDB`.`Visit` (
   INDEX `fk_Visit_Activity1_idx` (`activityID` ASC) VISIBLE,
   CONSTRAINT `fk_Visit_User1`
     FOREIGN KEY (`userID`)
-    REFERENCES `EventsDB`.`User` (`userID`)
+    REFERENCES `EventsDBCopy`.`User` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Visit_Activity1`
     FOREIGN KEY (`activityID`)
-    REFERENCES `EventsDB`.`Activity` (`activityID`)
+    REFERENCES `EventsDBCopy`.`Activity` (`activityID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `EventsDB`.`Joined Events`
+-- Table `EventsDBCopy`.`Joined Events`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `EventsDB`.`Joined Events` ;
+DROP TABLE IF EXISTS `EventsDBCopy`.`Joined Events` ;
 
-CREATE TABLE IF NOT EXISTS `EventsDB`.`Joined Events` (
+CREATE TABLE IF NOT EXISTS `EventsDBCopy`.`Joined Events` (
   `userID` INT NOT NULL,
   `eventID` INT NOT NULL,
   PRIMARY KEY (`userID`, `eventID`),
@@ -132,12 +132,12 @@ CREATE TABLE IF NOT EXISTS `EventsDB`.`Joined Events` (
   INDEX `fk_User Account_has_Event_User Account1_idx` (`userID` ASC) VISIBLE,
   CONSTRAINT `fk_User Account_has_Event_User Account1`
     FOREIGN KEY (`userID`)
-    REFERENCES `EventsDB`.`User` (`userID`)
+    REFERENCES `EventsDBCopy`.`User` (`userID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_User Account_has_Event_Event1`
     FOREIGN KEY (`eventID`)
-    REFERENCES `EventsDB`.`Event` (`eventID`)
+    REFERENCES `EventsDBCopy`.`Event` (`eventID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

@@ -1,7 +1,6 @@
 package com.example.myapplication.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -9,7 +8,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.User;
@@ -17,6 +15,7 @@ import com.example.myapplication.component.Visit;
 import com.example.myapplication.location.GPSLocation;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import com.android.volley.Request;
@@ -52,6 +51,16 @@ public class DatabaseManager implements DatabaseInterface {
             ClassCode messageClassCode
     ) {
         String url = baseUrl + urlExtension;
+
+        // If jsonRequest is not null, convert it to a string and append as query parameter
+        if (jsonRequest != null) {
+            try {
+                String jsonString = URLEncoder.encode(jsonRequest.toString(), "utf-8");
+                url += "?data=" + jsonString;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
             method,
@@ -172,44 +181,44 @@ public class DatabaseManager implements DatabaseInterface {
         sendJsonObjectRequest(
                 Request.Method.POST,
                 "/events/joinEvent",
-                objectParser.buildJoinObject(event, user),
+                objectParser.buildUserEventObject(event, user),
                 callback,
                 ClassCodes.STRING_CLASS
         );
     }
 
     @Override
-    public void getUsersAtEvent(Event event, DatabaseCallback<Integer> callback) {
+    public void getUsersAtEvent(Event event, DatabaseCallback<ArrayList<User>> callback) {
 
     }
 
     @Override
-    public void getJoinedEvents(User user, DatabaseCallback<Integer> callback) {
+    public void getJoinedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
 
     }
 
     @Override
-    public void addActivity(Activity activity, DatabaseCallback<Integer> callback) {
+    public void addActivity(Activity activity, DatabaseCallback<String> callback) {
 
     }
 
     @Override
-    public void getActivityByID(int activityID, DatabaseCallback<Integer> callback) {
+    public void getActivityByID(int activityID, DatabaseCallback<Activity> callback) {
 
     }
 
     @Override
-    public void getAllActivities(Event event, DatabaseCallback<Integer> callback) {
+    public void getAllActivities(Event event, DatabaseCallback<ArrayList<Activity>> callback) {
 
     }
 
     @Override
-    public void addVisit(Visit visit, DatabaseCallback<Integer> callback) {
+    public void addVisit(Visit visit, DatabaseCallback<String> callback) {
 
     }
 
     @Override
-    public void getVisitByID(int userID, int activityID, DatabaseCallback<Integer> callback) {
+    public void getVisitByID(int userID, int activityID, DatabaseCallback<Visit> callback) {
 
     }
 
@@ -225,77 +234,49 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void visitCountForUserAtEvent(int userID, int eventID, DatabaseCallback<Integer> callback) {
-
+    public void visitCountForUserAtEvent(User user, Event event, DatabaseCallback<Integer> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/visitCountForUserAtEvent",
+                objectParser.buildUserEventObject(event, user),
+                callback,
+                ClassCodes.INT_CLASS
+        );
     }
-
-//    @Override
-//    public void visitCountForUser(int userID, DatabaseCallback<Integer> callback) {
-//        String url = baseUrl + "/activities/visitCountForUser/" + Integer.toString(userID);
-//
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-//                Request.Method.GET,
-//                url,
-//                null,
-//                new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//
-//                        try {
-//                            if (response.get("status").equals("success")){
-//                                try {
-//                                    callback.onSuccess((Integer) response.get("message"));
-//                                } catch (NumberFormatException e){
-//                                    callback.onError("Did not receive integer from db");
-//                                }
-//                            } else{
-//                                callback.onError((String) response.get("message"));
-//                            }
-//                        } catch (JSONException e) {
-//                            callback.onError(e.getMessage());
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // Handle the error response
-//                        String errorMessage = "VolleyError adding event: " + error.getMessage();
-//                        callback.onError(errorMessage);
-//                    }
-//                });
-//
-//        // Add the request to the RequestQueue
-//        requestQueue.add(jsonObjectRequest);
-//    }
 
     @Override
     public void visitCountAtActivity(int activityID, DatabaseCallback<Integer> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/visitCountAtActivity/" + Integer.toString(activityID),
+                null,
+                callback,
+                ClassCodes.INT_CLASS
+        );
+    }
+
+    @Override
+    public void addUser(User user, DatabaseCallback<String> callback) {
 
     }
 
     @Override
-    public void addUser(User user, DatabaseCallback<Integer> callback) {
+    public void getUserByID(int userID, DatabaseCallback<User> callback) {
 
     }
 
     @Override
-    public void getUserByID(int userID, DatabaseCallback<Integer> callback) {
+    public void getAllUsers(DatabaseCallback<ArrayList<User>> callback) {
 
     }
 
     @Override
-    public void getAllUsers(DatabaseCallback<Integer> callback) {
+    public void verifyPassword(String password, User user, DatabaseCallback<String> callback) {
 
     }
 
     @Override
-    public void verifyPassword(String password, User user, DatabaseCallback<Integer> callback) {
-
-    }
-
-    @Override
-    public void activitiesAtLocation(GPSLocation location, Event event, DatabaseCallback<Integer> callback) {
+    public void activitiesAtLocation(GPSLocation location, Event event, DatabaseCallback<ArrayList<Activity>> callback) {
 
     }
 }

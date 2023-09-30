@@ -19,31 +19,31 @@ public interface DatabaseInterface {
     public void joinEvent(User user, Event event, final DatabaseCallback<String> callback);
 
     // Returns all users currently signed up for an event
-    public void getUsersAtEvent(Event event, final DatabaseCallback<Integer> callback);
+    public void getUsersAtEvent(Event event, final DatabaseCallback<ArrayList<User>> callback);
 
     // Returns all events an individual has signed up for
-    public void getJoinedEvents(User user, final DatabaseCallback<Integer> callback);
+    public void getJoinedEvents(User user, final DatabaseCallback<ArrayList<Event>> callback);
 
 
 
     ///////////////// Activity Methods /////////////////
 
-    public void addActivity(Activity activity, final DatabaseCallback<Integer> callback);
+    public void addActivity(Activity activity, final DatabaseCallback<String> callback);
 
-    public void getActivityByID(int activityID, final DatabaseCallback<Integer> callback);
+    public void getActivityByID(int activityID, final DatabaseCallback<Activity> callback);
 
-    public void getAllActivities(Event event, final DatabaseCallback<Integer> callback);
+    public void getAllActivities(Event event, final DatabaseCallback<ArrayList<Activity>> callback);
 
     // Visit (Visit class includes user/event details)
-    public void addVisit(Visit visit, final DatabaseCallback<Integer> callback);
+    public void addVisit(Visit visit, final DatabaseCallback<String> callback);
 
-    public void getVisitByID(int userID, int activityID, final DatabaseCallback<Integer> callback);
+    public void getVisitByID(int userID, int activityID, final DatabaseCallback<Visit> callback);
 
     // Gives the total visits for a specific user
     public void visitCountForUser(int userID, final DatabaseCallback<Integer> callback);
 
     // Gives the total visits at an event for a specific user
-    public void visitCountForUserAtEvent(int userID, int eventID, final DatabaseCallback<Integer> callback);
+    public void visitCountForUserAtEvent(User user, Event event, final DatabaseCallback<Integer> callback);
 
     // Gives the total visits for a specific activity
     public void visitCountAtActivity(int activityID, final DatabaseCallback<Integer> callback);
@@ -52,19 +52,19 @@ public interface DatabaseInterface {
 
     ///////////////// User Methods /////////////////
 
-    public void addUser(User user, final DatabaseCallback<Integer> callback);
+    public void addUser(User user, final DatabaseCallback<String> callback);
 
-    public void getUserByID(int userID, final DatabaseCallback<Integer> callback);
+    public void getUserByID(int userID, final DatabaseCallback<User> callback);
 
-    public void getAllUsers(final DatabaseCallback<Integer> callback);
+    public void getAllUsers(final DatabaseCallback<ArrayList<User>> callback);
 
-    public void verifyPassword(String password, User user, final DatabaseCallback<Integer> callback);
+    public void verifyPassword(String password, User user, final DatabaseCallback<String> callback);
 
 
 
     ///////////////// Location Methods /////////////////
 
     // Gives all the activities (in a given event) that overlap a point on the map
-    public void activitiesAtLocation(GPSLocation location, Event event, final DatabaseCallback<Integer> callback);
+    public void activitiesAtLocation(GPSLocation location, Event event, final DatabaseCallback<ArrayList<Activity>> callback);
 
 }

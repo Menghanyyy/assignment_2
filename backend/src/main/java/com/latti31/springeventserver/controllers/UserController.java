@@ -103,16 +103,12 @@ public class UserController {
     }
 
     @GetMapping("/verifyPassword")
-    public String verifyPassword(@RequestBody String jsonText) {
+    public String verifyPassword(
+            @RequestParam("userID") int userID,
+            @RequestParam("password") String givenPassword) {
         String query = "SELECT password FROM `User` WHERE userID = ?";
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(jsonText);
-
-            // Extract values from JSON
-            int userID = jsonNode.get("userID").asInt();
-            String givenPassword = jsonNode.get("password").asText();
 
             // Get actual password
             List<Map<String, Object>> passwords = jdbcTemplate.queryForList(query, userID);

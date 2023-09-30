@@ -276,20 +276,15 @@ public class ActivityController {
     }
 
     @GetMapping("/getVisitByID")
-    public String getActivity(@RequestBody String jsonText) {
+    public String getActivity(
+              @RequestParam("userID") int userID,
+              @RequestParam("activityID") int activityID
+    ) {
         String query = "SELECT " +
                 "time " +
                 "FROM Visit WHERE userID = ? AND activityID = ?";
 
-        // Parse the JSON string
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            JsonNode jsonNode = objectMapper.readTree(jsonText);
-
-            // Extract activity properties from JSON
-            int userID = jsonNode.get("userID").asInt();
-            int activityID = jsonNode.get("activityID").asInt();
 
             // User ID
             if (databaseChecker.keyNotInDBInt(
@@ -317,6 +312,7 @@ public class ActivityController {
 
             if (!visits.isEmpty()) {
                 Map<String, Object> visit = visits.get(0);
+                ObjectMapper objectMapper = new ObjectMapper();
                 ObjectNode jsonObject = objectMapper.createObjectNode();
                 jsonObject.put("time", visit.get("time").toString());
 
@@ -354,22 +350,18 @@ public class ActivityController {
     }
 
     @GetMapping("/visitCountForUserAtEvent")
-    public String getUserVisitEventCount(@RequestBody String jsonText) {
+    public String getUserVisitEventCount(
+            @RequestParam("userID") int userID,
+            @RequestParam("eventID") int eventID
+    ) {
+        System.out.println("Started");
         String query = "SELECT COUNT(*) " +
                 "FROM Visit v " +
                 "JOIN Activity a " +
                 "ON a.activityID = v.activityID " +
                 "WHERE `userID` = ? AND a.eventID = ?";
 
-        // Parse the JSON string
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            JsonNode jsonNode = objectMapper.readTree(jsonText);
-
-            // Extract activity properties from JSON
-            int userID = jsonNode.get("userID").asInt();
-            int eventID = jsonNode.get("eventID").asInt();
 
             List<Map<String, Object>> visitCountList = jdbcTemplate.queryForList(query, userID, eventID);
 

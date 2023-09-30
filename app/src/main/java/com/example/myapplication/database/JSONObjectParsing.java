@@ -58,7 +58,7 @@ public class JSONObjectParsing {
         return null;
     }
 
-    public static JSONObject buildJoinObject(Event event, User user) {
+    public static JSONObject buildUserEventObject(Event event, User user) {
         try {
             JSONObject jsonObject = new JSONObject();
 
