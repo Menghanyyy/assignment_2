@@ -15,15 +15,22 @@ public class Activity {
     private List<Point> activityRange;
     private List<Visit> activityVisits;
 
-    public Activity(String ActivityId, String ActivityName, User ActivityOrganiser, Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange) {
+    private String description;
+
+    private String locationName;
+
+    public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
+                    Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
+                    String description, String locationName) {
         this.activityId = ActivityId;
         this.activityName = ActivityName;
         this.activityOrganiser = ActivityOrganiser;
         this.hostedEvent = HostedEvent;
         this.activityLocation = ActivityLocation;
         this.activityRange = ActivityRange;
-
+        this.description = description;
         this.activityVisits = new ArrayList<Visit>();
+        this.locationName = locationName;
     }
 
     public String getActivityId() {
@@ -81,6 +88,22 @@ public class Activity {
     public boolean addActivityVisit (Visit visit) {
 
         return this.activityVisits.add(visit);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     @Override

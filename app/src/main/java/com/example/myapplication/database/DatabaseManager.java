@@ -377,6 +377,6 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void activitiesAtLocation(GPSLocation location, Event event, DatabaseCallback<ArrayList<Activity>> callback) {
-
+        // NOT IMPLEMENTED YET
     }
 }

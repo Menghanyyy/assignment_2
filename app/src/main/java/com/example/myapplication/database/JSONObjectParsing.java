@@ -3,6 +3,7 @@ package com.example.myapplication.database;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.User;
@@ -68,6 +69,30 @@ public class JSONObjectParsing {
             jsonObject.put("email", user.getUserEmail());
             jsonObject.put("userName", user.getUserName());
             jsonObject.put("password", user.getUserPin());
+
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject unpackActivity(Activity activity) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            // Add individual fields to the JSON object
+            jsonObject.put("centreLocation", "POINT(-45.62390335574153 -3.9551761173743847)");
+            jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
+            jsonObject.put("bbox", null);
+            jsonObject.put("description", activity.getDescription());
+            jsonObject.put("startTime", null);
+            jsonObject.put("endTime", null);
+            jsonObject.put("name", activity.getActivityName());
+            jsonObject.put("eventID", activity.getActivityId());
+            jsonObject.put("locationName", activity.getLocationName());
+            jsonObject.put("backgroundPicture", null);
+            jsonObject.put("creatorID", null);
 
             return jsonObject;
         } catch (JSONException e) {
