@@ -35,7 +35,8 @@ public class DatabaseManager implements DatabaseInterface {
 
     JSONObjectParsing objectParser = new JSONObjectParsing();
 
-    private static String baseUrl = "http://192.168.0.247:8080";
+//    private static String baseUrl = "http://192.168.0.247:8080";
+    private static String baseUrl = "http://192.168.56.1:8080";
 
     public DatabaseManager(Context context) {
         // Initialize the Volley RequestQueue
@@ -189,7 +190,13 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void getUsersAtEvent(Event event, DatabaseCallback<ArrayList<User>> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/events/getUsersAtEvent/" + Integer.valueOf(event.getEventId()),
+                null,
+                callback,
+                ClassCodes.USER_ARRAYLIST_CLASS
+        );
     }
 
     @Override
@@ -235,13 +242,23 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void visitCountForUserAtEvent(User user, Event event, DatabaseCallback<Integer> callback) {
-        sendJsonObjectRequest(
-                Request.Method.GET,
-                "/activities/visitCountForUserAtEvent",
-                objectParser.buildUserEventObject(event, user),
-                callback,
-                ClassCodes.INT_CLASS
-        );
+
+        try{
+            String url = "/activities/visitCountForUserAtEvent?userID="
+                    + Integer.toString(Integer.parseInt(user.getUserId()))
+                    + "&eventID="
+                    + Integer.toString(Integer.parseInt(event.getEventId()));
+
+            sendJsonObjectRequest(
+                    Request.Method.GET,
+                    url,
+                    null,
+                    callback,
+                    ClassCodes.INT_CLASS
+            );
+        } catch (NumberFormatException e){
+            callback.onError("user or event id not received: " + e.getMessage());
+        }
     }
 
     @Override
