@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.util.Log;
 
 import com.example.myapplication.component.Event;
+import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.User;
 
 import org.json.JSONArray;
@@ -50,6 +51,23 @@ public class JSONObjectParsing {
             jsonObject.put("organisationName", event.getOrganisationName());
             jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
             jsonObject.put("description", event.getDescription());
+
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject unpackUser(GeneralUser user) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            // Add individual fields to the JSON object
+            jsonObject.put("name", user.getUserName());
+            jsonObject.put("email", user.getUserEmail());
+            jsonObject.put("userName", user.getUserName());
+            jsonObject.put("password", user.getUserPin());
 
             return jsonObject;
         } catch (JSONException e) {
@@ -106,9 +124,8 @@ public class JSONObjectParsing {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.println(Log.ASSERT, "Error parsing JSON", e.getMessage());
         }
-
         return events;
     }
 
@@ -138,5 +155,40 @@ public class JSONObjectParsing {
         }
 
         return null;
+    }
+
+    public GeneralUser parseUser(JSONObject userObject) {
+        try {
+            int userID = userObject.getInt("userID");
+            String name = userObject.getString("name");
+            String email = userObject.getString("email");
+
+            return new GeneralUser(
+                    String.valueOf(userID),
+                    name,
+                    email,
+                    null
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<GeneralUser> parseUsers(JSONArray jsonArray) {
+        List<GeneralUser> users = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject userObject = jsonArray.getJSONObject(i);
+                GeneralUser user = parseUser(userObject);
+                users.add(user);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace(); // Handle JSON parsing errors here
+        }
+
+        return users;
     }
 }

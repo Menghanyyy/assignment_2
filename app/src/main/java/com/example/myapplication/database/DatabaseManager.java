@@ -1,6 +1,7 @@
 package com.example.myapplication.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -10,6 +11,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
+import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.User;
 import com.example.myapplication.component.Visit;
 import com.example.myapplication.location.GPSLocation;
@@ -48,9 +50,10 @@ public class DatabaseManager implements DatabaseInterface {
             int method,
             String urlExtension,
             JSONObject jsonRequest,
-            DatabaseCallback<T> callback,
+            Object callback,
             ClassCode messageClassCode
     ) {
+
         String url = baseUrl + urlExtension;
 
         // If jsonRequest is not null, convert it to a string and append as query parameter
@@ -73,23 +76,54 @@ public class DatabaseManager implements DatabaseInterface {
                     try {
                         if (response != null) {
                             if (response.get("status").equals("success")) {
-                                T parsedResponse = parseSuccess(
-                                    response.get("message"),
-                                    messageClassCode
-                                );
-                                if (parsedResponse != null){
-                                    callback.onSuccess(parsedResponse);
-                                } else{
-                                    callback.onError("Could not parse response.");
+
+                                // For arraylist Objects
+                                if (messageClassCode.getIsArraylist()) {
+                                    ArrayList<T> parsedResponseArraylist = parseSuccessArraylist(
+                                            response.get("message"),
+                                            messageClassCode
+                                    );
+                                    if (parsedResponseArraylist != null){
+                                        ((DatabaseCallback<Object>) callback).onSuccess(
+                                                (ArrayList<T>) parsedResponseArraylist
+                                        );
+                                    } else{
+                                        ((DatabaseCallback<Object>) callback).onError(
+                                                "Could not parse response 1."
+                                        );
+                                    }
+                                }
+
+                                // For non-arraylist objects
+                                else{
+                                    T parsedResponse = parseSuccess(
+                                            response.get("message"),
+                                            messageClassCode
+                                    );
+                                    if (parsedResponse != null){
+                                        ((DatabaseCallback<Object>) callback).onSuccess(
+                                                parsedResponse
+                                        );
+                                    } else{
+                                        ((DatabaseCallback<Object>) callback).onError(
+                                                "Could not parse response 2."
+                                        );
+                                    }
                                 }
                             } else {
-                                callback.onError((String) response.get("message"));
+                                ((DatabaseCallback<Object>) callback).onError(
+                                        (String) response.get("message")
+                                );
                             }
                         } else{
-                            callback.onError("Received empty response");
+                            ((DatabaseCallback<Object>) callback).onError(
+                                    "Received empty response"
+                            );
                         }
                     } catch (JSONException e) {
-                        callback.onError("Bad Json: " + e.getMessage());
+                        ((DatabaseCallback<Object>) callback).onError(
+                                "Bad Json: " + e.getMessage()
+                        );
                     }
                 }
             },
@@ -98,7 +132,7 @@ public class DatabaseManager implements DatabaseInterface {
                 public void onErrorResponse(VolleyError error) {
                     // Handle the error response
                     String errorMessage = "VolleyError adding event: " + error.getMessage();
-                    callback.onError(errorMessage);
+                    ((DatabaseCallback<Object>) callback).onError(errorMessage);
                 }
             }) {
             @Override
@@ -128,17 +162,24 @@ public class DatabaseManager implements DatabaseInterface {
             case ClassCodes.ACTIVITY_CLASS_VALUE:
                 return null;
             case ClassCodes.USER_CLASS_VALUE:
-                return null;
+                return (T) objectParser.parseUser((JSONObject) message);
             case ClassCodes.VISIT_CLASS_VALUE:
                 return null;
+            default:
+                return null;
+        }
+    }
+
+    private <T> ArrayList<T> parseSuccessArraylist(Object message, ClassCode classCode){
+        switch (classCode.getCode()) {
             case ClassCodes.ACTIVITY_ARRAYLIST_CLASS_VALUE:
                 return null;
             case ClassCodes.USER_ARRAYLIST_CLASS_VALUE:
-                return null;
+                return (ArrayList<T>) objectParser.parseUsers((JSONArray) message);
             case ClassCodes.VISIT_ARRAYLIST_CLASS_VALUE:
                 return null;
             case ClassCodes.EVENT_ARRAYLIST_CLASS_VALUE:
-                return (T) objectParser.parseEvents((JSONArray) message);
+                return (ArrayList<T>) objectParser.parseEvents((JSONArray) message);
             default:
                 return null;
         }
@@ -202,6 +243,17 @@ public class DatabaseManager implements DatabaseInterface {
     @Override
     public void getJoinedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
 
+        try{
+            sendJsonObjectRequest(
+                    Request.Method.GET,
+                    "/events/getJoinedEvents/" + Integer.valueOf(user.getUserId()),
+                    null,
+                    callback,
+                    ClassCodes.EVENT_ARRAYLIST_CLASS
+            );
+        } catch (NumberFormatException e){
+            callback.onError("user id not received: " + e.getMessage());
+        }
     }
 
     @Override
@@ -242,7 +294,6 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void visitCountForUserAtEvent(User user, Event event, DatabaseCallback<Integer> callback) {
-
         try{
             String url = "/activities/visitCountForUserAtEvent?userID="
                     + Integer.toString(Integer.parseInt(user.getUserId()))
@@ -273,23 +324,55 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void addUser(User user, DatabaseCallback<String> callback) {
-
+    public void addUser(GeneralUser user, DatabaseCallback<String> callback) {
+        sendJsonObjectRequest(
+                Request.Method.POST,
+                "/users/addUser",
+                objectParser.unpackUser(user),
+                callback,
+                ClassCodes.STRING_CLASS
+        );
     }
 
     @Override
-    public void getUserByID(int userID, DatabaseCallback<User> callback) {
-
+    public void getUserByID(int userID, DatabaseCallback<GeneralUser> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/users/getByID/" + Integer.toString(userID),
+                null,
+                callback,
+                ClassCodes.USER_CLASS
+        );
     }
 
     @Override
-    public void getAllUsers(DatabaseCallback<ArrayList<User>> callback) {
-
+    public void getAllUsers(DatabaseCallback<ArrayList<GeneralUser>> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/users/getAll",
+                null,
+                callback,
+                ClassCodes.USER_ARRAYLIST_CLASS
+        );
     }
 
     @Override
-    public void verifyPassword(String password, User user, DatabaseCallback<String> callback) {
+    public void verifyPassword(String password, GeneralUser user, DatabaseCallback<String> callback) {
+        try{
+            String url = "/users/verifyPassword?userID="
+                    + Integer.toString(Integer.parseInt(user.getUserId()))
+                    + "&password=" + password;
 
+            sendJsonObjectRequest(
+                    Request.Method.GET,
+                    url,
+                    null,
+                    callback,
+                    ClassCodes.STRING_CLASS
+            );
+        } catch (NumberFormatException e){
+            callback.onError("pw or user id not received: " + e.getMessage());
+        }
     }
 
     @Override

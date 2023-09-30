@@ -52,13 +52,13 @@ public interface DatabaseInterface {
 
     ///////////////// User Methods /////////////////
 
-    public void addUser(User user, final DatabaseCallback<String> callback);
+    public void addUser(GeneralUser user, final DatabaseCallback<String> callback);
 
-    public void getUserByID(int userID, final DatabaseCallback<User> callback);
+    public void getUserByID(int userID, final DatabaseCallback<GeneralUser> callback);
 
-    public void getAllUsers(final DatabaseCallback<ArrayList<User>> callback);
+    public void getAllUsers(final DatabaseCallback<ArrayList<GeneralUser>> callback);
 
-    public void verifyPassword(String password, User user, final DatabaseCallback<String> callback);
+    public void verifyPassword(String password, GeneralUser user, final DatabaseCallback<String> callback);
 
 
 

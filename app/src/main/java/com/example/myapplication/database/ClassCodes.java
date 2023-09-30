@@ -23,50 +23,60 @@ public class ClassCodes {
     // Class code values
     public static final ClassCode<String> STRING_CLASS = new ClassCode<>(
             STRING_CLASS_VALUE,
-            String.class
+            String.class,
+            false
     );
     public static final ClassCode<Integer> INT_CLASS = new ClassCode<>(
             INT_CLASS_VALUE,
-            Integer.class
+            Integer.class,
+            false
     );
     public static final ClassCode<Event> EVENT_CLASS = new ClassCode<>(
             EVENT_CLASS_VALUE,
-            Event.class
+            Event.class,
+            false
     );
     public static final ClassCode<Activity> ACTIVITY_CLASS = new ClassCode<>(
             ACTIVITY_CLASS_VALUE,
-            Activity.class
+            Activity.class,
+            false
     );
     public static final ClassCode<User> USER_CLASS = new ClassCode<>(
             USER_CLASS_VALUE,
-            User.class
+            User.class,
+            false
     );
     public static final ClassCode<Visit> VISIT_CLASS = new ClassCode<>(
             VISIT_CLASS_VALUE,
-            Visit.class
+            Visit.class,
+            false
     );
 
     public static final ClassCode<ArrayList<Activity>> ACTIVITY_ARRAYLIST_CLASS =
             (ClassCode<ArrayList<Activity>>) new ClassCode<>(
                     ACTIVITY_ARRAYLIST_CLASS_VALUE,
-                    new ArrayList<Activity>().getClass()
+                    new ArrayList<Activity>().getClass(),
+                    true
             );
 
     public static final ClassCode<ArrayList<User>> USER_ARRAYLIST_CLASS =
             (ClassCode<ArrayList<User>>) new ClassCode<>(
                     USER_ARRAYLIST_CLASS_VALUE,
-                    new ArrayList<User>().getClass()
+                    new ArrayList<User>().getClass(),
+                    true
             );
 
     public static final ClassCode<ArrayList<Visit>> VISIT_ARRAYLIST_CLASS =
             (ClassCode<ArrayList<Visit>>) new ClassCode<>(
                     VISIT_ARRAYLIST_CLASS_VALUE,
-                    new ArrayList<Visit>().getClass()
+                    new ArrayList<Visit>().getClass(),
+                    true
             );
 
     public static final ClassCode<ArrayList<Visit>> EVENT_ARRAYLIST_CLASS =
             (ClassCode<ArrayList<Visit>>) new ClassCode<>(
                     EVENT_ARRAYLIST_CLASS_VALUE,
-                    new ArrayList<Event>().getClass()
+                    new ArrayList<Event>().getClass(),
+                    true
             );
 }

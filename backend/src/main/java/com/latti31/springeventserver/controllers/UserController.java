@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("getByID/{user_id}")
     public String getUserByID(@PathVariable int user_id) {
-        String query = "SELECT name, email FROM `User` WHERE userID = ?";
+        String query = "SELECT userID, name, email FROM `User` WHERE userID = ?";
 
         try {
             List<Map<String, Object>> users = jdbcTemplate.queryForList(query, user_id);
@@ -45,7 +45,7 @@ public class UserController {
 
     @GetMapping("/getAll")
     public String getAll() {
-        String query = "SELECT name, email FROM `User`";
+        String query = "SELECT userID, name, email FROM `User`";
 
         try {
             List<Map<String, Object>> users = jdbcTemplate.queryForList(query);
