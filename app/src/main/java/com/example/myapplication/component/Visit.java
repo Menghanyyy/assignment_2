@@ -9,6 +9,11 @@ import java.time.LocalDateTime;
 public class Visit {
 
     private String userId;
+
+    public void setVisitingTime(LocalDateTime visitingTime) {
+        this.visitingTime = visitingTime;
+    }
+
     private LocalDateTime visitingTime;
     private String visitActivityId;
     private String visitEventId;

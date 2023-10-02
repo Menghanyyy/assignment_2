@@ -1,7 +1,9 @@
 package com.example.myapplication.database;
 
 import android.content.Context;
-import android.util.Log;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -37,8 +39,8 @@ public class DatabaseManager implements DatabaseInterface {
 
     JSONObjectParsing objectParser = new JSONObjectParsing();
 
-//    private static String baseUrl = "http://192.168.0.247:8080";
-    private static String baseUrl = "http://192.168.56.1:8080";
+    private static String baseUrl = "http://192.168.0.247:8080";
+//    private static String baseUrl = "http://192.168.56.1:8080";
 
     public DatabaseManager(Context context) {
         // Initialize the Volley RequestQueue
@@ -71,6 +73,7 @@ public class DatabaseManager implements DatabaseInterface {
             url,
             jsonRequest,
             new Response.Listener<JSONObject>() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
@@ -151,6 +154,7 @@ public class DatabaseManager implements DatabaseInterface {
         requestQueue.add(jsonObjectRequest);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private <T> T parseSuccess(Object message, ClassCode classCode){
         switch (classCode.getCode()) {
             case ClassCodes.STRING_CLASS_VALUE:
@@ -160,11 +164,11 @@ public class DatabaseManager implements DatabaseInterface {
             case ClassCodes.EVENT_CLASS_VALUE:
                 return (T) objectParser.parseEvent((JSONObject) message);
             case ClassCodes.ACTIVITY_CLASS_VALUE:
-                return null;
+                return (T) objectParser.parseActivity((JSONObject) message);
             case ClassCodes.USER_CLASS_VALUE:
                 return (T) objectParser.parseUser((JSONObject) message);
             case ClassCodes.VISIT_CLASS_VALUE:
-                return null;
+                return (T) objectParser.parseVisit((JSONObject) message);
             default:
                 return null;
         }
@@ -173,10 +177,11 @@ public class DatabaseManager implements DatabaseInterface {
     private <T> ArrayList<T> parseSuccessArraylist(Object message, ClassCode classCode){
         switch (classCode.getCode()) {
             case ClassCodes.ACTIVITY_ARRAYLIST_CLASS_VALUE:
-                return null;
+                return (ArrayList<T>) objectParser.parseActivities((JSONArray) message);
             case ClassCodes.USER_ARRAYLIST_CLASS_VALUE:
                 return (ArrayList<T>) objectParser.parseUsers((JSONArray) message);
             case ClassCodes.VISIT_ARRAYLIST_CLASS_VALUE:
+                // Not needed yet
                 return null;
             case ClassCodes.EVENT_ARRAYLIST_CLASS_VALUE:
                 return (ArrayList<T>) objectParser.parseEvents((JSONArray) message);
@@ -258,27 +263,58 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void addActivity(Activity activity, DatabaseCallback<String> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.POST,
+                "/activities/addActivity",
+                JSONObjectParsing.unpackActivity(activity),
+                callback,
+                ClassCodes.STRING_CLASS
+        );
     }
 
     @Override
     public void getActivityByID(int activityID, DatabaseCallback<Activity> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/getByID/" + Integer.toString(activityID),
+                null,
+                callback,
+                ClassCodes.ACTIVITY_CLASS
+        );
     }
 
     @Override
     public void getAllActivities(Event event, DatabaseCallback<ArrayList<Activity>> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/getAll/" + event.getEventId(),
+                null,
+                callback,
+                ClassCodes.ACTIVITY_ARRAYLIST_CLASS
+        );
     }
 
     @Override
     public void addVisit(Visit visit, DatabaseCallback<String> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.POST,
+                "/activities/addVisit",
+                JSONObjectParsing.unpackVisit(visit),
+                callback,
+                ClassCodes.STRING_CLASS
+        );
     }
 
     @Override
     public void getVisitByID(int userID, int activityID, DatabaseCallback<Visit> callback) {
-
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/activities/getVisitByID?userID=" + Integer.toString(userID) + "" +
+                        "&activityID=" + Integer.toString(activityID),
+                null,
+                callback,
+                ClassCodes.VISIT_CLASS
+        );
     }
 
     @Override

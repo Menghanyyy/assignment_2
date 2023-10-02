@@ -145,6 +145,7 @@ public class ActivityController {
             );
             return jsonWrapper.wrapString(true, "Activity added successfully.");
         } catch (Exception e) {
+            e.printStackTrace();
             return jsonWrapper.wrapString(false, "Error creating activity: " +
                     e.getMessage());
         }
@@ -281,6 +282,8 @@ public class ActivityController {
               @RequestParam("activityID") int activityID
     ) {
         String query = "SELECT " +
+                "activityID, " +
+                "userID, " +
                 "time " +
                 "FROM Visit WHERE userID = ? AND activityID = ?";
 
@@ -307,14 +310,14 @@ public class ActivityController {
             }
 
             List<Map<String, Object>> visits = jdbcTemplate.queryForList(query, userID, activityID);
-            System.out.println("V " + userID + " A " + activityID);
-            System.out.println(visits);
 
             if (!visits.isEmpty()) {
                 Map<String, Object> visit = visits.get(0);
                 ObjectMapper objectMapper = new ObjectMapper();
                 ObjectNode jsonObject = objectMapper.createObjectNode();
                 jsonObject.put("time", visit.get("time").toString());
+                jsonObject.put("activityID", visit.get("activityID").toString());
+                jsonObject.put("userID", visit.get("userID").toString());
 
                 // Convert JSON object to a JSON string
                 return jsonWrapper.wrapJsonNode(true, jsonObject);

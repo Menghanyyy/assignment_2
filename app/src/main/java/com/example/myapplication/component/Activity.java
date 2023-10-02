@@ -19,9 +19,48 @@ public class Activity {
 
     private String locationName;
 
+    public List<Point> getBbox() {
+        return bbox;
+    }
+
+    public void setBbox(List<Point> bbox) {
+        this.bbox = bbox;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    private List<Point> bbox;
+
+    private String startTime;
+    private String endTime;
+    private String image;
+
     public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
                     Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
-                    String description, String locationName) {
+                    String description, String locationName, List<Point> bbox,
+                    String startTime, String endTime, String image) {
         this.activityId = ActivityId;
         this.activityName = ActivityName;
         this.activityOrganiser = ActivityOrganiser;
@@ -31,6 +70,10 @@ public class Activity {
         this.description = description;
         this.activityVisits = new ArrayList<Visit>();
         this.locationName = locationName;
+        this.bbox = bbox;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.image = image;
     }
 
     public String getActivityId() {

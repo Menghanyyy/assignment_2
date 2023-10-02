@@ -2,11 +2,16 @@ package com.example.myapplication.database;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.User;
+import com.example.myapplication.component.Visit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +22,7 @@ public class dbTesting {
 
     JSONObjectParsing jp = new JSONObjectParsing();
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void runTests(Context context){
         // Testing Database Connection
         DatabaseManager databaseManager = new DatabaseManager(context);
@@ -44,6 +50,28 @@ public class dbTesting {
                 dummyRange,
                 "Unimelb",
                 "A big event"
+        );
+
+        Activity testActivity = new Activity(
+                null,
+                "Random activity",
+                testUser,
+                testEvent,
+                null,
+                dummyRange,
+                "A great activity",
+                "Melbourne",
+                dummyRange,
+                "2023-09-21T12:00:00Z",
+                "2023-09-21T12:00:00Z",
+                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA"
+                );
+
+        Visit testVisit = new Visit(
+                "1",
+                "1",
+                null,
+                null
         );
 
         // Event Tests
@@ -173,7 +201,67 @@ public class dbTesting {
         }
 
         // Activity Tests
-        if (false) {
+        if (true) {
+
+            databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.i("Add activity", result);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error adding activity", error);
+                }
+            });
+
+            databaseManager.getActivityByID(1, new DatabaseCallback<Activity>() {
+                @Override
+                public void onSuccess(Activity result) {
+                    Log.i("get activity by id", String.valueOf(result.getActivityName()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error getting activity", error);
+                }
+            });
+
+            databaseManager.getAllActivities(testEvent, new DatabaseCallback<ArrayList<Activity>>() {
+                @Override
+                public void onSuccess(ArrayList<Activity> result) {
+                    Log.i("get activities", String.valueOf(result.size()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error get activities", error);
+                }
+            });
+
+            databaseManager.addVisit(testVisit, new DatabaseCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.i("Add visit", result);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error adding visit", error);
+                }
+            });
+
+            databaseManager.getVisitByID(1, 1, new DatabaseCallback<Visit>() {
+                @Override
+                public void onSuccess(Visit result) {
+                    Log.i("get visit by id", String.valueOf(result.getVisitingTime()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error getting visit", error);
+                }
+            });
 
             databaseManager.visitCountForUser(1, new DatabaseCallback<Integer>() {
                 @Override
