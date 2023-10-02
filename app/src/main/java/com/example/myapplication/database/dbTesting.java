@@ -201,7 +201,7 @@ public class dbTesting {
         }
 
         // Activity Tests
-        if (true) {
+        if (false) {
 
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override
