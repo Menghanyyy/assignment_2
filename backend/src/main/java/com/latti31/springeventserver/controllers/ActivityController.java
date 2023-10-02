@@ -129,6 +129,26 @@ public class ActivityController {
             Date startTime = dateFormat.parse(startTimeString);
             Date endTime = dateFormat.parse(endTimeString);
 
+            // EventID
+            if (databaseChecker.keyNotInDBInt(
+                    "Event",
+                    "eventID",
+                    eventID
+            )){
+                return jsonWrapper.wrapString(false, ("Event ID " + Integer.toString(eventID) +
+                        " does not exist in the database."));
+            }
+
+            // UserID
+            if (databaseChecker.keyNotInDBInt(
+                    "User",
+                    "userID",
+                    creatorID
+            )){
+                return jsonWrapper.wrapString(false, ("User ID " + Integer.toString(creatorID) +
+                        " does not exist in the database."));
+            }
+
             jdbcTemplate.update(
                     query,
                     centreLocation,

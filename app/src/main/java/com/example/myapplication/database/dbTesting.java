@@ -43,7 +43,7 @@ public class dbTesting {
         dummyRange.add(new Point(4, 4));
 
         Event testEvent = new Event(
-                "2",
+                "4",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
@@ -75,7 +75,7 @@ public class dbTesting {
         );
 
         // Event Tests
-        if (false) {
+        if (true) {
             databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -150,7 +150,7 @@ public class dbTesting {
         }
 
         // User Tests
-        if (false){
+        if (true){
             databaseManager.addUser(testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -201,7 +201,7 @@ public class dbTesting {
         }
 
         // Activity Tests
-        if (false) {
+        if (true) {
 
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override

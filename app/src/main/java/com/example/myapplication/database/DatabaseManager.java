@@ -39,8 +39,9 @@ public class DatabaseManager implements DatabaseInterface {
 
     JSONObjectParsing objectParser = new JSONObjectParsing();
 
-    private static String baseUrl = "http://192.168.0.247:8080";
+//    private static String baseUrl = "http://192.168.0.247:8080";
 //    private static String baseUrl = "http://192.168.56.1:8080";
+    private static String baseUrl = "http://comp90018.us.to:8080";
 
     public DatabaseManager(Context context) {
         // Initialize the Volley RequestQueue
