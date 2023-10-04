@@ -14,7 +14,13 @@ public class Event {
     private List<Activity> eventActivity;
     private List<Visit> eventVisit;
 
-    public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation, List<Point> EventRange) {
+    // Optional, refers to company/organisation running event
+    private String organisationName;
+
+    private String description;
+
+    public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation,
+                 List<Point> EventRange, String organisationName, String description) {
 
         this.eventId = EventID;
         this.eventName = EventName;
@@ -23,8 +29,8 @@ public class Event {
         this.eventRange = EventRange;
         this.eventActivity = new ArrayList<Activity>();
         this.eventVisit = new ArrayList<Visit>();
-
-
+        this.organisationName = organisationName;
+        this.description = description;
     }
 
     public String getEventId() {
@@ -67,6 +73,10 @@ public class Event {
         this.eventRange = eventRange;
     }
 
+    public String getOrganisationName() { return this.organisationName; }
+
+    public void setOrganisationName(String organisationName) { this.organisationName = organisationName; }
+
     public List<Activity> getEventActivity() {
         return this.eventActivity;
     }
@@ -93,5 +103,13 @@ public class Event {
 
         String result = this.eventName + " Organise By " + this.eventOrganiser;
         return result;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

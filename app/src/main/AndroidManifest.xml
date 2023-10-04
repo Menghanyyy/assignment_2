@@ -18,8 +18,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
-        android:networkSecurityConfig="@xml/network_security_config"> <!-- Reference network security config here -->
-
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name=".insertLinkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity2"
+            android:exported="false" /> <!-- Reference network security config here -->
         <!-- Your main activity -->
         <activity
             android:name=".MainActivity"
@@ -28,6 +33,7 @@
             <!-- Intent filter for the main action -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -36,4 +42,5 @@
             android:exported="true">
         </activity>
     </application>
+
 </manifest>
