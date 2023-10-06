@@ -3,4 +3,6 @@
     <string name="mapbox_access_token">pk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZWk3amMwcnAwMnluMXVoM3lpdXVlIn0.lQDph6gIoF13vJS5pJMXkA</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_location_permission_explanation">Need to render curret location on map</string>
+    <string name="user_location_permission_not_granted">Not Granted</string>
 </resources>

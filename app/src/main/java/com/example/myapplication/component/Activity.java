@@ -1,6 +1,6 @@
 package com.example.myapplication.component;
 
-import android.graphics.Point;
+import com.mapbox.geojson.Point;
 
 import java.util.ArrayList;
 import java.util.List;

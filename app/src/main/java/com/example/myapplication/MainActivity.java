@@ -55,23 +55,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onStart() {
         super.onStart();
 
-        super.onStart();
-
         Button mapView_Btn = (Button) findViewById(R.id.mapView_Btn);
-
 
         mapView_Btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, MapActivity.class));
             }
         });
-        Visit testV = new Visit(abc.getUserId(), null, null, null);
-        Log.i("test visit", testV.toString());
 
-        new dbTesting().runTests(this);
+//        new dbTesting().runTests(this);
     }
 }

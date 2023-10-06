@@ -1,7 +1,6 @@
 package com.example.myapplication.database;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Build;
 import android.util.Log;
 
@@ -15,12 +14,14 @@ import com.example.myapplication.component.Visit;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.mapbox.geojson.Point;
 
 import java.util.Random;
 
 public class dbTesting {
 
     JSONObjectParsing jp = new JSONObjectParsing();
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void runTests(Context context){
@@ -34,13 +35,14 @@ public class dbTesting {
                 "Password"
         );
 
-        List<Point> dummyRange = new ArrayList<>();
+
+        List<Point> dummyRange = createCirclePolygon(144.9631, -37.8136, 10, 3);
         // Adding some sample points
-        dummyRange.add(new Point(0, 0));
-        dummyRange.add(new Point(1, 1));
-        dummyRange.add(new Point(2, 2));
-        dummyRange.add(new Point(3, 3));
-        dummyRange.add(new Point(4, 4));
+//        dummyRange.add(new PointF(0, 0));
+//        dummyRange.add(new PointF(1, 1));
+//        dummyRange.add(new PointF(2, 2));
+//        dummyRange.add(new PointF(3, 3));
+//        dummyRange.add(new PointF(4, 4));
 
         Event testEvent = new Event(
                 "4",
@@ -218,7 +220,7 @@ public class dbTesting {
             databaseManager.getActivityByID(1, new DatabaseCallback<Activity>() {
                 @Override
                 public void onSuccess(Activity result) {
-                    Log.i("get activity by id", String.valueOf(result.getActivityName()));
+                    Log.i("get activity by id", String.valueOf(result.getActivityRange()));
                 }
 
                 @Override
@@ -305,4 +307,31 @@ public class dbTesting {
             System.out.println("Location tests");
         }
     }
+
+    public static List<Point> createCirclePolygon(double lonCenter, double latCenter, double radiusKm, int numVertices) {
+        List<Point> circlePoints = new ArrayList<>();
+
+        // Convert radius from kilometers to degrees
+        double radiusInDegrees = radiusKm / 111.32;  // Rough conversion factor; might be slightly inaccurate near poles
+
+        double angleStep = 2 * Math.PI / numVertices;
+
+        for (int i = 0; i < numVertices; i++) {
+            double theta = i * angleStep;
+
+            double dLat = radiusInDegrees * Math.sin(theta);
+            double dLon = radiusInDegrees * Math.cos(theta) / Math.cos(Math.toRadians(latCenter));
+
+            double lat = Math.round((latCenter + dLat) * 100.0) / 100.0;
+            double lon = Math.round((lonCenter + dLon) * 100.0) / 100.0;
+
+            circlePoints.add(Point.fromLngLat(lon,lat));
+        }
+
+        // Close the circle by adding the first point at the end
+        circlePoints.add(circlePoints.get(0));
+        return circlePoints;
+    }
+
+
 }

@@ -1,6 +1,6 @@
 package com.example.myapplication.database;
 
-import android.graphics.Point;
+import com.mapbox.geojson.Point;
 import android.os.Build;
 import android.util.Log;
 
@@ -34,7 +34,7 @@ public class JSONObjectParsing {
 
         for (int i = 0; i < points.size(); i++) {
             Point point = points.get(i);
-            polygonString.append(point.x).append(" ").append(point.y);
+            polygonString.append(point.longitude()).append(" ").append(point.latitude());
 
             if (i < points.size() - 1) {
                 polygonString.append(", ");
@@ -139,21 +139,21 @@ public class JSONObjectParsing {
     public static List<Point> extractPointsFromPolygon(String polygonString) {
         List<Point> pointList = new ArrayList<>();
 
-        // Use regex to extract coordinates from the input string
-        Pattern pattern = Pattern.compile("-?\\d+ -?\\d+");
+        Pattern pattern = Pattern.compile("-?\\d+\\.?\\d* -?\\d+\\.?\\d*");
         Matcher matcher = pattern.matcher(polygonString);
 
         while (matcher.find()) {
             String[] parts = matcher.group().split("\\s+");
             if (parts.length == 2) {
-                int x = Integer.parseInt(parts[0]);
-                int y = Integer.parseInt(parts[1]);
-                Point point = new Point(x, y);
+                double x = Double.parseDouble(parts[0]);
+                double y = Double.parseDouble(parts[1]);
+                Point point = Point.fromLngLat(x, y);
                 pointList.add(point);
             }
         }
 
-        pointList.remove(pointList.size()-1);
+        //pointList.remove(pointList.size()-1);
+        //Log.i("String value of bbox", String.valueOf(pointList));
         return pointList;
     }
 
@@ -183,6 +183,7 @@ public class JSONObjectParsing {
             String description = jsonEvent.getString("description");
 
             String bboxString = jsonEvent.getString("bbox");
+            //Log.i("bboxString", String.valueOf(bboxString));
             List<Point> bbox = extractPointsFromPolygon(bboxString);
 
             // Create and return an Event object
