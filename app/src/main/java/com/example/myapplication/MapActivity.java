@@ -13,11 +13,19 @@ import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolygonOptions;
+
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
+
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
@@ -43,6 +51,8 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.style.layers.CircleLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
@@ -141,6 +151,15 @@ public class MapActivity extends AppCompatActivity{
                         Bitmap markerImage = getBitmapFromDrawable(R.drawable.baseline_location_on_24);
                         style.addImage("my-marker-icon", markerImage);
 
+                        GeoJsonSource geoJsonSource = new GeoJsonSource("marker-source-id");
+                        style.addSource(geoJsonSource);
+
+                        SymbolLayer markerSymbolLayer = new SymbolLayer("marker-symbol-layer-id", "maker-source-id");
+                        markerSymbolLayer.withProperties(iconImage("my-marker-icon"), iconAllowOverlap(true), iconIgnorePlacement(true), iconSize(5f)  ,visibility(Property.VISIBLE));
+
+                        style.addLayer(markerSymbolLayer);
+
+
 
                         // Set initial map viewport and zoom
                         CameraPosition initialPosition = new CameraPosition.Builder()
@@ -159,9 +178,15 @@ public class MapActivity extends AppCompatActivity{
                             public boolean onMapClick(@NonNull LatLng point) {
                                 Log.i("clickedMap", String.valueOf(point));
 //
-                              clickedPoints.add(point);
-                              addMarker();
-                                // Handle the map click
+//                              clickedPoints.add(point);
+
+                                Point markerP = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+                                GeoJsonSource source = style.getSourceAs("marker-source-id");
+                                if (source != null) {
+                                    source.setGeoJson(Feature.fromGeometry(markerP));
+                                }
+
+                              // Handle the map click
                                 return true; // return true if the click was handled, false otherwise
                             }
                         });
@@ -246,20 +271,31 @@ public class MapActivity extends AppCompatActivity{
         }
     }
 
-    private void addMarker() {
+    private void addMarker(@NonNull Style style) {
 
-        symbolManager.deleteAll();
+//        // To remove the layer with ID "outline"
+//        Layer symbolLayer = style.getLayer("marker-symbol-layer-id");
+//        if (symbolLayer != null) {
+//            style.removeLayer(symbolLayer);
+//        }
+//
+//        Source source = style.getSource("marker-source-id");
+//        if (source != null) {
+//            style.removeSource(source);
+//        }
 
-        for (LatLng l : clickedPoints) {
-            SymbolOptions symbolOptions = new SymbolOptions();
-            symbolOptions.withLatLng(l);
-            symbolOptions.withIconImage("my-marker-icon");
-            symbolManager.create(symbolOptions);
+
+        List<Feature> features = new ArrayList<>();
+        for (LatLng latLng : clickedPoints) {
+            features.add(Feature.fromGeometry(Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
         }
 
-        Log.i("Marker", clickedPoints.size() + "");
-        Log.i("SymbolManagerCount", "Number of symbols: " + symbolManager.getAnnotations().size());
-        Log.i("SymbolManagerCount", "Number of symbols: " + symbolManager.getAnnotations().size());
+        FeatureCollection featureCollection = FeatureCollection.fromFeatures(features);
+
+        GeoJsonSource source = style.getSourceAs("marker-source-id");
+        if (source != null) {
+            source.setGeoJson(featureCollection);
+        }
 
 
     }
