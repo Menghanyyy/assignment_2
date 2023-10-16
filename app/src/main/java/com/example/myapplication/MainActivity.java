@@ -68,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button editable_mapView_Btn = (Button) findViewById(R.id.editable_mapview_btn);
+
+        editable_mapView_Btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, EditableMapActivity.class));
+            }
+        });
+
 //        new dbTesting().runTests(this);
     }
 }

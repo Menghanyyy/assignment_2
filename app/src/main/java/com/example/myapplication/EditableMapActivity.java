@@ -86,7 +86,7 @@ import android.Manifest;
 import javax.security.auth.login.LoginException;
 
 
-public class MapActivity extends AppCompatActivity {
+public class EditableMapActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
@@ -96,93 +96,91 @@ public class MapActivity extends AppCompatActivity {
 
     private MapView mapView;
     private MapboxMap mapboxMap;
-    
-    private FillManager fillManager;
+
     private CircleManager circleManager;
-    private CircleManager markerManager;
     private List<LatLng> polygonVertices = new ArrayList<>();
-    private List<LatLng> clickedPoints = new ArrayList<>();
+    private LatLng clickedPoints = new LatLng(0, 0);
+    private List<List<Point>> pointsList = new ArrayList<>();
+
     private long downTime;
     private static final long LONG_PRESS_TIME = 3000; // Set the time for a long press
-    List<List<Point>> pointsList = new ArrayList<>();
-    private SymbolManager symbolManager;
     private DatabaseManager databaseManager;
 
-    private boolean isLocationEnabled = false;
+    private boolean drawCircle = false;
+    private boolean mapMove = true;
+    private boolean addMarker = false;
 
-    
+    private View.OnTouchListener drawCircleTouchListener = null;
+    private MapboxMap.OnMapClickListener onMapClick = null;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-        this.databaseManager = new DatabaseManager(this);
-
-        databaseManager.getEventByID(82, new DatabaseCallback<Event>() {
-            @Override
-            public void onSuccess(Event result) {
-                pointsList.add(result.getEventRange());
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error Retrieving json", error);
-            }
-        });
-
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-        setContentView(R.layout.activity_map);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.editable_activity_map);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.map);
 
-        mapView = (MapView) findViewById(R.id.mapView);
+        mapView = (MapView) findViewById(R.id.mapView_2);
         mapView.onCreate(savedInstanceState);
-        
+
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                
-                MapActivity.this.mapboxMap = mapboxMap;
+
+                EditableMapActivity.this.mapboxMap = mapboxMap;
 
                 mapboxMap.setStyle(new Style.Builder().fromUri(Style.DARK)
-                        .withImage(MARKER_ICON_ID,
-                        getBitmapFromDrawable(R.drawable.baseline_location_on_24)),
-                        new Style.OnStyleLoaded() {
+                                .withImage(MARKER_ICON_ID,
+                                getBitmapFromDrawable(R.drawable.baseline_location_on_24)),
+                                new Style.OnStyleLoaded() {
 
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
+                            @Override
+                            public void onStyleLoaded(@NonNull Style style) {
 
-                        initSource(style);
-                        initLayers(style);
+                                initSource(style);
+                                initLayers(style);
 
-                        circleManager = new CircleManager(mapView, mapboxMap, style);
-
-                        drawPolygon_Geojson(style);
-
-                        // Set initial map viewport and zoom
-                        CameraPosition initialPosition = new CameraPosition.Builder()
-                                .target(new LatLng(-37.80995133438894, 144.96871464972733))  // Set the latitude and longitude
-                                .zoom(10)  // Set zoom level
-                                .build();
-
-                        mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
+                                circleManager = new CircleManager(mapView, mapboxMap, style);
 
 
+                                // Set initial map viewport and zoom
+                                CameraPosition initialPosition = new CameraPosition.Builder()
+                                        .target(new LatLng(-37.80995133438894, 144.96871464972733))  // Set the latitude and longitude
+                                        .zoom(10)  // Set zoom level
+                                        .build();
 
-                        // Map is set up and the style has loaded. Now you can add data or make other map adjustments
+                                mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
 
-                    }
+                                if(mapMove) {
+                                    mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
 
-                });
+                                } else if (addMarker) {
+                                    mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                                        @Override
+                                        public boolean onMapClick(@NonNull LatLng point) {
 
-                // Enable zoom controls (+ and - buttons)
-                mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
+                                            clickedPoints = point;
+                                            addMarker();
+
+                                            return false;
+                                        }
+                                    });
+
+
+                                }
+
+                            }
+
+                        });
+
 
 
             }
@@ -190,6 +188,9 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
+    private void handleMapLongClick() {
+        circleManager.deleteAll();
+    }
 
     private void initSource(@NonNull Style loadedMapStyle) {
         GeoJsonSource gj = new GeoJsonSource(ICON_SOURCE_ID);
@@ -205,18 +206,20 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
+    private void addMarker() {
+        mapboxMap.getStyle(new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                GeoJsonSource destinationIconGeoJsonSource = style.getSourceAs(ICON_SOURCE_ID);
+                if (destinationIconGeoJsonSource != null) {
+                    destinationIconGeoJsonSource.setGeoJson(Feature.fromGeometry(Point.fromLngLat(
+                            clickedPoints.getLongitude(), clickedPoints.getLatitude())));
+                }
+            }
+        });
 
-    @SuppressWarnings( {"MissingPermission"})
-    private void toggleUserLocation() {
-        LocationComponent locationComponent = mapboxMap.getLocationComponent();
-        if (isLocationEnabled) {
-            locationComponent.setLocationComponentEnabled(false);
-            isLocationEnabled = false;
-        } else {
-            enableLocationComponent(mapboxMap.getStyle());
-            isLocationEnabled = true;
-        }
     }
+
 
 
     private Bitmap getBitmapFromDrawable(int drawableId) {
@@ -306,64 +309,147 @@ public class MapActivity extends AppCompatActivity {
 
     }
 
-    @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-        // Check if permissions are enabled and if not request
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            // Get an instance of the component
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
-
-            // Activate with options
-            locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
-
-            // Enable to make component visible
-            locationComponent.setLocationComponentEnabled(true);
-
-            // Set the component's render mode
-            locationComponent.setRenderMode(RenderMode.COMPASS);
-
-            // Set the component's camera mode
-            locationComponent.setCameraMode(CameraMode.TRACKING);
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_CODE_LOCATION_PERMISSION);
-        }
-    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                enableLocationComponent(mapboxMap.getStyle());
-            } else {
-                Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-                finish();
-            }
-        }
-    }
-
-
-    @Override
-    @SuppressWarnings( {"MissingPermission"})
     protected void onStart() {
         super.onStart();
         mapView.onStart();
 
-        Button toggleLocationButton = findViewById(R.id.location_toggle_button);
-        toggleLocationButton.setOnClickListener(new View.OnClickListener() {
+        Button drawCircleButton = findViewById(R.id.circle_btn);
+        drawCircleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mapboxMap != null && mapboxMap.getStyle() != null) {
-                    toggleUserLocation();
+                drawCircle = !drawCircle;
+                mapMove = false;
+                addMarker = false;
+
+                if(drawCircle) {
+                    mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                    drawCircleTouchListener = new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            switch (motionEvent.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    polygonVertices.clear();
+                                    downTime = System.currentTimeMillis();
+                                    break;
+
+                                case MotionEvent.ACTION_UP:
+                                    view.performClick();
+                                    if (System.currentTimeMillis() - downTime > LONG_PRESS_TIME) {
+                                        // Handle long click
+                                        handleMapLongClick();
+                                    } else {
+                                        drawPolygon_Geojson(mapboxMap.getStyle());
+                                    }
+                                    break;
+
+                                case MotionEvent.ACTION_MOVE:
+                                    LatLng touchedPoint = mapboxMap.getProjection().fromScreenLocation(
+                                            new android.graphics.PointF(motionEvent.getX(), motionEvent.getY()));
+                                    polygonVertices.add(touchedPoint); // 添加点到列表
+
+                                    CircleOptions circleOptions = new CircleOptions();
+                                    circleOptions.withLatLng(touchedPoint);
+                                    circleOptions.withCircleColor("rgba(255,0,0,0.5)");
+                                    circleManager.create(circleOptions);
+                                    break;
+                            }
+                            return true;
+                        }
+                    };
+
+                    mapView.setOnTouchListener(drawCircleTouchListener);
+                }
+                else {
+                    mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
+                    mapView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            return false;
+                        }
+                    });
                 }
             }
         });
+
+        Button addMarkerButton = findViewById(R.id.marker_btn);
+        addMarkerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawCircle = false;
+                mapMove = false;
+                addMarker = !addMarker;
+
+                mapView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        return false;
+                    }
+                });
+
+                if(addMarker) {
+                    mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                    onMapClick = new MapboxMap.OnMapClickListener() {
+                        @Override
+                        public boolean onMapClick(@NonNull LatLng point) {
+                            clickedPoints = point;
+                            addMarker();
+                            return false;
+                        }
+                    };
+
+                    mapboxMap.addOnMapClickListener(onMapClick);
+
+                } else {
+
+                    mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
+                    mapboxMap.removeOnMapClickListener(onMapClick);
+
+                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                        @Override
+                        public boolean onMapClick(@NonNull LatLng point) {
+                            return false;
+                        }
+                    });
+
+                }
+
+            }
+        });
+
+
+        Button moveMapButton = findViewById(R.id.move_btn);
+        moveMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawCircle = false;
+                mapMove = !mapMove;
+                addMarker = false;
+
+                mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
+
+                mapView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        return false;
+                    }
+                });
+
+                mapboxMap.removeOnMapClickListener(onMapClick);
+
+                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                    @Override
+                    public boolean onMapClick(@NonNull LatLng point) {
+                        return false;
+                    }
+                });
+
+
+
+            }
+        });
+
     }
 
     @Override

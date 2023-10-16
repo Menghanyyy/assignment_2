@@ -64,13 +64,21 @@
         android:id="@+id/mapView_Btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="47dp"
+        android:layout_marginTop="463dp"
+        android:layout_marginEnd="270dp"
+        android:layout_marginBottom="220dp"
         android:text="Go Map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.904" />
-        
+
     <TextView
         android:id="@+id/forget"
         android:layout_width="match_parent"
@@ -83,5 +91,20 @@
         android:gravity="center_horizontal"
         android:layout_below="@+id/signInButton"
         />
+
+    <Button
+        android:id="@+id/editable_mapview_btn"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="236dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="463dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="220dp"
+        android:text="Editable Map" />
 
 </RelativeLayout>
