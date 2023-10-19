@@ -9,10 +9,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.myapplication.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity2 extends AppCompatActivity {
+public class Home extends AppCompatActivity {
     BottomNavigationView bottomNavigationView ;
     EventFragment mEventFragment;
     MapFragment mMapFragment;

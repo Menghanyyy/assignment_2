@@ -1,32 +1,24 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.MapActivity;
-import com.example.myapplication.component.*;
-import com.example.myapplication.database.DatabaseCallback;
-import com.example.myapplication.database.DatabaseManager;
-import com.example.myapplication.database.dbTesting;
 import com.google.android.material.button.MaterialButton;
 
-import org.json.JSONArray;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     //MAPBOX TOKEN = sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw
 
@@ -46,13 +38,29 @@ public class MainActivity extends AppCompatActivity {
                         password.getText().toString().equals("123")){
                     //Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
                     TextView password = (TextView)findViewById(R.id.password);
-                    Intent i = new Intent(MainActivity.this,MainActivity2.class);
+                    Intent i = new Intent(Login.this, Home.class);
                     startActivity(i);
                 }else{
-                    Toast.makeText(MainActivity.this, "Failed Login", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+        TextView textView= findViewById(R.id.register);
+        String text = "Don't have an account? Sign Up";
+        SpannableString ss= new SpannableString(text);
+        ClickableSpan clickableSpan1 = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent i = new Intent(Login.this, SignUP.class);
+                startActivity(i);
+            }
+        };
+        ss.setSpan(clickableSpan1,23,30, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        textView.setText(ss);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -64,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         mapView_Btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MapActivity.class));
+                startActivity(new Intent(Login.this, MapActivity.class));
             }
         });
 
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         editable_mapView_Btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, EditableMapActivity.class));
+                startActivity(new Intent(Login.this, EditableMapActivity.class));
             }
         });
 
