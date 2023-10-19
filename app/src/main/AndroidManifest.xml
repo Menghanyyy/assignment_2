@@ -16,10 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".NewLink"
+            android:exported="false" />
+        <activity
             android:name=".SignUP"
             android:exported="false" />
         <activity
-            android:name=".insertLinkActivity"
+            android:name=".Link"
             android:exported="false" />
         <activity
             android:name=".Home"
@@ -38,10 +41,10 @@
         </activity>
         <activity
             android:name=".MapActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".EditableMapActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
     </application>
 
 </manifest>
