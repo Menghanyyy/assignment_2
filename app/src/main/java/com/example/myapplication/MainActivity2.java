@@ -25,8 +25,8 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        mEventFragment =EventFragment.newInstance("","");
-        mMapFragment =MapFragment.newInstance("","");
+        mEventFragment = EventFragment.newInstance("","");
+        mMapFragment = MapFragment.newInstance("","");
         mProfileFragment =ProfileFragment.newInstance("","");
 
         replaceFg(mEventFragment);
