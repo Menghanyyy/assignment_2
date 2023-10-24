@@ -274,4 +274,41 @@ public class EventController {
                     e.getMessage());
         }
     }
+
+    // Get all events created by a specific user
+    @GetMapping("/getCreatedEvents/{user_id}")
+    public String getCreatedEvents(@PathVariable int user_id) {
+        String query = "SELECT " +
+                "eventID, " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event " +
+                "WHERE creatorID = ?";
+
+        try {
+            if (databaseChecker.keyNotInDBInt(
+                    "User",
+                    "userID",
+                    user_id
+            )) {
+                return jsonWrapper.wrapString(false, "User with ID " +
+                        user_id + " not found.");
+            }
+
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
+            if (!events.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
+            } else {
+                return jsonWrapper.wrapString(false, "No events found");
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return jsonWrapper.wrapString(false, "Error retrieving events: " +
+                    e.getMessage());
+        }
+    }
 }
