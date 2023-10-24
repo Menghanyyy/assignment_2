@@ -84,12 +84,12 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="224dp">
+
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="224dp"
-                        android:src="@mipmap/aaaa"
                         android:scaleType="fitXY"
-                        />
+                        android:src="@mipmap/aaaa" />
 
                     <ImageView
                         android:layout_width="16dp"
