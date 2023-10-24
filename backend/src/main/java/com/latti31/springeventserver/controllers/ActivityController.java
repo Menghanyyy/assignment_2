@@ -163,11 +163,40 @@ public class ActivityController {
                     backgroundPictureData,
                     creatorID
             );
+
+            // Potentially widening the event bbox
+            rebalanceEvent(eventID);
+
             return jsonWrapper.wrapString(true, "Activity added successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             return jsonWrapper.wrapString(false, "Error creating activity: " +
                     e.getMessage());
+        }
+    }
+
+    private void rebalanceEvent(int eventID) {
+
+        System.out.println("Rebalancing events (not implemented)");
+
+        String query = "SELECT " +
+                "eventID, " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event WHERE eventID = ?";
+        try {
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, eventID);
+            if (!events.isEmpty()) {
+                Map<String, Object> event = events.get(0);
+                ObjectMapper objectMapper = new ObjectMapper();
+            } else {
+
+            }
+        } catch (Exception e){
+
         }
     }
 

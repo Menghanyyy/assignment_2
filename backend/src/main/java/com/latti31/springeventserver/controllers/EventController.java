@@ -62,8 +62,16 @@ public class EventController {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(jsonText);
 
+            // Default to the bounding box for all of Australia
+            String bbox = LocationController.getSQLBBOX(
+                    -43.6345972634,
+                    -10.6681857235,
+                    113.338953078,
+                    153.569469029
+            );
+            System.out.println("BBOX: " + bbox);
+
             // Extract values from JSON
-            String bbox = jsonNode.get("bbox").asText();
             String name = jsonNode.get("name").asText();
             String organisationName = jsonNode.get("organisationName").asText();
             String description = jsonNode.get("description").asText();
@@ -242,6 +250,43 @@ public class EventController {
                 "FROM Event e " +
                 "JOIN `Joined Events` je ON e.eventID = je.eventID " +
                 "WHERE je.userID = ?";
+
+        try {
+            if (databaseChecker.keyNotInDBInt(
+                    "User",
+                    "userID",
+                    user_id
+            )) {
+                return jsonWrapper.wrapString(false, "User with ID " +
+                        user_id + " not found.");
+            }
+
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
+            if (!events.isEmpty()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
+            } else {
+                return jsonWrapper.wrapString(false, "No events found");
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there's an issue with the database query
+            return jsonWrapper.wrapString(false, "Error retrieving events: " +
+                    e.getMessage());
+        }
+    }
+
+    // Get all events created by a specific user
+    @GetMapping("/getCreatedEvents/{user_id}")
+    public String getCreatedEvents(@PathVariable int user_id) {
+        String query = "SELECT " +
+                "eventID, " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description " +
+                "FROM Event " +
+                "WHERE creatorID = ?";
 
         try {
             if (databaseChecker.keyNotInDBInt(
