@@ -104,14 +104,14 @@ public class UserController {
 
     @GetMapping("/verifyPassword")
     public String verifyPassword(
-            @RequestParam("userID") int userID,
+            @RequestParam("username") String username,
             @RequestParam("password") String givenPassword) {
-        String query = "SELECT password FROM `User` WHERE userID = ?";
+        String query = "SELECT password FROM `User` WHERE username = ?";
 
         try {
 
             // Get actual password
-            List<Map<String, Object>> passwords = jdbcTemplate.queryForList(query, userID);
+            List<Map<String, Object>> passwords = jdbcTemplate.queryForList(query, username);
             if (passwords.size() == 1) {
                 String correctPassword = (String) passwords.get(0).get("password");
 

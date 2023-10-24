@@ -62,8 +62,16 @@ public class EventController {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(jsonText);
 
+            // Default to the bounding box for all of Australia
+            String bbox = LocationController.getSQLBBOX(
+                    -43.6345972634,
+                    -10.6681857235,
+                    113.338953078,
+                    153.569469029
+            );
+            System.out.println("BBOX: " + bbox);
+
             // Extract values from JSON
-            String bbox = jsonNode.get("bbox").asText();
             String name = jsonNode.get("name").asText();
             String organisationName = jsonNode.get("organisationName").asText();
             String description = jsonNode.get("description").asText();
