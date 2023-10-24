@@ -5,26 +5,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity">
+    tools:context=".EditableMapActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapView"
+            android:id="@+id/mapView_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/location_toggle_button"
+                android:id="@+id/move_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="180dp"
+                android:padding="10dp"
+                android:text="Move" />
+
+            <Button
+                android:id="@+id/marker_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="120dp"
+                android:padding="10dp"
+                android:text="Add Marker" />
+
+            <Button
+                android:id="@+id/circle_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="60dp"
                 android:padding="10dp"
-                android:text="Toggle Location" />
+                android:text="Draw Circle" />
         </com.mapbox.mapboxsdk.maps.MapView>
 
 

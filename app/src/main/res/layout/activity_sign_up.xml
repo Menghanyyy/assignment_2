@@ -9,10 +9,10 @@
 
 
     <TextView
-        android:id="@+id/SignIn"
+        android:id="@+id/Registration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign in"
+        android:text="Registration"
         android:textColor="@color/white"
         android:textSize="35dp"
         android:textStyle="bold"
@@ -22,30 +22,33 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userName"
+        android:id="@+id/email"
         android:background="#30ffffff"
-        android:layout_below="@+id/SignIn"
-        android:hint="UserName"
+        android:layout_below="@+id/Registration"
+        android:hint="Email"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:layout_margin="10dp"
         android:padding="20dp"
-        android:drawableLeft="@drawable/baseline_person_outline_24"
+        android:drawableLeft="@drawable/baseline_email_24"
         android:drawablePadding="20dp"/>
 
     <EditText
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/password"
+        android:layout_below="@+id/email"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:background="#30ffffff"
-        android:layout_below="@+id/userName"
-        android:hint="Password"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:layout_margin="10dp"
-        android:padding="20dp"
         android:drawableLeft="@drawable/baseline_info_24"
-        android:drawablePadding="20dp"/>
+        android:drawablePadding="20dp"
+        android:hint="Password"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signInButton"
@@ -58,55 +61,25 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="#1D428A"
-        android:text="Log In" />
+        android:text="sign in" />
 
-    <Button
-        android:id="@+id/mapView_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go Map"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.904" />
 
     <TextView
         android:id="@+id/forget"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Forgot the password?"
-        android:textColor="@color/white"
-        android:textSize="15dp"
-        android:textStyle="normal"
-        android:layout_margin="10dp"
-        android:gravity="center_horizontal"
-        android:layout_below="@+id/signInButton"
-        />
-
-    <Button
-        android:id="@+id/editable_mapview_btn"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="236dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="50dp"
-        android:text="Editable Map" />
-
-    <TextView
-        android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/forget"
+        android:layout_below="@+id/signInButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:gravity="center_horizontal"
-        android:text="Don't have an account? Sign Up"
+        android:text="Already have an account? Log In"
         android:textColor="@color/white"
         android:textSize="15dp"
         android:textStyle="normal" />
+
+
 
 </RelativeLayout>
