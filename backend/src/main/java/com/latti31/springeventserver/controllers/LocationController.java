@@ -119,4 +119,14 @@ public class LocationController {
                     e.getMessage());
         }
     }
+
+    public static String getSQLBBOX(double latMin, double latMax, double longMin, double longMax){
+        return "POLYGON((" +
+                Double.toString(latMin) + " " + Double.toString(longMin) + ", " +
+                Double.toString(latMax) + " " + Double.toString(longMin) + ", " +
+                Double.toString(latMax) + " " + Double.toString(longMax) + ", " +
+                Double.toString(latMin) + " " + Double.toString(longMax) + ", " +
+                Double.toString(latMin) + " " + Double.toString(longMin) +
+                "))";
+    }
 }
