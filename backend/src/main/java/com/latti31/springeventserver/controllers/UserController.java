@@ -94,8 +94,14 @@ public class UserController {
 
             // Insert values into the database
             jdbcTemplate.update(query, email, name, userName, password);
+            try {
+                int generatedEventID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+                return jsonWrapper.wrapString(true, Integer.toString(generatedEventID));
 
-            return jsonWrapper.wrapString(true, "User added successfully.");
+            } catch (Exception ex){
+                return jsonWrapper.wrapString(false, "Error getting last insert ID (user)"
+                        + ex.getMessage());
+            }
         } catch (Exception e) {
             return jsonWrapper.wrapString(false, "Error Adding User: " +
                     e.getMessage());
@@ -106,17 +112,17 @@ public class UserController {
     public String verifyPassword(
             @RequestParam("username") String username,
             @RequestParam("password") String givenPassword) {
-        String query = "SELECT password FROM `User` WHERE username = ?";
+        String query = "SELECT password, userID FROM `User` WHERE username = ?";
 
         try {
-
             // Get actual password
             List<Map<String, Object>> passwords = jdbcTemplate.queryForList(query, username);
             if (passwords.size() == 1) {
                 String correctPassword = (String) passwords.get(0).get("password");
+                int userID = (Integer) passwords.get(0).get("userID");
 
                 if (correctPassword.equals(givenPassword)) {
-                    return jsonWrapper.wrapString(true, "true");
+                    return jsonWrapper.wrapString(true, Integer.toString(userID));
                 }
 
                 return jsonWrapper.wrapString(true, "false");
@@ -130,7 +136,7 @@ public class UserController {
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the account creation fails
-            return jsonWrapper.wrapString(false, "Error Adding User: " + e.getMessage());
+            return jsonWrapper.wrapString(false, "Error Verifying pw: " + e.getMessage());
         }
     }
 }

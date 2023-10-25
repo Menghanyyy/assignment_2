@@ -1,5 +1,6 @@
 package com.example.myapplication.database;
 
+import android.accessibilityservice.FingerprintGestureController;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -29,7 +30,7 @@ public class dbTesting {
         DatabaseManager databaseManager = new DatabaseManager(context);
 
         GeneralUser testUser = new GeneralUser(
-                "1",
+                "10",
                 "zara",
                 "zara.com",
                 "Password"
@@ -45,7 +46,7 @@ public class dbTesting {
 //        dummyRange.add(new PointF(4, 4));
 
         Event testEvent = new Event(
-                "4",
+                "107",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
@@ -81,7 +82,13 @@ public class dbTesting {
             databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("On success", result);
+                    try{
+                        Integer eventID = Integer.parseInt(result);
+                        Log.i("On success (Event ID)", String.valueOf(eventID));
+                    }
+                    catch (Exception e){
+                        Log.i("Event bad string", result);
+                    }
                 }
 
                 @Override
@@ -90,7 +97,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getEventByID(1, new DatabaseCallback<Event>() {
+            databaseManager.getEventByID(107, new DatabaseCallback<Event>() {
                 @Override
                 public void onSuccess(Event result) {
                     Log.i("get event by id", String.valueOf(result.getEventName()));
@@ -138,15 +145,39 @@ public class dbTesting {
                 }
             });
 
+            databaseManager.getEventLinkByID(Integer.parseInt(testEvent.getEventId()), new DatabaseCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.i("get Link", result);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error getting Link:", error);
+                }
+            });
+
             databaseManager.getJoinedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
-                    Log.i("get joined events", result.get(0).getEventName());
+                    Log.i("get joined events", Integer.toString(result.size()));
                 }
 
                 @Override
                 public void onError(String error) {
                     Log.println(Log.ASSERT, "Error joined events", error);
+                }
+            });
+
+            databaseManager.getCreatedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
+                @Override
+                public void onSuccess(ArrayList<Event> result) {
+                    Log.i("get created events", Integer.toString(result.size()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error created events", error);
                 }
             });
         }
@@ -156,7 +187,13 @@ public class dbTesting {
             databaseManager.addUser(testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("add User", result);
+                    try{
+                        Integer userID = Integer.parseInt(result);
+                        Log.i("On success (User ID)", String.valueOf(userID));
+                    }
+                    catch (Exception e){
+                        Log.i("User bad string", result);
+                    }
                 }
 
                 @Override
@@ -189,7 +226,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.verifyPassword("secret2", testUser, new DatabaseCallback<String>() {
+            databaseManager.verifyPassword("Password", testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     Log.i("verify password", result);
@@ -197,7 +234,7 @@ public class dbTesting {
 
                 @Override
                 public void onError(String error) {
-                    Log.println(Log.ASSERT, "error verifying", error);
+                    Log.println(Log.ASSERT, "error verifying user", error);
                 }
             });
         }
@@ -208,7 +245,14 @@ public class dbTesting {
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("Add activity", result);
+
+                    try{
+                        Integer activityID = Integer.parseInt(result);
+                        Log.i("Success (Activity ID)", String.valueOf(activityID));
+                    }
+                    catch (Exception e){
+                        Log.i("Activity bad string", result);
+                    }
                 }
 
                 @Override

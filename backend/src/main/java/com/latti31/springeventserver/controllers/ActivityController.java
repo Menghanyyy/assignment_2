@@ -162,7 +162,14 @@ public class ActivityController {
             // Potentially widening the event bbox
             rebalanceEvent(eventID);
 
-            return jsonWrapper.wrapString(true, "Activity added successfully.");
+            try {
+                int generatedEventID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+                return jsonWrapper.wrapString(true, Integer.toString(generatedEventID));
+
+            } catch (Exception ex){
+                return jsonWrapper.wrapString(false, "Error getting last insert ID (event)"
+                        + ex.getMessage());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return jsonWrapper.wrapString(false, "Error creating activity: " +

@@ -2,6 +2,7 @@ package com.example.myapplication.database;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -214,6 +215,17 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
+    public void getEventLinkByID(int eventID, DatabaseCallback<String> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/events/getEventLinkByID/" + Integer.valueOf(eventID),
+                null,
+                callback,
+                ClassCodes.STRING_CLASS
+        );
+    }
+
+    @Override
     public void getAllEvents(DatabaseCallback<ArrayList<Event>> callback){
         sendJsonObjectRequest(
                 Request.Method.GET,
@@ -253,6 +265,22 @@ public class DatabaseManager implements DatabaseInterface {
             sendJsonObjectRequest(
                     Request.Method.GET,
                     "/events/getJoinedEvents/" + Integer.valueOf(user.getUserId()),
+                    null,
+                    callback,
+                    ClassCodes.EVENT_ARRAYLIST_CLASS
+            );
+        } catch (NumberFormatException e){
+            callback.onError("user id not received: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
+
+        try{
+            sendJsonObjectRequest(
+                    Request.Method.GET,
+                    "/events/getCreatedEvents/" + Integer.valueOf(user.getUserId()),
                     null,
                     callback,
                     ClassCodes.EVENT_ARRAYLIST_CLASS
@@ -396,9 +424,10 @@ public class DatabaseManager implements DatabaseInterface {
     @Override
     public void verifyPassword(String password, GeneralUser user, DatabaseCallback<String> callback) {
         try{
-            String url = "/users/verifyPassword?userID="
-                    + Integer.toString(Integer.parseInt(user.getUserId()))
+            String url = "/users/verifyPassword?username="
+                    + user.getUserName()
                     + "&password=" + password;
+            Log.i("sending url", url);
 
             sendJsonObjectRequest(
                     Request.Method.GET,

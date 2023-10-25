@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.latti31.springeventserver.objects.DatabaseChecker;
 import com.latti31.springeventserver.objects.JSONResponseWrapper;
+import com.latti31.springeventserver.objects.RandomStringGenerator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +15,17 @@ import java.util.Map;
 @RequestMapping("/events")
 public class EventController {
 
+    public static int LINK_LENGTH = 15;
+
     private final JdbcTemplate jdbcTemplate;
     private final DatabaseChecker databaseChecker;
     private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
+    private final RandomStringGenerator randomStringGenerator;
 
     public EventController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.databaseChecker = new DatabaseChecker(jdbcTemplate);
+        this.randomStringGenerator = new RandomStringGenerator();
     }
 
     @GetMapping("/getByID/{id}")
@@ -49,6 +54,26 @@ public class EventController {
         }
     }
 
+    @GetMapping("/getEventLinkByID/{id}")
+    public String getEventLinkByID(@PathVariable int id) {
+        String query = "SELECT " +
+                "link " +
+                "FROM Event WHERE eventID = ?";
+        try {
+            // Get actual password
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, id);
+            if (events.size() == 1) {
+                String link = (String) events.get(0).get("link");
+                return jsonWrapper.wrapString(true, link);
+            }
+            return jsonWrapper.wrapString(false, "Event Not Unique");
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if the event with the specified ID doesn't exist
+            return jsonWrapper.wrapString(false, "Error getting link: " +
+                    e.getMessage());
+        }
+    }
+
     @PostMapping("/addEvent")
     public String createEvent(@RequestBody String jsonText) {
         String query = "INSERT INTO Event (" +
@@ -56,7 +81,8 @@ public class EventController {
                 "name, " +
                 "organisationName, " +
                 "creatorID, " +
-                "description) VALUES (ST_PolygonFromText(?), ?, ?, ?, ?)";
+                "description, " +
+                "link) VALUES (ST_PolygonFromText(?), ?, ?, ?, ?, ?)";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -69,7 +95,6 @@ public class EventController {
                     113.338953078,
                     153.569469029
             );
-            System.out.println("BBOX: " + bbox);
 
             // Extract values from JSON
             String name = jsonNode.get("name").asText();
@@ -95,6 +120,8 @@ public class EventController {
                 return jsonWrapper.wrapString(false, "Event name already exists");
             }
 
+            String link = randomStringGenerator.generateRandomString(LINK_LENGTH);
+
             // Insert values into the database
             jdbcTemplate.update(
                     query,
@@ -102,10 +129,18 @@ public class EventController {
                     name,
                     organisationName,
                     creatorID,
-                    description
+                    description,
+                    link
             );
 
-            return jsonWrapper.wrapString(true, "Event created successfully.");
+            try {
+                int generatedEventID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+                return jsonWrapper.wrapString(true, Integer.toString(generatedEventID));
+
+            } catch (Exception ex){
+                return jsonWrapper.wrapString(false, "Error getting last insert ID (event)"
+                        + ex.getMessage());
+            }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
             return jsonWrapper.wrapString(false, "Error creating event: " + e.getMessage());

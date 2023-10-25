@@ -13,6 +13,8 @@ public interface DatabaseInterface {
 
     public void getEventByID(int eventID, final DatabaseCallback<Event> callback);
 
+    void getEventLinkByID(int eventID, DatabaseCallback<String> callback);
+
     public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
 
     // Users signing up to attend an event
@@ -27,6 +29,8 @@ public interface DatabaseInterface {
 
 
     ///////////////// Activity Methods /////////////////
+
+    void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback);
 
     public void addActivity(Activity activity, final DatabaseCallback<String> callback);
 
