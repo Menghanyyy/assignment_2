@@ -1,5 +1,6 @@
 package com.example.myapplication.database;
 
+import android.accessibilityservice.FingerprintGestureController;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -81,7 +82,13 @@ public class dbTesting {
             databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("On success", result);
+                    try{
+                        Integer eventID = Integer.parseInt(result);
+                        Log.i("On success (Event ID)", String.valueOf(eventID));
+                    }
+                    catch (Exception e){
+                        Log.i("Event bad string", result);
+                    }
                 }
 
                 @Override
@@ -176,11 +183,17 @@ public class dbTesting {
         }
 
         // User Tests
-        if (false){
+        if (true){
             databaseManager.addUser(testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("add User", result);
+                    try{
+                        Integer userID = Integer.parseInt(result);
+                        Log.i("On success (User ID)", String.valueOf(userID));
+                    }
+                    catch (Exception e){
+                        Log.i("User bad string", result);
+                    }
                 }
 
                 @Override
@@ -213,7 +226,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.verifyPassword("secret2", testUser, new DatabaseCallback<String>() {
+            databaseManager.verifyPassword("Password", testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     Log.i("verify password", result);
@@ -221,18 +234,25 @@ public class dbTesting {
 
                 @Override
                 public void onError(String error) {
-                    Log.println(Log.ASSERT, "error verifying", error);
+                    Log.println(Log.ASSERT, "error verifying user", error);
                 }
             });
         }
 
         // Activity Tests
-        if (false) {
+        if (true) {
 
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.i("Add activity", result);
+
+                    try{
+                        Integer activityID = Integer.parseInt(result);
+                        Log.i("Success (Activity ID)", String.valueOf(activityID));
+                    }
+                    catch (Exception e){
+                        Log.i("Activity bad string", result);
+                    }
                 }
 
                 @Override

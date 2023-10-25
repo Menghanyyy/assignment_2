@@ -2,6 +2,7 @@ package com.example.myapplication.database;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -423,9 +424,10 @@ public class DatabaseManager implements DatabaseInterface {
     @Override
     public void verifyPassword(String password, GeneralUser user, DatabaseCallback<String> callback) {
         try{
-            String url = "/users/verifyPassword?userID="
-                    + Integer.toString(Integer.parseInt(user.getUserId()))
+            String url = "/users/verifyPassword?username="
+                    + user.getUserName()
                     + "&password=" + password;
+            Log.i("sending url", url);
 
             sendJsonObjectRequest(
                     Request.Method.GET,
