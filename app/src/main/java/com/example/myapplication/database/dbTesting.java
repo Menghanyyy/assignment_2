@@ -31,8 +31,8 @@ public class dbTesting {
 
         GeneralUser testUser = new GeneralUser(
                 "10",
-                "zara",
-                "zara.com",
+                "zara2",
+                "zara2.com",
                 "Password"
         );
 
@@ -46,7 +46,7 @@ public class dbTesting {
 //        dummyRange.add(new PointF(4, 4));
 
         Event testEvent = new Event(
-                "107",
+                "117",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
@@ -71,8 +71,8 @@ public class dbTesting {
                 );
 
         Visit testVisit = new Visit(
-                "1",
-                "1",
+                "4",
+                "82",
                 null,
                 null
         );
@@ -202,7 +202,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getUserByID(1, new DatabaseCallback<GeneralUser>() {
+            databaseManager.getUserByID(3, new DatabaseCallback<GeneralUser>() {
                 @Override
                 public void onSuccess(GeneralUser result) {
                     Log.i("get User by ID", result.getUserId());
@@ -261,10 +261,10 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getActivityByID(1, new DatabaseCallback<Activity>() {
+            databaseManager.getActivityByID(76, new DatabaseCallback<Activity>() {
                 @Override
                 public void onSuccess(Activity result) {
-                    Log.i("get activity by id", String.valueOf(result.getActivityRange()));
+                    Log.i("get activity by id", String.valueOf(result.getActivityName()));
                 }
 
                 @Override
@@ -297,7 +297,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getVisitByID(1, 1, new DatabaseCallback<Visit>() {
+            databaseManager.getVisitByID(3, 82, new DatabaseCallback<Visit>() {
                 @Override
                 public void onSuccess(Visit result) {
                     Log.i("get visit by id", String.valueOf(result.getVisitingTime()));
@@ -309,7 +309,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.visitCountForUser(1, new DatabaseCallback<Integer>() {
+            databaseManager.visitCountForUser(3, new DatabaseCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer result) {
                     Log.i("Visit Count for user 1", String.valueOf(result));
@@ -347,7 +347,7 @@ public class dbTesting {
         }
 
         // Location Tests
-        if (false){
+        if (true){
             System.out.println("Location tests");
         }
     }
