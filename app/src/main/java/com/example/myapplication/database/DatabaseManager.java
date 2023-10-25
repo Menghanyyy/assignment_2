@@ -422,10 +422,10 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void verifyPassword(String password, GeneralUser user, DatabaseCallback<String> callback) {
+    public void verifyPassword(String password, String username, DatabaseCallback<String> callback) {
         try{
             String url = "/users/verifyPassword?username="
-                    + user.getUserName()
+                    + username
                     + "&password=" + password;
             Log.i("sending url", url);
 

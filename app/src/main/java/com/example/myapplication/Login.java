@@ -11,38 +11,63 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.database.DatabaseCallback;
+import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
 
 public class Login extends AppCompatActivity {
 
     //MAPBOX TOKEN = sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw
+    private DatabaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        databaseManager = new DatabaseManager(this);
+
         TextView username = (TextView)findViewById(R.id.userName);
         TextView password = (TextView)findViewById(R.id.password);
 
-        MaterialButton loginBt= (MaterialButton)findViewById(R.id.signInButton);
+        MaterialButton loginBt = (MaterialButton)findViewById(R.id.signInButton);
         loginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (username.getText().toString().equals("admin") &&
-                        password.getText().toString().equals("123")){
-                    //Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
-                    TextView password = (TextView)findViewById(R.id.password);
-                    Intent i = new Intent(Login.this, Home.class);
-                    startActivity(i);
-                }else{
-                    Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
-                }
+
+                databaseManager.verifyPassword(password.getText().toString(),username.getText().toString() , new DatabaseCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.println(Log.ASSERT, "error verifying", error);
+                        Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+//                if (username.getText().toString().equals("admin") &&
+//                        password.getText().toString().equals("123")){
+//                    //Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
+//                    TextView password = (TextView)findViewById(R.id.password);
+//                    Intent i = new Intent(Login.this, Home.class);
+//                    startActivity(i);
+//                }else{
+//                    Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
+//                }
+
+//                Intent i = new Intent(Login.this, Home.class);
+//                startActivity(i);
             }
         });
 

@@ -48,9 +48,11 @@
                         android:textStyle="bold" />
 
                     <ImageView
+                        android:id="@+id/eventEdit"
                         android:layout_width="44dp"
                         android:layout_height="44dp"
-                        android:src="@mipmap/ic_launcher" />
+                        android:src="@drawable/ic_baseline_edit_44"
+                    />
 
 
                 </LinearLayout>
