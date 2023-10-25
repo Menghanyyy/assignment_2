@@ -53,7 +53,6 @@ public class EventPageActivity extends AppCompatActivity {
                 desc.setText("Scientific evidence shows that Indigenous sdsdsdsd mkmkmkeqweqeqwemkmkmmkmkmkmkmkmmkmkmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way knnknknknknknknknknknknknknknknknknknknknknknknknknknknkto protect biodiversity is therefore to.");
                 location.setText("Melbourne");
                 organisation.setText(result.getOrganisationName());
-
             }
 
             @Override
@@ -62,10 +61,19 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
 
+        ImageView iv_edit = findViewById(R.id.eventEdit);
+        iv_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent eventInfo = new Intent(EventPageActivity.this, CreateEvent.class);//src to tagactivity
+                eventInfo.putExtra("eventId", eventId);
+                startActivity(eventInfo);
+            }
+        });
+
 
         tv_map = findViewById(R.id.tv_map);
         iv_back = findViewById(R.id.iv_back);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +88,7 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
 
-
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(
                 new BottomNavigationView.OnItemSelectedListener() {
                     @Override
@@ -107,7 +115,9 @@ public class EventPageActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+
         super.onStart();
+
     }
 
     @Override
