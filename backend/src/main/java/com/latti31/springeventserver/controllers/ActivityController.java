@@ -32,7 +32,6 @@ public class ActivityController {
                 "activityID, " +
                 "ST_AsText(centreLocation) AS centreLocation, " +
                 "ST_AsText(polygonLocation) AS polygonLocation, " +
-                "ST_AsText(bbox) AS bbox, " +
                 "description, " +
                 "startTime, " +
                 "endTime, " +
@@ -62,7 +61,6 @@ public class ActivityController {
                 jsonObject.put("activityID", (Integer) activity.get("activityID"));
                 jsonObject.put("centreLocation", (String) activity.get("centreLocation"));
                 jsonObject.put("polygonLocation", (String) activity.get("polygonLocation"));
-                jsonObject.put("bbox", (String) activity.get("bbox"));
                 jsonObject.put("description", (String) activity.get("description"));
                 jsonObject.put("startTime", activity.get("startTime").toString());
                 jsonObject.put("endTime", activity.get("endTime").toString());
@@ -89,7 +87,6 @@ public class ActivityController {
         String query = "INSERT INTO Activity (" +
                 "`centreLocation`, " +
                 "`polygonLocation`, " +
-                "`bbox`, " +
                 "`description`, " +
                 "`startTime`, " +
                 "`endTime`, " +
@@ -99,7 +96,7 @@ public class ActivityController {
                 "`backgroundPicture`, " +
                 "`creatorID`" +
                 ") VALUES " +
-                "(ST_PointFromText(?), ST_PolygonFromText(?), ST_PolygonFromText(?)," +
+                "(ST_PointFromText(?), ST_PolygonFromText(?)," +
                 "?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Parse the JSON string
@@ -111,7 +108,6 @@ public class ActivityController {
             // Extract activity properties from JSON
             String centreLocation = jsonNode.get("centreLocation").asText();
             String polygonLocation = jsonNode.get("polygonLocation").asText();
-            String bbox = jsonNode.get("bbox").asText();
             String description = jsonNode.get("description").asText();
             String startTimeString = jsonNode.get("startTime").asText();
             String endTimeString = jsonNode.get("endTime").asText();
@@ -153,7 +149,6 @@ public class ActivityController {
                     query,
                     centreLocation,
                     polygonLocation,
-                    bbox,
                     description,
                     startTime,
                     endTime,
@@ -182,7 +177,6 @@ public class ActivityController {
         String query = "SELECT " +
                 "eventID, " +
                 "name, " +
-                "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
                 "creatorID, " +
                 "description " +
@@ -207,7 +201,6 @@ public class ActivityController {
                 "activityID, " +
                 "ST_AsText(centreLocation) AS centreLocation, " +
                 "ST_AsText(polygonLocation) AS polygonLocation, " +
-                "ST_AsText(bbox) AS bbox, " +
                 "description, " +
                 "startTime, " +
                 "endTime, " +
@@ -235,7 +228,6 @@ public class ActivityController {
                 jsonObject.put("activityID", (Integer) activity.get("activityID"));
                 jsonObject.put("centreLocation", (String) activity.get("centreLocation"));
                 jsonObject.put("polygonLocation", (String) activity.get("polygonLocation"));
-                jsonObject.put("bbox", (String) activity.get("bbox"));
                 jsonObject.put("description", (String) activity.get("description"));
                 jsonObject.put("startTime", activity.get("startTime").toString());
                 jsonObject.put("endTime", activity.get("endTime").toString());
