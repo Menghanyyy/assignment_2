@@ -28,6 +28,8 @@ public interface DatabaseInterface {
 
     ///////////////// Activity Methods /////////////////
 
+    void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback);
+
     public void addActivity(Activity activity, final DatabaseCallback<String> callback);
 
     public void getActivityByID(int activityID, final DatabaseCallback<Activity> callback);

@@ -263,6 +263,22 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
+    public void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
+
+        try{
+            sendJsonObjectRequest(
+                    Request.Method.GET,
+                    "/events/getCreatedEvents/" + Integer.valueOf(user.getUserId()),
+                    null,
+                    callback,
+                    ClassCodes.EVENT_ARRAYLIST_CLASS
+            );
+        } catch (NumberFormatException e){
+            callback.onError("user id not received: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void addActivity(Activity activity, DatabaseCallback<String> callback) {
         sendJsonObjectRequest(
                 Request.Method.POST,

@@ -29,7 +29,7 @@ public class dbTesting {
         DatabaseManager databaseManager = new DatabaseManager(context);
 
         GeneralUser testUser = new GeneralUser(
-                "1",
+                "10",
                 "zara",
                 "zara.com",
                 "Password"
@@ -45,7 +45,7 @@ public class dbTesting {
 //        dummyRange.add(new PointF(4, 4));
 
         Event testEvent = new Event(
-                "4",
+                "107",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
                 null,
@@ -90,7 +90,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getEventByID(1, new DatabaseCallback<Event>() {
+            databaseManager.getEventByID(107, new DatabaseCallback<Event>() {
                 @Override
                 public void onSuccess(Event result) {
                     Log.i("get event by id", String.valueOf(result.getEventName()));
@@ -141,7 +141,7 @@ public class dbTesting {
             databaseManager.getJoinedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
-                    Log.i("get joined events", result.get(0).getEventName());
+                    Log.i("get joined events", Integer.toString(result.size()));
                 }
 
                 @Override
@@ -149,10 +149,22 @@ public class dbTesting {
                     Log.println(Log.ASSERT, "Error joined events", error);
                 }
             });
+
+            databaseManager.getCreatedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
+                @Override
+                public void onSuccess(ArrayList<Event> result) {
+                    Log.i("get created events", Integer.toString(result.size()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error created events", error);
+                }
+            });
         }
 
         // User Tests
-        if (true){
+        if (false){
             databaseManager.addUser(testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -203,7 +215,7 @@ public class dbTesting {
         }
 
         // Activity Tests
-        if (true) {
+        if (false) {
 
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override
