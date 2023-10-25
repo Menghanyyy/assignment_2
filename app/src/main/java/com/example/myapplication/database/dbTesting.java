@@ -226,7 +226,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.verifyPassword("Password", testUser, new DatabaseCallback<String>() {
+            databaseManager.verifyPassword("Password", testUser.getUserName(), new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     Log.i("verify password", result);

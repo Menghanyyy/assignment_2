@@ -62,7 +62,7 @@ public interface DatabaseInterface {
 
     public void getAllUsers(final DatabaseCallback<ArrayList<GeneralUser>> callback);
 
-    public void verifyPassword(String password, GeneralUser user, final DatabaseCallback<String> callback);
+    public void verifyPassword(String password, String username, final DatabaseCallback<String> callback);
 
 
 

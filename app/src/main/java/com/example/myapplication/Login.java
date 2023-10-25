@@ -41,18 +41,20 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-//                databaseManager.verifyPassword("secret2", testUser, new DatabaseCallback<String>() {
-//                    @Override
-//                    public void onSuccess(String result) {
-//                        Log.i("verify password", result);
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//                        Log.println(Log.ASSERT, "error verifying", error);
-//                    }
-//                });
-//
+                databaseManager.verifyPassword(password.getText().toString(),username.getText().toString() , new DatabaseCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Intent i = new Intent(Login.this, Home.class);
+                        startActivity(i);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.println(Log.ASSERT, "error verifying", error);
+                        Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
+                    }
+                });
+
 
 //                if (username.getText().toString().equals("admin") &&
 //                        password.getText().toString().equals("123")){
@@ -64,8 +66,8 @@ public class Login extends AppCompatActivity {
 //                    Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
 //                }
 
-                Intent i = new Intent(Login.this, Home.class);
-                startActivity(i);
+//                Intent i = new Intent(Login.this, Home.class);
+//                startActivity(i);
             }
         });
 
