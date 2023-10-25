@@ -214,6 +214,17 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
+    public void getEventLinkByID(int eventID, DatabaseCallback<String> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/events/getEventLinkByID/" + Integer.valueOf(eventID),
+                null,
+                callback,
+                ClassCodes.STRING_CLASS
+        );
+    }
+
+    @Override
     public void getAllEvents(DatabaseCallback<ArrayList<Event>> callback){
         sendJsonObjectRequest(
                 Request.Method.GET,

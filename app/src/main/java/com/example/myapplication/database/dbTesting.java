@@ -138,6 +138,18 @@ public class dbTesting {
                 }
             });
 
+            databaseManager.getEventLinkByID(Integer.parseInt(testEvent.getEventId()), new DatabaseCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.i("get Link", result);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error getting Link:", error);
+                }
+            });
+
             databaseManager.getJoinedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
