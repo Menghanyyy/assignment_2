@@ -40,12 +40,12 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#09264C"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:text="Events Happening"
+                        android:layout_marginLeft="10dp"
                         android:layout_weight="1"
-                        android:layout_marginLeft="10dp" />
+                        android:text="Events Happening"
+                        android:textColor="#09264C"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:layout_width="44dp"
@@ -59,10 +59,11 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="#fff"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginHorizontal="16dp">
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#fff"
+                    app:cardCornerRadius="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -79,45 +80,28 @@
                                 android:orientation="vertical">
 
                                 <ImageView
+                                    android:id="@+id/eventImage"
                                     android:layout_width="match_parent"
-                                    android:layout_height="118dp"
-                                    android:src="@mipmap/bbbb"
-                                    android:scaleType="centerCrop" />
+                                    android:layout_height="150dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@mipmap/bbbb" />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_marginTop="18dp">
+                                    android:layout_marginTop="18dp"
+                                    android:orientation="vertical">
 
                                     <TextView
+                                        android:id="@+id/eventTitle"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:textSize="16sp"
-                                        android:textStyle="bold"
-                                        android:textColor="#1D428A"
                                         android:layout_marginHorizontal="16dp"
+                                        android:layout_marginTop="15dp"
                                         android:text="Colonial Conservation: A Green assault on Indigenous Land"
-                                        android:layout_marginTop="12dp" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="12sp"
                                         android:textColor="#1D428A"
-                                        android:layout_marginHorizontal="16dp"
-                                        android:layout_marginTop="4dp"
-                                        android:text="Location: Ground Floor - Sydney Mayer " />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="12sp"
-                                        android:textColor="#818C99"
-                                        android:layout_marginHorizontal="16dp"
-                                        android:layout_marginTop="4dp"
-                                        android:text="Scientific evidence shows that Indigenous people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to." />
-
+                                        android:textSize="16sp"
+                                        android:textStyle="bold" />
 
                                 </LinearLayout>
 
@@ -127,11 +111,12 @@
                             <LinearLayout
                                 android:layout_width="295dp"
                                 android:layout_height="60dp"
-                                android:gravity="center_vertical"
                                 android:layout_marginLeft="40dp"
-                                android:layout_marginTop="90dp"
-                                android:paddingHorizontal="16dp"
-                                android:background="@drawable/cardinfo_background">
+                                android:layout_marginTop="120dp"
+                                android:background="@drawable/cardinfo_background"
+                                android:elevation="3dp"
+                                android:gravity="center_vertical"
+                                android:paddingHorizontal="16dp">
 
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:layout_width="40dp"
@@ -142,37 +127,37 @@
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
+                                    android:layout_marginLeft="-15dp"
                                     android:src="@mipmap/ic_launcher"
-                                    app:shapeAppearance="@style/tipImageStyle"
-                                    android:layout_marginLeft="-15dp" />
+                                    app:shapeAppearance="@style/tipImageStyle" />
 
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
+                                    android:layout_marginLeft="-15dp"
                                     android:src="@mipmap/ic_launcher"
-                                    app:shapeAppearance="@style/tipImageStyle"
-                                    android:layout_marginLeft="-15dp" />
+                                    app:shapeAppearance="@style/tipImageStyle" />
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="#1D428A"
-                                    android:text="+78 Going"
-                                    android:textStyle="bold"
-                                    android:textSize="15sp"
+                                    android:layout_marginLeft="8dp"
                                     android:layout_weight="1"
-                                    android:layout_marginLeft="8dp" />
+                                    android:text="+78 Going"
+                                    android:textColor="#1D428A"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:layout_width="67dp"
                                     android:layout_height="28dp"
-                                    android:textColor="#fff"
+                                    android:layout_marginLeft="8dp"
                                     android:background="@drawable/btn_background"
-                                    android:text="Invite"
-                                    android:textStyle="bold"
-                                    android:textSize="15sp"
                                     android:gravity="center"
-                                    android:layout_marginLeft="8dp" />
+                                    android:text="Invite"
+                                    android:textColor="#fff"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
 
                             </LinearLayout>
                         </FrameLayout>
@@ -181,17 +166,17 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
+                            android:layout_marginHorizontal="16dp"
                             android:layout_marginTop="20dp"
-                            android:layout_marginHorizontal="16dp">
+                            android:orientation="vertical">
 
                             <!--map start-->
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -199,24 +184,25 @@
                                     android:src="@mipmap/ic_launcher" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="50dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="30dp"
+                                    android:text="Start Date:"
+                                    android:textColor="#1D428A"
                                     android:textSize="10sp"
                                     android:textStyle="bold"
-                                    android:textColor="#1D428A"
-                                    android:layout_marginLeft="30dp"
-                                    android:text="Date:"
 
                                     />
 
                                 <TextView
+                                    android:id="@+id/eventStartDate"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
                                     android:layout_marginLeft="87dp"
+                                    android:text="Wednesday 13 Sep 2023"
+                                    android:textSize="10sp"
 
-                                    android:text="Wednesday 13 Sep 2023" />
+                                    android:textStyle="bold" />
 
                             </LinearLayout>
 
@@ -224,9 +210,9 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp"
                                 android:gravity="center_vertical"
-                                android:layout_marginTop="10dp">
+                                android:orientation="horizontal">
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -234,33 +220,34 @@
                                     android:src="@mipmap/ic_launcher" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="50dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="30dp"
+                                    android:text="End Date:"
+                                    android:textColor="#1D428A"
                                     android:textSize="10sp"
                                     android:textStyle="bold"
-                                    android:textColor="#1D428A"
-                                    android:layout_marginLeft="30dp"
-                                    android:text="Date:"
 
                                     />
 
                                 <TextView
+                                    android:id="@+id/eventEndDate"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
                                     android:layout_marginLeft="87dp"
+                                    android:text="Wednesday 13 Sep 2023"
+                                    android:textSize="10sp"
 
-                                    android:text="Wednesday 13 Sep 2023" />
+                                    android:textStyle="bold" />
 
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp"
                                 android:gravity="center_vertical"
-                                android:layout_marginTop="10dp">
+                                android:orientation="horizontal">
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -268,38 +255,38 @@
                                     android:src="@mipmap/ic_launcher" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="50dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="30dp"
+                                    android:text="Location:"
+                                    android:textColor="#1D428A"
                                     android:textSize="10sp"
                                     android:textStyle="bold"
-                                    android:textColor="#1D428A"
-                                    android:layout_marginLeft="30dp"
-                                    android:text="Date:"
 
                                     />
 
                                 <TextView
+                                    android:id="@+id/eventLocation"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
                                     android:layout_marginLeft="87dp"
                                     android:layout_weight="1"
-
-                                    android:text="Ground Floor \n- Sydney Mayer" />
+                                    android:text="Ground Floor - Sydney Mayer"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold" />
 
 
                                 <TextView
                                     android:id="@+id/tv_map"
                                     android:layout_width="67dp"
                                     android:layout_height="28dp"
-                                    android:textColor="#fff"
+                                    android:layout_marginLeft="8dp"
                                     android:background="@drawable/btn_background"
-                                    android:text="map"
-                                    android:textStyle="bold"
-                                    android:textSize="15sp"
                                     android:gravity="center"
-                                    android:layout_marginLeft="8dp" />
+                                    android:text="map"
+                                    android:textColor="#fff"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
 
                             </LinearLayout>
 
@@ -307,9 +294,9 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
+                                android:layout_marginTop="10dp"
                                 android:gravity="center_vertical"
-                                android:layout_marginTop="20dp">
+                                android:orientation="horizontal">
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -317,26 +304,26 @@
                                     android:src="@mipmap/ic_launcher" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="50dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="30dp"
+                                    android:text="Host:"
+                                    android:textColor="#1D428A"
                                     android:textSize="10sp"
                                     android:textStyle="bold"
-                                    android:textColor="#1D428A"
-                                    android:layout_marginLeft="30dp"
-                                    android:text="Date:"
 
                                     />
 
                                 <TextView
-                                    android:id="@+id/tv_link"
+                                    android:id="@+id/eventOrganisation"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="12sp"
-                                    android:textStyle="bold"
-                                    android:textColorLink="#0057FF"
                                     android:layout_marginLeft="87dp"
+                                    android:text="Australian Centre"
                                     android:textColor="#0057FF"
-                                    android:text="Australian Centre" />
+                                    android:textColorLink="#0057FF"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
 
                             </LinearLayout>
 
@@ -344,8 +331,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
-                                android:background="#09264C"
-                                android:layout_marginTop="6dp"></View>
+                                android:layout_marginTop="6dp"
+                                android:background="#09264C"></View>
 
                         </LinearLayout>
 
@@ -357,39 +344,44 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-
-                                >
+                                android:orientation="vertical">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="12sp"
+                                    android:layout_marginHorizontal="16dp"
+                                    android:layout_marginTop="4dp"
+                                    android:text="About Event"
                                     android:textColor="#1D428A"
-                                    android:layout_marginHorizontal="16dp"
-                                    android:layout_marginTop="4dp"
-                                    android:text="Location: Ground Floor - Sydney Mayer " />
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
 
                                 <TextView
+                                    android:id="@+id/eventDescription"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="12sp"
-                                    android:textColor="#818C99"
                                     android:layout_marginHorizontal="16dp"
                                     android:layout_marginTop="4dp"
-                                    android:text="Scientific evidence shows that Indigenous people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to." />
+                                    android:ellipsize="end"
+                                    android:maxLines="5"
+                                    android:text="Scientific evidence shows that Indigenous sdsdsdsd mkmkmkeqweqeqwemkmkmmkmkmkmkmkmmkmkmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to."
+                                    android:textColor="#818C99"
+                                    android:textSize="12sp"
+                                    android:justificationMode="inter_word"/>
 
+                                <TextView
+                                    android:id="@+id/eventDescriptionExpend"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="right"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="16dp"
+                                    android:text="Read More"
+                                    android:textColor="#f00"
+                                    android:clickable="true"/>
 
                             </LinearLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Read mORE"
-                                android:textColor="#f00"
-                                android:layout_alignParentRight="true"
-                                android:layout_alignParentBottom="true"
-                                android:layout_marginRight="20dp" />
 
                         </RelativeLayout>
 
@@ -408,19 +400,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="50dp"
-
             android:background="@drawable/btn_background15dp"
-            android:textColor="#fff"
-            android:text="Book for this event"
-            android:textSize="16sp"
-            android:textStyle="bold"
             android:gravity="center"
-            android:layout_alignParentBottom="true" />
+            android:text="Book for this event"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </RelativeLayout>
-
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,12 +18,14 @@ public class Home extends AppCompatActivity {
     MapFragment mMapFragment;
     ProfileFragment mProfileFragment;
 
+    CreateEvent mCreateEvent;
+
     private int currentIndex = 0; //当前Frament索引
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_home);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         mEventFragment =EventFragment.newInstance("","");
         mMapFragment =MapFragment.newInstance("","");
@@ -33,8 +34,8 @@ public class Home extends AppCompatActivity {
         replaceFg(mEventFragment);
 
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationView.setOnItemSelectedListener(
+                new BottomNavigationView.OnItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
@@ -64,8 +65,6 @@ public class Home extends AppCompatActivity {
     private void replaceFg(Fragment myFragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-
-
         // 开始一个Fragment事务
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -91,8 +90,8 @@ public class Home extends AppCompatActivity {
             if(1==currentIndex){
 
             }else{
-                replaceFg(mMapFragment);
-                currentIndex = 1;
+                Intent intent = new Intent(this, CreateEvent.class);
+                startActivity(intent);
 
             }
         }else{

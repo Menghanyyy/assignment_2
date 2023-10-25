@@ -22,7 +22,10 @@
             android:name=".SignUP"
             android:exported="false" />
         <activity
-            android:name=".Link"
+            android:name=".CreateEvent"
+            android:exported="false" />
+        <activity
+            android:name=".EventPageActivity"
             android:exported="false" />
         <activity
             android:name=".Home"

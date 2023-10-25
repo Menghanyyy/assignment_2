@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Drop Shadow Layer -->
+    <item>
+        <shape android:shape="oval">
+            <!-- This gradient is for the shadow effect -->
+            <gradient
+                android:type="radial"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:gradientRadius="80%"
+                android:startColor="#66B0B0B0"
+                android:endColor="#00B0B0B0"/>
+            <corners android:radius="30dp"/>
+
+            <padding
+                android:top="50dp"
+                android:right="50dp"
+                android:bottom="50dp"
+                android:left="50dp"/>
+        </shape>
+    </item>
+    <!-- Button Background Layer -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#707070"/> <!-- Dark Grey for the button background -->
+        </shape>
+    </item>
+</layer-list>
