@@ -104,7 +104,6 @@ public class JSONObjectParsing {
             // Add individual fields to the JSON object
             jsonObject.put("centreLocation", "POINT(-45.62390335574153 -3.9551761173743847)");
             jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
-            jsonObject.put("bbox", convertPoints(activity.getBbox()));
             jsonObject.put("description", activity.getDescription());
             jsonObject.put("startTime", activity.getStartTime());
             jsonObject.put("endTime", activity.getEndTime());
@@ -229,8 +228,7 @@ public class JSONObjectParsing {
             List<Point> activityPolygon = null; //extractPointsFromPolygon(polygonString);
             String description = jsonActivity.getString("description");
             String locationName = jsonActivity.getString("locationName");
-            String bboxString = jsonActivity.getString("bbox");
-            List<Point> bbox = extractPointsFromPolygon(bboxString);
+
             String startTime = jsonActivity.getString("startTime");
             String endTime = jsonActivity.getString("endTime");
             String image = jsonActivity.getString("backgroundPicture");
@@ -245,7 +243,7 @@ public class JSONObjectParsing {
                     activityPolygon,
                     description,
                     locationName,
-                    bbox,
+                    null,
                     startTime,
                     endTime,
                     image
