@@ -67,7 +67,7 @@ public class CheckIn extends AppCompatActivity implements
                 darknessDetector = new DarknessDetector(this);
                 if (lightSensor != null) {
                     darknessDetector = new DarknessDetector(this);
-                    setInstructions("Cover the front camera");
+                    setInstructions("Put your phone in your pocket");
                     break;
                 }
         }
