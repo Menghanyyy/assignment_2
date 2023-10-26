@@ -12,6 +12,8 @@ import com.example.myapplication.gestures.DarknessDetector;
 import com.example.myapplication.gestures.ShakeDetector;
 import com.example.myapplication.gestures.TiltDetector;
 
+import java.util.Random;
+
 public class CheckIn extends AppCompatActivity implements
         ShakeDetector.OnShakeListener,
         TiltDetector.OnTiltListener,
@@ -22,26 +24,47 @@ public class CheckIn extends AppCompatActivity implements
     private DarknessDetector darknessDetector;
     private SensorManager sensorManager;
 
+    private static final int GESTURE_COUNT = 3;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        shakeDetector = new ShakeDetector(this);
-        tiltDetector = new TiltDetector(this);
-        darknessDetector = new DarknessDetector(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        Random random = new Random();
+        int randomInt = random.nextInt(GESTURE_COUNT);
 
-        if (accelerometer != null) {
-            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        switch (randomInt) {
+            case 0:
+                shakeDetector = new ShakeDetector(this);
+                if (accelerometer != null) {
+                    sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                    break;
+                }
+            case 1:
+                tiltDetector = new TiltDetector(this);
+                if (accelerometer != null) {
+                    sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                    break;
+                }
+            case 2:
+                darknessDetector = new DarknessDetector(this);
+                if (lightSensor != null) {
+                    darknessDetector = new DarknessDetector(this);
+                    break;
+                }
+        }
+
+        if (lightSensor != null) {
             sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
@@ -60,7 +83,7 @@ public class CheckIn extends AppCompatActivity implements
 
     @Override
     public void onShake() {
-        //checkIn();
+        checkIn();
     }
 
     @Override
@@ -70,7 +93,7 @@ public class CheckIn extends AppCompatActivity implements
 
     @Override
     public void onTiltedBothWays() {
-        //checkIn();
+        checkIn();
     }
 
     @Override
