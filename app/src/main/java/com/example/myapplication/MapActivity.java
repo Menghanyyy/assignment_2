@@ -164,7 +164,6 @@ public class MapActivity extends AppCompatActivity {
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 
                 MapActivity.this.mapboxMap = mapboxMap;
-
                 mapboxMap.setStyle(new Style.Builder().fromUri(Style.DARK)
                         .withImage(MARKER_ICON_ID,
                         getBitmapFromDrawable(R.drawable.baseline_location_on_24)),
