@@ -400,6 +400,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <TextView
+            android:id="@+id/tv_gotomap"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
@@ -407,7 +408,7 @@
             android:layout_marginBottom="50dp"
             android:background="@drawable/btn_background15dp"
             android:gravity="center"
-            android:text="Book for this event"
+            android:text="GO TO MAP"
             android:textColor="#fff"
             android:textSize="16sp"
             android:textStyle="bold" />

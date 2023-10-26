@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
@@ -109,6 +110,7 @@ public class MapActivity extends AppCompatActivity {
     private DatabaseManager databaseManager;
 
     private boolean isLocationEnabled = false;
+    RecyclerView rvView;
 
     
 
@@ -116,6 +118,20 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        List<MyTestBean> datas = new ArrayList<>();
+        MyTestBean bean1 = new MyTestBean();
+        bean1.setNum1("100");
+        bean1.setNum2("10");
+        datas.add(bean1);
+
+        MyTestBean bean2 = new MyTestBean();
+        bean2.setNum1("200");
+        bean1.setNum2("20");
+        datas.add(bean2);
+
+        MyAdapter myAdapter = new MyAdapter(datas);
+
+
 
 
         this.databaseManager = new DatabaseManager(this);
@@ -139,16 +155,15 @@ public class MapActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.map);
-
+        rvView = findViewById(R.id.rvView);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        
+        rvView.setAdapter(myAdapter);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
                 
                 MapActivity.this.mapboxMap = mapboxMap;
-
                 mapboxMap.setStyle(new Style.Builder().fromUri(Style.DARK)
                         .withImage(MARKER_ICON_ID,
                         getBitmapFromDrawable(R.drawable.baseline_location_on_24)),
