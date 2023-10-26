@@ -9,10 +9,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.gestures.ShakeDetector;
+import com.example.myapplication.gestures.TiltDetector;
 
-public class CheckIn extends AppCompatActivity implements ShakeDetector.OnShakeListener {
+public class CheckIn extends AppCompatActivity implements
+        ShakeDetector.OnShakeListener, TiltDetector.OnTiltListener {
 
     private ShakeDetector shakeDetector;
+    private TiltDetector tiltDetector;
     private SensorManager sensorManager;
 
     @Override
@@ -22,6 +25,7 @@ public class CheckIn extends AppCompatActivity implements ShakeDetector.OnShakeL
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         shakeDetector = new ShakeDetector(this);
+        tiltDetector = new TiltDetector(this);
     }
 
     @Override
@@ -30,7 +34,9 @@ public class CheckIn extends AppCompatActivity implements ShakeDetector.OnShakeL
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (accelerometer != null) {
             sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
+
     }
 
     @Override
@@ -41,11 +47,28 @@ public class CheckIn extends AppCompatActivity implements ShakeDetector.OnShakeL
 
     @Override
     public void onShake() {
-        outputSuccess();
+        phoneShaken();
     }
 
-    private void outputSuccess(){
+    @Override
+    public void initialTilt(){
         TextView output = findViewById(R.id.gestureOutput);
-        output.setText("Phone shaken");
+        output.setText("Tilt 1");
+    }
+
+    @Override
+    public void onTiltedBothWays() {
+        TextView output = findViewById(R.id.gestureOutput);
+        output.setText("Phone tilted");
+    }
+
+    private void phoneShaken(){
+//        TextView output = findViewById(R.id.gestureOutput);
+//        output.setText("Phone shaken");
+    }
+
+    public void returnText(){
+        TextView output = findViewById(R.id.gestureOutput);
+        output.setText("Output");
     }
 }

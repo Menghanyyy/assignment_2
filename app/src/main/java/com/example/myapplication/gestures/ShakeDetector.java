@@ -7,7 +7,7 @@ import android.hardware.SensorManager;
 
 public class ShakeDetector implements SensorEventListener {
 
-    private static final float SHAKE_THRESHOLD = 12.0f; // Adjust this value according to sensitivity
+    private static final float SHAKE_THRESHOLD = 12.0f; // Sensitivity
 
     private OnShakeListener mListener;
 
