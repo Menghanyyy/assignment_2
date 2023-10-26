@@ -26,6 +26,11 @@ public class CheckIn extends AppCompatActivity implements
 
     private static final int GESTURE_COUNT = 3;
 
+    private void setInstructions(String instructionString){
+        TextView output = findViewById(R.id.instructions);
+        output.setText(instructionString);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,18 +53,21 @@ public class CheckIn extends AppCompatActivity implements
                 shakeDetector = new ShakeDetector(this);
                 if (accelerometer != null) {
                     sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                    setInstructions("Shake Your Phone!");
                     break;
                 }
             case 1:
                 tiltDetector = new TiltDetector(this);
                 if (accelerometer != null) {
                     sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                    setInstructions("Tilt left, then tilt right");
                     break;
                 }
             case 2:
                 darknessDetector = new DarknessDetector(this);
                 if (lightSensor != null) {
                     darknessDetector = new DarknessDetector(this);
+                    setInstructions("Cover the front camera");
                     break;
                 }
         }

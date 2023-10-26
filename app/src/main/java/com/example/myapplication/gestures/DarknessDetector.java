@@ -23,7 +23,6 @@ public class DarknessDetector implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             float lightLevel = event.values[0];
-            Log.i("Light Level", Float.toString(lightLevel));
 
             // Detect darkness (when light level is below the threshold)
             if (lightLevel < LIGHT_THRESHOLD) {
