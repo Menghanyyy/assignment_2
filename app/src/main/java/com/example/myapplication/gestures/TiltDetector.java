@@ -21,8 +21,6 @@ public class TiltDetector implements SensorEventListener {
     public interface OnTiltListener {
         void onTiltedBothWays();
 
-        void returnText();
-
         void initialTilt();
     }
 
@@ -34,8 +32,6 @@ public class TiltDetector implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0]; // X-axis tilt
-            Log.i("Orientation", Float.toString(x));
-            Log.i("Tilts", Boolean.toString(tiltedLeft) + " " + Boolean.toString(tiltedCentre) + " " + Boolean.toString(tiltedRight));
 
             // Detect left tilt
             if (x > TILT_THRESHOLD) {
@@ -81,7 +77,6 @@ public class TiltDetector implements SensorEventListener {
 
             if (x < CENTRE_THRESHOLD && x > -CENTRE_THRESHOLD){
                 tiltedCentre = true;
-                mListener.returnText();
             }
         }
     }

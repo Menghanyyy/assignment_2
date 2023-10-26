@@ -8,14 +8,18 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.gestures.DarknessDetector;
 import com.example.myapplication.gestures.ShakeDetector;
 import com.example.myapplication.gestures.TiltDetector;
 
 public class CheckIn extends AppCompatActivity implements
-        ShakeDetector.OnShakeListener, TiltDetector.OnTiltListener {
+        ShakeDetector.OnShakeListener,
+        TiltDetector.OnTiltListener,
+        DarknessDetector.OnDarknessListener {
 
     private ShakeDetector shakeDetector;
     private TiltDetector tiltDetector;
+    private DarknessDetector darknessDetector;
     private SensorManager sensorManager;
 
     @Override
@@ -26,17 +30,20 @@ public class CheckIn extends AppCompatActivity implements
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         shakeDetector = new ShakeDetector(this);
         tiltDetector = new TiltDetector(this);
+        darknessDetector = new DarknessDetector(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
         if (accelerometer != null) {
             sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
             sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
     }
 
     @Override
@@ -45,30 +52,29 @@ public class CheckIn extends AppCompatActivity implements
         sensorManager.unregisterListener(shakeDetector);
     }
 
+    //TODO Link this to other activity
+    private void checkIn(){
+        TextView output = findViewById(R.id.gestureOutput);
+        output.setText("Checked In");
+    }
+
     @Override
     public void onShake() {
-        phoneShaken();
+        //checkIn();
     }
 
     @Override
     public void initialTilt(){
-        TextView output = findViewById(R.id.gestureOutput);
-        output.setText("Tilt 1");
+        // TODO Give haptic feedback that user is halfway done with gesture
     }
 
     @Override
     public void onTiltedBothWays() {
-        TextView output = findViewById(R.id.gestureOutput);
-        output.setText("Phone tilted");
+        //checkIn();
     }
 
-    private void phoneShaken(){
-//        TextView output = findViewById(R.id.gestureOutput);
-//        output.setText("Phone shaken");
-    }
-
-    public void returnText(){
-        TextView output = findViewById(R.id.gestureOutput);
-        output.setText("Output");
+    @Override
+    public void onDarknessDetected() {
+        checkIn();
     }
 }
