@@ -54,20 +54,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
                     }
                 });
-
-
-//                if (username.getText().toString().equals("admin") &&
-//                        password.getText().toString().equals("123")){
-//                    //Toast.makeText(MainActivity.this, "Successful Login", Toast.LENGTH_LONG).show();
-//                    TextView password = (TextView)findViewById(R.id.password);
-//                    Intent i = new Intent(Login.this, Home.class);
-//                    startActivity(i);
-//                }else{
-//                    Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
-//                }
-
-//                Intent i = new Intent(Login.this, Home.class);
-//                startActivity(i);
+                
             }
         });
 
