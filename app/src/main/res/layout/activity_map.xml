@@ -51,8 +51,6 @@
         tools:itemCount="3"
         tools:listitem="@layout/item_map_tip"
 
-
-
         />
 
 

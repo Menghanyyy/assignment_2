@@ -18,7 +18,7 @@ public class Home extends AppCompatActivity {
     MapFragment mMapFragment;
     ProfileFragment mProfileFragment;
 
-    CreateEvent mCreateEvent;
+    CreateEditEvent mCreateEvent;
 
     private int currentIndex = 0; //当前Frament索引
 
@@ -90,7 +90,7 @@ public class Home extends AppCompatActivity {
             if(1==currentIndex){
 
             }else{
-                Intent intent = new Intent(this, CreateEvent.class);
+                Intent intent = new Intent(this, CreateEditEvent.class);
                 startActivity(intent);
 
             }
