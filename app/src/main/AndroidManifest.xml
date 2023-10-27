@@ -22,7 +22,10 @@
             android:name=".SignUP"
             android:exported="false" />
         <activity
-            android:name=".CreateEvent"
+            android:name=".CreateEditEvent"
+            android:exported="false" />
+        <activity
+            android:name=".AddRemoveActivity"
             android:exported="false" />
         <activity
             android:name=".EventPageActivity"

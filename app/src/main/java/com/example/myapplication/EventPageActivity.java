@@ -24,6 +24,7 @@ public class EventPageActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     DatabaseManager databaseManager;
+    TextView tv_gotomap;
 
 
     @SuppressLint("MissingInflatedId")
@@ -33,7 +34,15 @@ public class EventPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_info);
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
+        tv_gotomap = findViewById(R.id.tv_gotomap);
+        tv_gotomap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent  mapIntent = new Intent(EventPageActivity.this,MapActivity.class);
+                startActivity(mapIntent);
 
+            }
+        });
         databaseManager = new DatabaseManager(this);
 
         databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {
@@ -65,14 +74,13 @@ public class EventPageActivity extends AppCompatActivity {
         iv_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent eventInfo = new Intent(EventPageActivity.this, CreateEvent.class);//src to tagactivity
+                Intent eventInfo = new Intent(EventPageActivity.this, CreateEditEvent.class);//src to tagactivity
                 eventInfo.putExtra("eventId", eventId);
                 startActivity(eventInfo);
             }
         });
 
 
-        tv_map = findViewById(R.id.tv_map);
         iv_back = findViewById(R.id.iv_back);
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,12 +89,6 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
 
-        tv_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(
