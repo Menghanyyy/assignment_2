@@ -7,42 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".MapActivity">
 
-    <RelativeLayout
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <!-- Removed layout_gravity as it's not applicable in RelativeLayout -->
+        <ImageButton
+            android:id="@+id/location_toggle_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/rounded_btn_background_2"
+            android:paddingTop="5dp"
+            android:paddingStart="5dp"
+            android:paddingBottom="7dp"
+            android:paddingEnd="7dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_baseline_my_location_60" />
 
-            <Button
-                android:id="@+id/location_toggle_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="60dp"
-                android:padding="10dp"
-                android:text="Toggle Location" />
-        </com.mapbox.mapboxsdk.maps.MapView>
-
-
-
-    </RelativeLayout>
+    </com.mapbox.mapboxsdk.maps.MapView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="200dp"
         tools:itemCount="3"
         tools:listitem="@layout/item_map_tip"
-        android:visibility="gone"
-        />
-
-
+        android:visibility="gone"/>
 </RelativeLayout>

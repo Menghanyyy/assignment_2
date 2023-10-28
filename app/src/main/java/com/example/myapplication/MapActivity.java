@@ -77,6 +77,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ import android.Manifest;
 import javax.security.auth.login.LoginException;
 
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
@@ -112,8 +113,6 @@ public class MapActivity extends AppCompatActivity {
 
     private boolean isLocationEnabled = false;
     RecyclerView rvView;
-
-    
 
 
     @Override
@@ -149,7 +148,6 @@ public class MapActivity extends AppCompatActivity {
             }
         });
 
-
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
         setContentView(R.layout.activity_map);
@@ -158,13 +156,22 @@ public class MapActivity extends AppCompatActivity {
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         rvView.setAdapter(myAdapter);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                
-                MapActivity.this.mapboxMap = mapboxMap;
-                mapboxMap.setStyle(Style.MAPBOX_STREETS,
-                    new Style.OnStyleLoaded() {
+        mapView.getMapAsync(this);
+
+    }
+
+    /**
+     * Called when the map is ready to be used.
+     *
+     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     *                  {@link MapView} that defines the callback.
+     */
+    @Override
+    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+
+        MapActivity.this.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/light-v11"),
+                new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
@@ -192,12 +199,8 @@ public class MapActivity extends AppCompatActivity {
 
                 });
 
-                // Enable zoom controls (+ and - buttons)
-                mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
-
-
-            }
-        });
+        // Enable zoom controls (+ and - buttons)
+        mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
 
     }
 
@@ -326,18 +329,6 @@ public class MapActivity extends AppCompatActivity {
             // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
-//            // Set up custom LocationComponentOptions
-//            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this)
-//                    .accuracyAlpha(.6f)
-//                    .accuracyColor(Color.BLUE)
-//                    .build();
-//
-//            // Use the custom options when activating the location component
-//            LocationComponentActivationOptions locationComponentActivationOptions =
-//                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
-//                            .locationComponentOptions(locationComponentOptions)
-//                            .build();
-
             // Activate with options
             locationComponent.activateLocationComponent(
                     LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
@@ -345,11 +336,12 @@ public class MapActivity extends AppCompatActivity {
             // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
 
+            // Set the component's camera mode
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            // Set the component's camera mode
-            locationComponent.setCameraMode(CameraMode.TRACKING);
 
             ensureUserLocationIsOnTop(loadedMapStyle);
 
@@ -393,7 +385,7 @@ public class MapActivity extends AppCompatActivity {
         super.onStart();
         mapView.onStart();
 
-        Button toggleLocationButton = findViewById(R.id.location_toggle_button);
+        ImageButton toggleLocationButton = findViewById(R.id.location_toggle_button);
         toggleLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

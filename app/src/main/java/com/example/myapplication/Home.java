@@ -8,15 +8,24 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.myapplication.component.GeneralUser;
+import com.example.myapplication.database.DatabaseCallback;
+import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Home extends AppCompatActivity {
+
+    public static GeneralUser currentUser;
+
     BottomNavigationView bottomNavigationView ;
     EventFragment mEventFragment;
     MapFragment mMapFragment;
     ProfileFragment mProfileFragment;
+
+    DatabaseManager databaseManager;
 
     CreateEditEvent mCreateEvent;
 
@@ -26,13 +35,29 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Intent intent = getIntent();
+        String userId = intent.getStringExtra("userId");
+
+        databaseManager = new DatabaseManager(this);
+        databaseManager.getUserByID(Integer.parseInt(userId), new DatabaseCallback<GeneralUser>() {
+            @Override
+            public void onSuccess(GeneralUser result) {
+                currentUser = result;
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error getting user", error);
+            }
+        });
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         mEventFragment =EventFragment.newInstance("","");
         mMapFragment =MapFragment.newInstance("","");
         mProfileFragment =ProfileFragment.newInstance("","");
 
         replaceFg(mEventFragment);
-
 
         bottomNavigationView.setOnItemSelectedListener(
                 new BottomNavigationView.OnItemSelectedListener() {

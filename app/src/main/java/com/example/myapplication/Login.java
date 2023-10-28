@@ -46,6 +46,7 @@ public class Login extends AppCompatActivity {
                     public void onSuccess(String result) {
                         Intent i = new Intent(Login.this, Home.class);
                         Log.println(Log.ASSERT, "Logging in", result);
+                        i.putExtra("userId", result);
                         startActivity(i);
                     }
 

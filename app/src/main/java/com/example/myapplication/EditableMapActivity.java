@@ -75,6 +75,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ import android.Manifest;
 import javax.security.auth.login.LoginException;
 
 
-public class EditableMapActivity extends AppCompatActivity {
+public class EditableMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
@@ -123,68 +124,41 @@ public class EditableMapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editable_activity_map);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.map);
-
         mapView = (MapView) findViewById(R.id.mapView_2);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+    }
 
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
+    /**
+     * Called when the map is ready to be used.
+     *
+     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     *                  {@link MapView} that defines the callback.
+     */
+    @Override
+    public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
-                EditableMapActivity.this.mapboxMap = mapboxMap;
+        EditableMapActivity.this.mapboxMap = mapboxMap;
 
-                mapboxMap.setStyle(new Style.Builder().fromUri(Style.DARK)
-                                .withImage(MARKER_ICON_ID,
-                                getBitmapFromDrawable(R.drawable.baseline_location_on_24)),
-                                new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/light-v11"),
+            new Style.OnStyleLoaded() {
+                @Override
+                public void onStyleLoaded(@NonNull Style style) {
 
-                            @Override
-                            public void onStyleLoaded(@NonNull Style style) {
+                    circleManager = new CircleManager(mapView, mapboxMap, style);
 
-                                initSource(style);
-                                initLayers(style);
+                    // Set initial map viewport and zoom
+                    CameraPosition initialPosition = new CameraPosition.Builder()
+                            .target(new LatLng(-37.80995133438894, 144.96871464972733))  // Set the latitude and longitude
+                            .zoom(10)  // Set zoom level
+                            .build();
 
-                                circleManager = new CircleManager(mapView, mapboxMap, style);
+                    mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
+                }
 
-                                // Set initial map viewport and zoom
-                                CameraPosition initialPosition = new CameraPosition.Builder()
-                                        .target(new LatLng(-37.80995133438894, 144.96871464972733))  // Set the latitude and longitude
-                                        .zoom(10)  // Set zoom level
-                                        .build();
+            });
 
-                                mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
-
-
-                                if(mapMove) {
-                                    mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
-
-                                } else if (addMarker) {
-                                    mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
-                                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                                        @Override
-                                        public boolean onMapClick(@NonNull LatLng point) {
-
-                                            clickedPoints = point;
-                                            addMarker();
-
-                                            return false;
-                                        }
-                                    });
-
-
-                                }
-
-                            }
-
-                        });
-
-
-
-            }
-        });
 
     }
 
@@ -192,34 +166,36 @@ public class EditableMapActivity extends AppCompatActivity {
         circleManager.deleteAll();
     }
 
-    private void initSource(@NonNull Style loadedMapStyle) {
-        GeoJsonSource gj = new GeoJsonSource(ICON_SOURCE_ID);
-        loadedMapStyle.addSource(gj);
-    }
 
-    private void initLayers(@NonNull Style loadedMapStyle) {
+    private void addMarker(Style loadedMapStyle) {
 
-        loadedMapStyle.addLayer(new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(
+        // Remove the existing layer if it's present
+        if (loadedMapStyle.getLayer(ICON_LAYER_ID) != null) {
+            loadedMapStyle.removeLayer(ICON_LAYER_ID);
+        }
+
+        // Remove the existing source if it's present
+        if (loadedMapStyle.getSource(ICON_SOURCE_ID) != null) {
+            loadedMapStyle.removeSource(ICON_SOURCE_ID);
+        }
+
+        loadedMapStyle.addImage(MARKER_ICON_ID, getBitmapFromDrawable(R.drawable.location_pointer));
+
+        GeoJsonSource geoJsonSource = new GeoJsonSource(ICON_SOURCE_ID);
+        Point destinationPoint = Point.fromLngLat(clickedPoints.getLongitude(), clickedPoints.getLatitude());
+
+        geoJsonSource.setGeoJson(Feature.fromGeometry(destinationPoint));
+        loadedMapStyle.addSource(geoJsonSource);
+
+        SymbolLayer destinationSymbolLayer = new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID);
+        destinationSymbolLayer.withProperties(
                 iconImage(MARKER_ICON_ID),
-                iconIgnorePlacement(true),
-                iconAllowOverlap(true)));
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true)
+        );
 
+        loadedMapStyle.addLayer(destinationSymbolLayer);
     }
-
-    private void addMarker() {
-        mapboxMap.getStyle(new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                GeoJsonSource destinationIconGeoJsonSource = style.getSourceAs(ICON_SOURCE_ID);
-                if (destinationIconGeoJsonSource != null) {
-                    destinationIconGeoJsonSource.setGeoJson(Feature.fromGeometry(Point.fromLngLat(
-                            clickedPoints.getLongitude(), clickedPoints.getLatitude())));
-                }
-            }
-        });
-
-    }
-
 
 
     private Bitmap getBitmapFromDrawable(int drawableId) {
@@ -271,6 +247,7 @@ public class EditableMapActivity extends AppCompatActivity {
             points.add(Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude()));
         }
 
+        pointsList.clear();
         pointsList.add(points);
 
         for (List<Point> p : pointsList)
@@ -292,7 +269,12 @@ public class EditableMapActivity extends AppCompatActivity {
                     PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
                     PropertyFactory.fillOpacity(0.5f)
             );
-            style.addLayer(fillLayer);
+
+            // To remove the layer with ID "maine"
+            Layer layer = style.getLayer(ICON_LAYER_ID);
+            if (layer != null) {
+                style.addLayerBelow(fillLayer, ICON_LAYER_ID);
+            }
 
             // Adding outline layer to the map
             LineLayer lineLayer = new LineLayer("outline" + pointsList.indexOf(p), "maine" + pointsList.indexOf(p));
@@ -315,7 +297,7 @@ public class EditableMapActivity extends AppCompatActivity {
         super.onStart();
         mapView.onStart();
 
-        Button drawCircleButton = findViewById(R.id.circle_btn);
+        ImageButton drawCircleButton = findViewById(R.id.circle_btn);
         drawCircleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -373,7 +355,7 @@ public class EditableMapActivity extends AppCompatActivity {
             }
         });
 
-        Button addMarkerButton = findViewById(R.id.marker_btn);
+        ImageButton  addMarkerButton = findViewById(R.id.marker_btn);
         addMarkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -394,7 +376,7 @@ public class EditableMapActivity extends AppCompatActivity {
                         @Override
                         public boolean onMapClick(@NonNull LatLng point) {
                             clickedPoints = point;
-                            addMarker();
+                            addMarker(mapboxMap.getStyle());
                             return false;
                         }
                     };
@@ -419,7 +401,7 @@ public class EditableMapActivity extends AppCompatActivity {
         });
 
 
-        Button moveMapButton = findViewById(R.id.move_btn);
+        ImageButton  moveMapButton = findViewById(R.id.move_btn);
         moveMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -444,7 +426,6 @@ public class EditableMapActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-
 
 
             }

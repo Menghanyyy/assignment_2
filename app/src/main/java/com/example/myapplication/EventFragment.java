@@ -164,8 +164,6 @@ public class EventFragment extends Fragment{
             location.setText("Location: Melbourne");
             desc.setText(event.getDescription());
 
-
-
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

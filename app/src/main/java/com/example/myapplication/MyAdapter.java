@@ -42,8 +42,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView1 = itemView.findViewById(R.id.tv1);
-            textView2 = itemView.findViewById(R.id.tv2);
+//            textView1 = itemView.findViewById(R.id.tv1);
+//            textView2 = itemView.findViewById(R.id.tv2);
         }
     }
 }
