@@ -119,6 +119,7 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         List<MyTestBean> datas = new ArrayList<>();
         MyTestBean bean1 = new MyTestBean();
         bean1.setNum1("100");
@@ -131,7 +132,6 @@ public class MapActivity extends AppCompatActivity {
         datas.add(bean2);
 
         MyAdapter myAdapter = new MyAdapter(datas);
-
 
 
 
@@ -154,8 +154,6 @@ public class MapActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_map);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.map);
         rvView = findViewById(R.id.rvView);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -328,17 +326,17 @@ public class MapActivity extends AppCompatActivity {
             // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
-            // Set up custom LocationComponentOptions
-            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this)
-                    .accuracyAlpha(.6f)
-                    .accuracyColor(Color.BLUE)
-                    .build();
-
-            // Use the custom options when activating the location component
-            LocationComponentActivationOptions locationComponentActivationOptions =
-                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
-                            .locationComponentOptions(locationComponentOptions)
-                            .build();
+//            // Set up custom LocationComponentOptions
+//            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this)
+//                    .accuracyAlpha(.6f)
+//                    .accuracyColor(Color.BLUE)
+//                    .build();
+//
+//            // Use the custom options when activating the location component
+//            LocationComponentActivationOptions locationComponentActivationOptions =
+//                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
+//                            .locationComponentOptions(locationComponentOptions)
+//                            .build();
 
             // Activate with options
             locationComponent.activateLocationComponent(
