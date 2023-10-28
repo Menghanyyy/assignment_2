@@ -9,8 +9,8 @@ public class GeneralUser extends User{
     private List<String> subscribedOrganisation;
 
 
-    public GeneralUser(String UserId, String UserName, String UserEmail, String UserPin) {
-        super(UserId, UserName, UserEmail, UserPin);
+    public GeneralUser(String UserId, String UserName, String UserEmail, String UserPin, String Name) {
+        super(UserId, UserName, UserEmail, UserPin, Name);
 
         this.visitedLocation = new ArrayList<Visit>();
         this.subscribedOrganisation = new ArrayList<String>();

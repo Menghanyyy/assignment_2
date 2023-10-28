@@ -9,18 +9,79 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.myapplication.component.GeneralUser;
+import com.example.myapplication.database.DatabaseCallback;
+import com.example.myapplication.database.DatabaseManager;
+import com.google.android.material.button.MaterialButton;
 
 public class SignUP extends AppCompatActivity {
+
+    private DatabaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        databaseManager = new DatabaseManager(this);
+
+        TextView usernameView = (TextView)findViewById(R.id.username);
+        TextView emailView = (TextView)findViewById(R.id.email);
+        TextView passwordView = (TextView)findViewById(R.id.password);
+        TextView nameView = (TextView)findViewById(R.id.name);
+
+        MaterialButton signUpBt = (MaterialButton)findViewById(R.id.signUpButton);
+        signUpBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GeneralUser newUser = new GeneralUser(
+                        null,
+                        usernameView.getText().toString(),
+                        emailView.getText().toString(),
+                        passwordView.getText().toString(),
+                        nameView.getText().toString()
+                );
+                databaseManager.addUser(newUser, new DatabaseCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try{
+                            Integer userID = Integer.parseInt(result);
+
+                            // Update ID since it is created by the DB
+                            newUser.setUserId(result);
+
+                            Log.i("On success (User ID)", String.valueOf(userID));
+                            Intent i = new Intent(SignUP.this, Home.class);
+                            startActivity(i);
+                        }
+                        catch (Exception e){
+                            Log.i("User bad string", result);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.println(Log.ASSERT, "Error adding user", error);
+                        Toast.makeText(
+                                SignUP.this, "Failed To Sign Up",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+            }
+        });
+
         TextView textView= findViewById(R.id.forget);
         String text = "Already have an account? Log In";
         SpannableString ss= new SpannableString(text);
+
+//        MaterialButton signupButton =
+
         ClickableSpan clickableSpan1 = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {

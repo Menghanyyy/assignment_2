@@ -6,11 +6,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.latti31.springeventserver.objects.DatabaseChecker;
 import com.latti31.springeventserver.objects.JSONResponseWrapper;
+import com.latti31.springeventserver.objects.MapboxUploader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/activities")
@@ -21,9 +25,42 @@ public class ActivityController {
 
     private final JSONResponseWrapper jsonWrapper = new JSONResponseWrapper();
 
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10); // adjust the pool size as needed
+
+    public static final int UPLOAD_ATTEMPTS_LIMIT = 25;
+
     public ActivityController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.databaseChecker = new DatabaseChecker(jdbcTemplate);
+    }
+
+    private void asyncUpdateMapbox(int activityID, int eventID, int visited, String polygonString){
+        CompletableFuture.runAsync(() -> {
+            try {
+                MapboxUploader.makePutRequest(activityID, eventID, visited, polygonString);
+
+                int attemptsRemaining = UPLOAD_ATTEMPTS_LIMIT;
+
+                while (attemptsRemaining > 0){
+
+                    try {
+                        attemptsRemaining--;
+                        Boolean result = MapboxUploader.makePostRequest();
+                        if (result){
+                            break;
+                        }
+                        Thread.sleep(1000); // Pauses for 1 second
+
+                    } catch (InterruptedException e) {
+                        // Something went wrong
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, executorService);
+
     }
 
     @GetMapping("/getByID/{activity_id}")
@@ -163,8 +200,13 @@ public class ActivityController {
             rebalanceEvent(eventID);
 
             try {
-                int generatedEventID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
-                return jsonWrapper.wrapString(true, Integer.toString(generatedEventID));
+                int generatedID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+                // Assumes these functions will always work
+                // Call the makePostRequest and makePutRequest asynchronously
+                asyncUpdateMapbox(generatedID, eventID, 0, polygonLocation);
+
+                return jsonWrapper.wrapString(true, Integer.toString(generatedID));
 
             } catch (Exception ex){
                 return jsonWrapper.wrapString(false, "Error getting last insert ID (event)"
@@ -317,7 +359,29 @@ public class ActivityController {
             }
 
             jdbcTemplate.update(query, userID, activityID, time);
-            return jsonWrapper.wrapString(true, "Visit added successfully.");
+
+            String newQuery = "SELECT " +
+                    "ST_AsText(polygonLocation) AS polyLocation, " +
+                    "eventID " +
+                    "FROM Activity WHERE activityID = ?";
+
+            try {
+                List<Map<String, Object>> activities = jdbcTemplate.queryForList(newQuery, activityID);
+                if (!activities.isEmpty()) {
+                    Map<String, Object> activity = activities.get(0);
+
+                    int eventID = (int) activity.get("eventID");
+                    String polygonLocation = ((String) activity.get("polyLocation")).replace(",", ", ");
+
+                    asyncUpdateMapbox(activityID, eventID, 1, polygonLocation);
+
+                    return jsonWrapper.wrapString(true, "Visit added successfully.");
+                } else{
+                    return jsonWrapper.wrapString(false, "Visit not found.");
+                }
+            } catch (Exception ex){
+                return jsonWrapper.wrapString(false, "Problem uploading put request" + ex.getMessage());
+            }
         } catch (Exception e) {
             return jsonWrapper.wrapString(false, "Error creating visit: " +
                     e.getMessage());

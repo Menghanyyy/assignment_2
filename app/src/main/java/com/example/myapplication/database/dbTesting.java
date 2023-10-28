@@ -33,7 +33,8 @@ public class dbTesting {
                 "10",
                 "zara2",
                 "zara2.com",
-                "Password"
+                "Password",
+                "myname"
         );
 
 
