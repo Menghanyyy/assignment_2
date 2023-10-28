@@ -50,6 +50,7 @@
         android:layout_marginBottom="200dp"
         tools:itemCount="3"
         tools:listitem="@layout/item_map_tip"
+        android:visibility="gone"
 
 
 
