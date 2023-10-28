@@ -10,8 +10,8 @@ public class OrganisationUser extends User{
     private List<User> subscriber;
 
 
-    public OrganisationUser(String UserId, String UserName, String UserEmail, String UserPin) {
-        super(UserId, UserName, UserEmail, UserPin);
+    public OrganisationUser(String UserId, String UserName, String UserEmail, String UserPin, String Name) {
+        super(UserId, UserName, UserEmail, UserPin, Name);
 
         this.hostingEvent = new ArrayList<Event>();
 

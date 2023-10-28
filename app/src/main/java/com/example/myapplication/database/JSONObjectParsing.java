@@ -69,10 +69,12 @@ public class JSONObjectParsing {
             JSONObject jsonObject = new JSONObject();
 
             // Add individual fields to the JSON object
-            jsonObject.put("name", user.getUserName());
+            jsonObject.put("name", user.getName());
             jsonObject.put("email", user.getUserEmail());
             jsonObject.put("userName", user.getUserName());
             jsonObject.put("password", user.getUserPin());
+
+            Log.i("JSONOBJECT", jsonObject.toString());
 
             return jsonObject;
         } catch (JSONException e) {
@@ -258,19 +260,20 @@ public class JSONObjectParsing {
     public GeneralUser parseUser(JSONObject userObject) {
         try {
             int userID = userObject.getInt("userID");
+            String username = userObject.getString("username");
             String name = userObject.getString("name");
             String email = userObject.getString("email");
 
             return new GeneralUser(
                     String.valueOf(userID),
-                    name,
+                    username,
                     email,
-                    null
+                    null,
+                    name
             );
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

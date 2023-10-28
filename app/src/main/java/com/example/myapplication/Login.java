@@ -36,7 +36,7 @@ public class Login extends AppCompatActivity {
         TextView username = (TextView)findViewById(R.id.userName);
         TextView password = (TextView)findViewById(R.id.password);
 
-        MaterialButton loginBt = (MaterialButton)findViewById(R.id.signInButton);
+        MaterialButton loginBt = (MaterialButton)findViewById(R.id.signUpButton);
         loginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,6 +45,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onSuccess(String result) {
                         Intent i = new Intent(Login.this, Home.class);
+                        Log.println(Log.ASSERT, "Logging in", result);
                         startActivity(i);
                     }
 
@@ -66,6 +67,7 @@ public class Login extends AppCompatActivity {
             public void onClick(@NonNull View view) {
                 Intent i = new Intent(Login.this, SignUP.class);
                 startActivity(i);
+                Log.println(Log.ASSERT, "Signup button", "going to sign up");
             }
         };
         ss.setSpan(clickableSpan1,23,30, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

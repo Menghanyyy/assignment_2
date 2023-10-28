@@ -7,11 +7,18 @@ public abstract class User {
     private String userEmail;
     private String userPin;
 
-    public User(String UserId, String UserName, String UserEmail, String UserPin) {
+    public String getName() {
+        return name;
+    }
+
+    private String name;
+
+    public User(String UserId, String UserName, String UserEmail, String UserPin, String Name) {
         this.userId = UserId;
         this.userName = UserName;
         this.userEmail = UserEmail;
         this.userPin = UserPin;
+        this.name = Name;
     }
 
     public String getUserId() {
