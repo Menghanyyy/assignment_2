@@ -83,8 +83,6 @@ public class JSONObjectParsing {
             jsonObject.put("userName", user.getUserName());
             jsonObject.put("password", user.getUserPin());
 
-            Log.i("JSONOBJECT", jsonObject.toString());
-
             return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -114,6 +112,8 @@ public class JSONObjectParsing {
 
             // Add individual fields to the JSON object
             jsonObject.put("centreLocation", convertPoint(activity.getActivityLocation()));
+            Log.i("Centre Location", convertPoint(activity.getActivityLocation()));
+
             jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
             jsonObject.put("description", activity.getDescription());
             jsonObject.put("startTime", activity.getStartTime());
@@ -161,10 +161,23 @@ public class JSONObjectParsing {
                 pointList.add(point);
             }
         }
-
-        //pointList.remove(pointList.size()-1);
-        //Log.i("String value of bbox", String.valueOf(pointList));
         return pointList;
+    }
+
+    public static Point extractPoint(String pointString) {
+        Pattern pattern = Pattern.compile("-?\\d+\\.?\\d* -?\\d+\\.?\\d*");
+        Matcher matcher = pattern.matcher(pointString);
+
+        if (matcher.find()) {
+            String[] parts = matcher.group().split("\\s+");
+            if (parts.length == 2) {
+                double x = Double.parseDouble(parts[0]);
+                double y = Double.parseDouble(parts[1]);
+                return Point.fromLngLat(x, y);
+            }
+        }
+        // Return null if the input format is not valid
+        return null;
     }
 
     public ArrayList<Event> parseEvents(JSONArray jsonArray) {
@@ -236,9 +249,11 @@ public class JSONObjectParsing {
             String activityName = jsonActivity.getString("name");
             String locationString = jsonActivity.getString("centreLocation");
             String polygonString = jsonActivity.getString("polygonLocation");
-            List<Point> activityPolygon = null; //extractPointsFromPolygon(polygonString);
+            List<Point> activityPolygon = extractPointsFromPolygon(polygonString);
+            Point centrePoint = extractPoint(locationString);
             String description = jsonActivity.getString("description");
             String locationName = jsonActivity.getString("locationName");
+            int creatorID = jsonActivity.getInt("creatorID");
 
             String startTime = jsonActivity.getString("startTime");
             String endTime = jsonActivity.getString("endTime");
@@ -247,17 +262,18 @@ public class JSONObjectParsing {
             // Create and return an Event object
             return new Activity(
                     activityID,
-                    "Random activity",
+                    activityName,
                     null,
                     null,
-                    null,
+                    centrePoint,
                     activityPolygon,
                     description,
                     locationName,
                     null,
                     startTime,
                     endTime,
-                    image
+                    image,
+                    creatorID
             );
         } catch (JSONException e) {
             e.printStackTrace();

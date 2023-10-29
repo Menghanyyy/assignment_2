@@ -56,11 +56,12 @@ public class Activity {
     private String startTime;
     private String endTime;
     private String image;
+    private int creatorID;
 
     public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
                     Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
                     String description, String locationName, List<Point> bbox,
-                    String startTime, String endTime, String image) {
+                    String startTime, String endTime, String image, int CreatorID) {
         this.activityId = ActivityId;
         this.activityName = ActivityName;
         this.activityOrganiser = ActivityOrganiser;
@@ -74,6 +75,7 @@ public class Activity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.image = image;
+        this.creatorID = CreatorID;
     }
 
     public String getActivityId() {
