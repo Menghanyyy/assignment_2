@@ -283,6 +283,8 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                     PropertyFactory.fillOpacity(0.5f)
             );
 
+            style.addLayer(fillLayer);
+
             // To remove the layer with ID "maine"
             Layer layer = style.getLayer(ICON_LAYER_ID);
             if (layer != null) {
