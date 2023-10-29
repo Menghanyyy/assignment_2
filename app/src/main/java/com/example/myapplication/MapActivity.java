@@ -9,8 +9,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.component.Activity;
+import com.example.myapplication.component.Detect;
 import com.example.myapplication.component.Event;
+import com.example.myapplication.component.Features;
 import com.example.myapplication.component.GeneralUser;
+import com.example.myapplication.component.OnDetectResultListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -92,8 +95,10 @@ import android.Manifest;
 
 import javax.security.auth.login.LoginException;
 
+import com.example.myapplication.component.Detect;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnDetectResultListener {
+
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
@@ -120,6 +125,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LocationComponent locationComponent;
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
+    
+    Detect testDetect = new Detect(this);
 
 
     @Override
@@ -199,9 +206,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         // Set initial map viewport and zoom
                         CameraPosition initialPosition = new CameraPosition.Builder()
-                                .target(new LatLng(-37.80995133438894, 144.96871464972733))  // Set the latitude and longitude
+                                .target(new LatLng(-37.7951, 144.9620))  // Set the latitude and longitude
                                 .zoom(10)  // Set zoom level
                                 .build();
+
+                        // testing
+                        testDetect.nearActivities(144.9620, -37.7951);
+                        List<Features> features = testDetect.getFeatureList();
+                        Log.i("featuresTest", String.valueOf(features));
+                        // testing
 
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
@@ -460,4 +473,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.onDestroy();
     }
 
+
+    // this function return 
+    @Override
+    public void onDetectResult(List<Features> featureList) {
+        Log.i("featurelist", String.valueOf(featureList.size()));
+    }
 }
