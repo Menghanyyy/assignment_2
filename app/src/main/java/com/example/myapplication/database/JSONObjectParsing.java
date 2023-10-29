@@ -260,7 +260,7 @@ public class JSONObjectParsing {
     public GeneralUser parseUser(JSONObject userObject) {
         try {
             int userID = userObject.getInt("userID");
-            String username = userObject.getString("username");
+            String username = userObject.getString("userName");
             String name = userObject.getString("name");
             String email = userObject.getString("email");
 
