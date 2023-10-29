@@ -274,7 +274,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getAllActivities(testEvent, new DatabaseCallback<ArrayList<Activity>>() {
+            databaseManager.getAllActivities(testEvent.getEventId(), new DatabaseCallback<ArrayList<Activity>>() {
                 @Override
                 public void onSuccess(ArrayList<Activity> result) {
                     Log.i("get activities", String.valueOf(result.size()));

@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -63,6 +64,7 @@ import com.mapbox.mapboxsdk.style.sources.Source;
 
 import com.example.myapplication.database.*;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -103,21 +105,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FillManager fillManager;
     private CircleManager circleManager;
     private CircleManager markerManager;
-    private List<LatLng> polygonVertices = new ArrayList<>();
-    private List<LatLng> clickedPoints = new ArrayList<>();
     private long downTime;
     private static final long LONG_PRESS_TIME = 3000; // Set the time for a long press
     List<List<Point>> pointsList = new ArrayList<>();
+    List<Point> eventCenterPointsList = new ArrayList<>();
     private SymbolManager symbolManager;
     private DatabaseManager databaseManager;
 
     private boolean isLocationEnabled = false;
     RecyclerView rvView;
 
+    private LocationComponent locationComponent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        String eventId = intent.getStringExtra("eventId");
+
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
         List<MyTestBean> datas = new ArrayList<>();
         MyTestBean bean1 = new MyTestBean();
@@ -132,24 +140,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         MyAdapter myAdapter = new MyAdapter(datas);
 
-
-
-        this.databaseManager = new DatabaseManager(this);
-
-        databaseManager.getEventByID(105, new DatabaseCallback<Event>() {
-            @Override
-            public void onSuccess(Event result) {
-                pointsList.add(result.getEventRange());
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error Retrieving json", error);
-            }
-        });
-
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-
         setContentView(R.layout.activity_map);
 
         rvView = findViewById(R.id.rvView);
@@ -157,6 +147,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.onCreate(savedInstanceState);
         rvView.setAdapter(myAdapter);
         mapView.getMapAsync(this);
+
+
+        this.databaseManager = new DatabaseManager(this);
+
+        databaseManager.getAllActivities("133", new DatabaseCallback<ArrayList<Activity>>() {
+            @Override
+            public void onSuccess(ArrayList<Activity> result) {
+                Log.i("activity", result.size()+"");
+                for(Activity a : result) {
+                    Log.i("activity", a.getActivityName()+"");
+                    Log.i("activitycenter", a.getActivityId()+"");
+                    pointsList.add(a.getActivityRange());
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error get activities", error);
+            }
+        });
+
 
     }
 
@@ -189,8 +200,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 .build();
 
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
-
-
 
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
 
@@ -262,14 +271,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         }
 
-        List<Point> points = new ArrayList<>();
-        for (LatLng latLng : polygonVertices) {
-            Log.i("in", latLng+"");
-            points.add(Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude()));
-        }
-
-        pointsList.add(points);
-
         for (List<Point> p : pointsList)
         {
 
@@ -327,7 +328,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 == PackageManager.PERMISSION_GRANTED) {
 
             // Get an instance of the component
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+            locationComponent = mapboxMap.getLocationComponent();
 
             // Activate with options
             locationComponent.activateLocationComponent(

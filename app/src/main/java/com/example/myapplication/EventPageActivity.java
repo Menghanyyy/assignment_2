@@ -34,15 +34,18 @@ public class EventPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_info);
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
+
         tv_gotomap = findViewById(R.id.tv_gotomap);
         tv_gotomap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent  mapIntent = new Intent(EventPageActivity.this,MapActivity.class);
+                mapIntent.putExtra("eventId", eventId);
                 startActivity(mapIntent);
 
             }
         });
+
         databaseManager = new DatabaseManager(this);
 
         databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {

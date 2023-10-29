@@ -313,10 +313,10 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void getAllActivities(Event event, DatabaseCallback<ArrayList<Activity>> callback) {
+    public void getAllActivities(String eventId, DatabaseCallback<ArrayList<Activity>> callback) {
         sendJsonObjectRequest(
                 Request.Method.GET,
-                "/activities/getAll/" + event.getEventId(),
+                "/activities/getAll/" + eventId,
                 null,
                 callback,
                 ClassCodes.ACTIVITY_ARRAYLIST_CLASS

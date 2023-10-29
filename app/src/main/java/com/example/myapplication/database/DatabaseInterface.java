@@ -36,7 +36,7 @@ public interface DatabaseInterface {
 
     public void getActivityByID(int activityID, final DatabaseCallback<Activity> callback);
 
-    public void getAllActivities(Event event, final DatabaseCallback<ArrayList<Activity>> callback);
+    public void getAllActivities(String eventId, final DatabaseCallback<ArrayList<Activity>> callback);
 
     // Visit (Visit class includes user/event details)
     public void addVisit(Visit visit, final DatabaseCallback<String> callback);
