@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.component.*;
+import com.example.myapplication.database.DatabaseCallback;
+import com.example.myapplication.database.DatabaseManager;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
@@ -38,6 +40,8 @@ public class CreateEditEvent extends AppCompatActivity {
     TextView event_activity_name;
     Button create_event_btn, edit_event_btn, activity_add_button, activity_event_confirm_button;
     ViewGroup activity_list;
+
+    private DatabaseManager databaseManager;
 
     private Event createEvent;
 
@@ -70,9 +74,10 @@ public class CreateEditEvent extends AppCompatActivity {
         activity_list = findViewById(R.id.event_activity_list);
         activity_event_confirm_button = findViewById(R.id.event_activity_confirm_btn);
 
+        databaseManager = new DatabaseManager(this);
+
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
-
 
         if(eventId != null){
 
@@ -100,6 +105,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                         List<Point> testP = new ArrayList<Point>();
                         testP.add(Point.fromLngLat(0,0));
+                        Log.i("getcurretnuser", Home.currentUser.getName());
                         createEvent = new Event(
                                 "0",
                                 eventName,
@@ -129,8 +135,54 @@ public class CreateEditEvent extends AppCompatActivity {
                         activity_event_confirm_button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent i = new Intent(CreateEditEvent.this, Home.class);
-                                startActivity(i);
+
+                                databaseManager.addEvent(createEvent, new DatabaseCallback<String>() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        try{
+                                            Integer eventID = Integer.parseInt(result);
+                                            createEvent.setEventId(eventID+"");
+
+                                            for(int i=0 ; i < createEvent.getEventActivity().size(); i++) {
+
+                                                Activity activity = createEvent.getEventActivity().get(i);
+                                                activity.setHostedEvent(createEvent);
+
+                                                databaseManager.addActivity(activity, new DatabaseCallback<String>() {
+                                                    @Override
+                                                    public void onSuccess(String result) {
+                                                        try{
+                                                            Integer activityID = Integer.parseInt(result);
+                                                            Log.i("Success (Activity ID)", String.valueOf(activityID));
+
+                                                            if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
+                                                                Intent i = new Intent(CreateEditEvent.this, Home.class);
+                                                                startActivity(i);
+                                                            }
+                                                        }
+                                                        catch (Exception e){
+                                                            Log.i("Activity bad string", result);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String error) {
+                                                        Log.println(Log.ASSERT, "Error adding activity", error);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        catch (Exception e){
+                                            Log.i("Event bad string", result);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.println(Log.ASSERT, "Error adding event:", error);
+                                    }
+                                });
+
                             }
                         });
 
@@ -151,16 +203,16 @@ public class CreateEditEvent extends AppCompatActivity {
 
         Activity tmpActivity = new Activity("0",
                 name,
+                Home.currentUser,
                 null,
-                createEvent,
                 center,
                 range,
                 description,
                 address,
                 null,
-                "01",
-                "02",
-                "03");
+                "2023-09-21T12:00:00Z",
+                "2023-09-21T12:00:00Z",
+                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA");
 
         createEvent.addEventActivity(tmpActivity);
 

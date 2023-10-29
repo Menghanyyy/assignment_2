@@ -38,26 +38,27 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Intent intent = getIntent();
-        String userId = intent.getStringExtra("userId").toString().trim();
+        if(currentUser == null) {
+            Intent intent = getIntent();
+            String userId = intent.getStringExtra("userId").toString().trim();
 
-        Log.i("userId", userId);
+            Log.i("userId", userId);
 
-//        databaseManager = new DatabaseManager(this);
-//        databaseManager.getAllUsers(new DatabaseCallback<ArrayList<GeneralUser>>() {
-//            @Override
-//            public void onSuccess(ArrayList<GeneralUser> result) {
-//
-//                Log.i("amount",result.size()+"");
-//                Log.i("user",result.get(0)+"");
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Log.println(Log.ASSERT, "Error getting users", error);
-//            }
-//        });
+            databaseManager = new DatabaseManager(this);
+            databaseManager.getUserByID(Integer.parseInt(userId), new DatabaseCallback<GeneralUser>() {
+                @Override
+                public void onSuccess(GeneralUser result) {
+                    currentUser = result;
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error getting user", error);
+                }
+            });
+
+        }
+
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         mEventFragment =EventFragment.newInstance("","");
