@@ -23,6 +23,15 @@ import java.util.regex.Pattern;
 
 public class JSONObjectParsing {
 
+    public static String convertPoint(Point point) {
+        if (point == null) {
+            return "No point provided";
+        }
+
+        return "POINT(" + point.longitude() + " " + point.latitude() + ")";
+    }
+
+
     public static String convertPoints(List<Point> points){
         StringBuilder polygonString = new StringBuilder("POLYGON((");
 
@@ -104,7 +113,7 @@ public class JSONObjectParsing {
             JSONObject jsonObject = new JSONObject();
 
             // Add individual fields to the JSON object
-            jsonObject.put("centreLocation", "POINT(-45.62390335574153 -3.9551761173743847)");
+            jsonObject.put("centreLocation", convertPoint(activity.getActivityLocation()));
             jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
             jsonObject.put("description", activity.getDescription());
             jsonObject.put("startTime", activity.getStartTime());
