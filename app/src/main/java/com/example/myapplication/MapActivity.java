@@ -211,9 +211,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 .build();
 
                         // testing
-                        testDetect.nearActivities(144.9620, -37.7951);
-                        List<Features> features = testDetect.getFeatureList();
-                        Log.i("featuresTest", String.valueOf(features));
+
                         // testing
 
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
@@ -405,7 +403,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if (locationComponent != null) {
                     Location userLocation = locationComponent.getLastKnownLocation();
                     if (userLocation != null) {
-                        Log.i("location", userLocation.getLongitude()+"");
+                        testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
+
+
                         // You now have the user's location, you can check and trigger pop-up or other actions.
                     }
                     locationHandler.postDelayed(this, 10000);  // Check again after 10 seconds
@@ -478,5 +478,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onDetectResult(List<Features> featureList) {
         Log.i("featurelist", String.valueOf(featureList.size()));
+        if(featureList.size()>0) {
+
+            for(Features f : featureList) {
+                Log.i("distance", f.getDistance()+"");
+                Log.i("activityId", f.getActivityID()+"");
+            }
+        }
+
+
     }
 }

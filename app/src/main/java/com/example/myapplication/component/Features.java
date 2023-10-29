@@ -15,6 +15,22 @@ public class Features {
         this.visited = visited;
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public int getActivityID() {
+        return activityID;
+    }
+
+    public int getEventID() {
+        return eventID;
+    }
+
+    public int getVisited() {
+        return visited;
+    }
+
     @NonNull
     @Override
     public String toString() {
