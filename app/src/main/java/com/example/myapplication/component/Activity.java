@@ -19,6 +19,7 @@ public class Activity {
 
     private String locationName;
 
+
     public List<Point> getBbox() {
         return bbox;
     }
@@ -76,6 +77,25 @@ public class Activity {
         this.endTime = endTime;
         this.image = image;
         this.creatorID = CreatorID;
+    }
+
+    public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
+                    Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
+                    String description, String locationName, List<Point> bbox,
+                    String startTime, String endTime, String image) {
+        this.activityId = ActivityId;
+        this.activityName = ActivityName;
+        this.activityOrganiser = ActivityOrganiser;
+        this.hostedEvent = HostedEvent;
+        this.activityLocation = ActivityLocation;
+        this.activityRange = ActivityRange;
+        this.description = description;
+        this.activityVisits = new ArrayList<Visit>();
+        this.locationName = locationName;
+        this.bbox = bbox;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.image = image;
     }
 
     public String getActivityId() {

@@ -74,7 +74,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -116,6 +118,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     RecyclerView rvView;
 
     private LocationComponent locationComponent;
+    private Handler locationHandler = new Handler();
+    private Runnable locationRunnable;
 
 
     @Override
@@ -151,23 +155,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         this.databaseManager = new DatabaseManager(this);
 
-        databaseManager.getAllActivities("133", new DatabaseCallback<ArrayList<Activity>>() {
-            @Override
-            public void onSuccess(ArrayList<Activity> result) {
-                Log.i("activity", result.size()+"");
-                for(Activity a : result) {
-                    Log.i("activity", a.getActivityName()+"");
-                    Log.i("activitycenter", a.getActivityId()+"");
-                    pointsList.add(a.getActivityRange());
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error get activities", error);
-            }
-        });
-
 
     }
 
@@ -191,7 +178,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         circleManager = new CircleManager(mapView, mapboxMap, style);
 
-                        drawPolygon_Geojson(style);
+                        databaseManager.getAllActivities("133", new DatabaseCallback<ArrayList<Activity>>() {
+                            @Override
+                            public void onSuccess(ArrayList<Activity> result) {
+                                Log.i("activity", result.size()+"");
+                                for(Activity a : result) {
+                                    Log.i("activity", a.getActivityName()+"");
+                                    Log.i("activitycenter", a.getActivityId()+"");
+                                    pointsList.add(a.getActivityRange());
+                                }
+                                drawPolygon_Geojson(style);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.println(Log.ASSERT, "Error get activities", error);
+                            }
+                        });
+
 
                         // Set initial map viewport and zoom
                         CameraPosition initialPosition = new CameraPosition.Builder()
@@ -202,7 +206,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
-
 
                     }
 
@@ -314,6 +317,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (isLocationEnabled) {
             locationComponent.setLocationComponentEnabled(false);
             isLocationEnabled = false;
+            if (locationHandler != null && locationRunnable != null) {
+                locationHandler.removeCallbacks(locationRunnable);
+            }
         } else {
             enableLocationComponent(mapboxMap.getStyle());
             isLocationEnabled = true;
@@ -343,6 +349,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
+            startLocationChecker();
 
             ensureUserLocationIsOnTop(loadedMapStyle);
 
@@ -378,6 +385,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    private void startLocationChecker() {
+        locationRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (locationComponent != null) {
+                    Location userLocation = locationComponent.getLastKnownLocation();
+                    if (userLocation != null) {
+                        Log.i("location", userLocation.getLongitude()+"");
+                        // You now have the user's location, you can check and trigger pop-up or other actions.
+                    }
+                    locationHandler.postDelayed(this, 10000);  // Check again after 10 seconds
+                }
+            }
+        };
+        locationHandler.post(locationRunnable);
+    }
+
 
 
     @Override
@@ -407,6 +431,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         mapView.onPause();
+        if (locationHandler != null && locationRunnable != null) {
+            locationHandler.removeCallbacks(locationRunnable);
+        }
     }
 
     @Override
