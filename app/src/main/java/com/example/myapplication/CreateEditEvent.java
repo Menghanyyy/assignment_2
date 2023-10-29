@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,9 +18,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.component.Event;
+import com.example.myapplication.component.*;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class CreateEditEvent extends AppCompatActivity {
@@ -36,6 +38,8 @@ public class CreateEditEvent extends AppCompatActivity {
     TextView event_activity_name;
     Button create_event_btn, edit_event_btn, activity_add_button, activity_event_confirm_button;
     ViewGroup activity_list;
+
+    private Event createEvent;
 
 
     @Override
@@ -93,6 +97,18 @@ public class CreateEditEvent extends AppCompatActivity {
                         // Display error message to user
                         Toast.makeText(getApplicationContext(), "Please fill out all the fields.", Toast.LENGTH_SHORT).show();
                     } else {
+
+                        List<Point> testP = new ArrayList<Point>();
+                        testP.add(Point.fromLngLat(0,0));
+                        createEvent = new Event(
+                                "0",
+                                eventName,
+                                Home.currentUser,
+                                Point.fromLngLat(0,0),
+                                testP,
+                                eventOrganisation, eventDescription);
+
+
                         // Proceed to the next activity using an Intent
                         create_event_layout.setVisibility(View.GONE);
                         edit_event_layout.setVisibility(View.GONE);
@@ -131,7 +147,24 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
-    private void AddingActivity(String a) {
+    private void AddingActivity(String name, String description, String organisation, String address, Point center, ArrayList<Point> range) {
+
+        Activity tmpActivity = new Activity("0",
+                name,
+                null,
+                createEvent,
+                center,
+                range,
+                description,
+                address,
+                null,
+                "01",
+                "02",
+                "03");
+
+        createEvent.addEventActivity(tmpActivity);
+
+        Log.i("activity", String.valueOf(range));
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -141,17 +174,9 @@ public class CreateEditEvent extends AppCompatActivity {
         // Find views within the card and populate them
         TextView activityName = cardView.findViewById(R.id.activity_name);
 
-        activityName.setText(a);
+        activityName.setText(name);
 
 
-
-        // and similarly for other views...
-        // Populate the views with data from the event
-        // mainImage.setImageResource(event.getImageResource());  // Assuming Event has a method to provide image resource
-        // title.setText(event.getTitle());
-        // ... similarly, populate other views ...
-
-        // Add the populated card to the parent layout
         activity_list.addView(cardView);
     }
 
@@ -172,12 +197,23 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-                                Intent a = result.getData();
-                                String text = a.getStringExtra("test");
-                                Log.i("text", text+"");
+                                Intent intent = result.getData();
+                                String activity_name = intent.getStringExtra("activityName");
+                                String activity_description = intent.getStringExtra("activityDescription");
+                                String activity_organisation = intent.getStringExtra("activityOrganisation");
+                                String activity_address = intent.getStringExtra("activityAddress");
 
-                                AddingActivity(text);
+                                LatLng activity_center = intent.getParcelableExtra("activityCenter");
+                                ArrayList<LatLng> activity_range = intent.getParcelableArrayListExtra("activityRange");
 
+                                Point activity_center_point = Point.fromLngLat(activity_center.getLongitude(), activity_center.getLatitude());
+
+                                ArrayList<Point> activity_range_points = new ArrayList<>();
+                                for(LatLng latlng: activity_range) {
+                                    activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
+                                }
+
+                                AddingActivity(activity_name, activity_description, activity_organisation, activity_address, activity_center_point, activity_range_points);
 
                             }
                         }

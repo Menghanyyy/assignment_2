@@ -136,7 +136,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         this.databaseManager = new DatabaseManager(this);
 
-        databaseManager.getEventByID(82, new DatabaseCallback<Event>() {
+        databaseManager.getEventByID(105, new DatabaseCallback<Event>() {
             @Override
             public void onSuccess(Event result) {
                 pointsList.add(result.getEventRange());

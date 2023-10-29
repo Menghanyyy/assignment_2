@@ -1,41 +1,20 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.myapplication.component.Event;
-import com.example.myapplication.component.GeneralUser;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineProvider;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Polygon;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.*;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -44,26 +23,18 @@ import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Feature;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleManager;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleOptions;
-import com.mapbox.mapboxsdk.plugins.annotation.FillManager;
-import com.mapbox.mapboxsdk.plugins.annotation.FillOptions;
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.mapboxsdk.style.layers.CircleLayer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.Source;
 
 import com.example.myapplication.database.*;
 
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -72,19 +43,17 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import android.Manifest;
-
-import javax.security.auth.login.LoginException;
 
 
 public class EditableMapActivity extends AppCompatActivity implements OnMapReadyCallback{
@@ -114,6 +83,10 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
     private View.OnTouchListener drawCircleTouchListener = null;
     private MapboxMap.OnMapClickListener onMapClick = null;
 
+    private Button map_registered_btn;
+
+    private TextView activity_name;
+
 
 
     @Override
@@ -124,9 +97,49 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editable_activity_map);
 
+        Intent intent = getIntent();
+        String activityName = intent.getStringExtra("activityName");
+
+        activity_name = findViewById(R.id.activity_name);
+        activity_name.setText(activityName);
+
         mapView = (MapView) findViewById(R.id.mapView_2);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        map_registered_btn = findViewById(R.id.register_map_done_btn);
+
+        map_registered_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if((clickedPoints.getLongitude() != 0 && clickedPoints.getLatitude() != 0) && pointsList.size() > 0) {
+
+                    ArrayList<LatLng> activityRange = new ArrayList<>();
+                    for(Point point : pointsList.get(0)) {
+                        activityRange.add(new LatLng(point.latitude(), point.longitude()));
+                    }
+
+                    ArrayList<Point> pp = new ArrayList<>(pointsList.get(0));
+
+                    Intent intent = new Intent();
+                    intent.putExtra("activityCenter", clickedPoints);
+                    intent.putParcelableArrayListExtra("activityRange", activityRange);
+                    setResult(RESULT_OK, intent);
+                    finish();
+
+                }
+                else {
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Please add marker and range..", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+
+                }
+
+            }
+        });
+
     }
 
     /**

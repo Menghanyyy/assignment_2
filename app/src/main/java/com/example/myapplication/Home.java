@@ -16,6 +16,8 @@ import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 public class Home extends AppCompatActivity {
 
     public static GeneralUser currentUser;
@@ -37,20 +39,25 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         Intent intent = getIntent();
-        String userId = intent.getStringExtra("userId");
+        String userId = intent.getStringExtra("userId").toString().trim();
 
-        databaseManager = new DatabaseManager(this);
-        databaseManager.getUserByID(Integer.parseInt(userId), new DatabaseCallback<GeneralUser>() {
-            @Override
-            public void onSuccess(GeneralUser result) {
-                currentUser = result;
-            }
+        Log.i("userId", userId);
 
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error getting user", error);
-            }
-        });
+//        databaseManager = new DatabaseManager(this);
+//        databaseManager.getAllUsers(new DatabaseCallback<ArrayList<GeneralUser>>() {
+//            @Override
+//            public void onSuccess(ArrayList<GeneralUser> result) {
+//
+//                Log.i("amount",result.size()+"");
+//                Log.i("user",result.get(0)+"");
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Log.println(Log.ASSERT, "Error getting users", error);
+//            }
+//        });
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         mEventFragment =EventFragment.newInstance("","");
