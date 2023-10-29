@@ -15,6 +15,8 @@ import com.example.myapplication.component.Visit;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.Point;
 
 import java.util.Random;
@@ -38,7 +40,7 @@ public class dbTesting {
         );
 
 
-        List<Point> dummyRange = createCirclePolygon(144.9631, -37.8136, 10, 3);
+        List<Point> dummyRange = createCirclePolygon(144.19631, -37.1, 10, 3);
         // Adding some sample points
 //        dummyRange.add(new PointF(0, 0));
 //        dummyRange.add(new PointF(1, 1));
@@ -56,19 +58,27 @@ public class dbTesting {
                 "A big event"
         );
 
+        // Assuming latitude and longitude values
+        double latitude = -37.1;
+        double longitude = 144.1;
+
+        // Create a Point object with the specified latitude and longitude
+        Point centrePoint = Point.fromLngLat(longitude, latitude);
+
         Activity testActivity = new Activity(
                 null,
                 "Random activity",
                 testUser,
                 testEvent,
-                null,
+                centrePoint,
                 dummyRange,
                 "A great activity",
                 "Melbourne",
                 dummyRange,
                 "2023-09-21T12:00:00Z",
                 "2023-09-21T12:00:00Z",
-                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA"
+                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA",
+                Integer.parseInt(testUser.getUserId())
                 );
 
         Visit testVisit = new Visit(
@@ -79,7 +89,7 @@ public class dbTesting {
         );
 
         // Event Tests
-        if (true) {
+        if (false) {
             databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -184,7 +194,7 @@ public class dbTesting {
         }
 
         // User Tests
-        if (true){
+        if (false){
             databaseManager.addUser(testUser, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
@@ -265,7 +275,7 @@ public class dbTesting {
             databaseManager.getActivityByID(76, new DatabaseCallback<Activity>() {
                 @Override
                 public void onSuccess(Activity result) {
-                    Log.i("get activity by id", String.valueOf(result.getActivityName()));
+                    Log.i("get activity by id", String.valueOf(result.getActivityLocation()));
                 }
 
                 @Override
@@ -277,7 +287,7 @@ public class dbTesting {
             databaseManager.getAllActivities(testEvent, new DatabaseCallback<ArrayList<Activity>>() {
                 @Override
                 public void onSuccess(ArrayList<Activity> result) {
-                    Log.i("get activities", String.valueOf(result.size()));
+                    Log.i("get activities", String.valueOf(result.get(0).getActivityLocation()));
                 }
 
                 @Override
@@ -348,7 +358,7 @@ public class dbTesting {
         }
 
         // Location Tests
-        if (true){
+        if (false){
             System.out.println("Location tests");
         }
     }
