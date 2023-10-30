@@ -29,6 +29,15 @@ public class Visit {
         this.visitOrganisationId = VisitOrganisationId;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public Visit(String UserId, String VisitActivityId) {
+        this.userId = UserId;
+        this.visitingTime = LocalDateTime.now();
+        this.visitActivityId = VisitActivityId;
+        this.visitEventId = "";
+        this.visitOrganisationId = "";
+    }
+
     public String getUserId() {
         return this.userId;
     }

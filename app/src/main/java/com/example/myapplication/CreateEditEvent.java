@@ -272,11 +272,8 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             }
                         }
-                    });
-
-
-
-
+                    }
+            );
 
 
 }

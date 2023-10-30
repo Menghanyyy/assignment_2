@@ -1,5 +1,9 @@
 package com.example.myapplication;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.Nullable;
@@ -14,6 +18,7 @@ import com.example.myapplication.component.Event;
 import com.example.myapplication.component.Features;
 import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.OnDetectResultListener;
+import com.example.myapplication.component.Visit;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -79,6 +84,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -135,13 +141,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ViewGroup popupLayout;
     private ArrayList<String> avoidPopUp;
 
+    private String eventId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String eventId = intent.getStringExtra("eventId");
+        eventId = intent.getStringExtra("eventId");
 
         eventsActivities = new ArrayList<>();
         activitiesMarkerId = new ArrayList<>();
@@ -159,7 +167,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
 
         this.databaseManager = new DatabaseManager(this);
 
@@ -185,13 +192,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        initLayers(style);
 
 
-                        databaseManager.getAllActivities("140", new DatabaseCallback<ArrayList<Activity>>() {
+                        databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
                                 Log.i("activity", result.size()+"");
                                 eventsActivities = result;
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
+
+                                // handle get visit..
 
                             }
 
@@ -421,7 +430,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (userLocation != null) {
                         testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
 
-
                         // You now have the user's location, you can check and trigger pop-up or other actions.
                     }
                     locationHandler.postDelayed(this, 3000);  // Check again after 3 seconds
@@ -490,6 +498,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
+
     // this function return 
     @Override
     public void onDetectResult(List<Features> featureList) {
@@ -533,7 +542,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         public void onClick(View view) {
                             avoidPopUp.add(finalTmpActivity.getActivityId());
                             popupLayout.removeView(checkInCardView);
+                        }
+                    });
 
+                    checkInBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            popupLayout.removeView(checkInCardView);
+                            Intent intent = new Intent(MapActivity.this, CheckIn.class);
+                            intent.putExtra("activityId", finalTmpActivity.getActivityId());
+                            activityResultLauncher.launch(intent);
                         }
                     });
 
@@ -583,4 +601,45 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         return false; // return false to let the map handle the click as normal (e.g., pan or zoom)
     }
+
+    // Define an ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> activityResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+
+                        /**
+                         * Called when result is available
+                         *
+                         * @param result
+                         */
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+
+                            if(result.getResultCode() == RESULT_OK) {
+
+                                Intent intent = result.getData();
+                                String checkedInActivityId = intent.getStringExtra("activityId");
+
+                                Visit newVisit = new Visit(Home.currentUser.getUserId(), checkedInActivityId);
+
+                                databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        avoidPopUp.add(checkedInActivityId);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.println(Log.ASSERT, "Error adding visit", error);
+                                    }
+                                });
+
+
+
+                            }
+                        }
+                    }
+            );
 }

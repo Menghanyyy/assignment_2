@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ public class CheckIn extends AppCompatActivity implements
     private DarknessDetector darknessDetector;
     private SensorManager sensorManager;
 
+    private String activityId;
+
     private static final int GESTURE_COUNT = 3;
 
     private void setInstructions(String instructionString){
@@ -36,6 +39,8 @@ public class CheckIn extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.check_in);
 
+        Intent intent = getIntent();
+        activityId = intent.getStringExtra("activityId");
     }
 
     @Override
@@ -47,6 +52,7 @@ public class CheckIn extends AppCompatActivity implements
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         Random random = new Random();
         int randomInt = random.nextInt(GESTURE_COUNT);
+        randomInt = 1;
 
         switch (randomInt) {
             case 0:
@@ -54,39 +60,53 @@ public class CheckIn extends AppCompatActivity implements
                 if (accelerometer != null) {
                     sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
                     setInstructions("Shake Your Phone!");
-                    break;
                 }
+                break;
             case 1:
                 tiltDetector = new TiltDetector(this);
                 if (accelerometer != null) {
-                    sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+                    sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
                     setInstructions("Tilt left, then tilt right");
-                    break;
                 }
+                break;
             case 2:
                 darknessDetector = new DarknessDetector(this);
                 if (lightSensor != null) {
                     darknessDetector = new DarknessDetector(this);
                     setInstructions("Put your phone in your pocket");
-                    break;
                 }
+                break;
         }
 
-        if (lightSensor != null) {
-            sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+//        if (lightSensor != null) {
+//            sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+//        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        sensorManager.unregisterListener(shakeDetector);
+
+        if (shakeDetector != null) {
+            sensorManager.unregisterListener(shakeDetector);
+        }
+        if (tiltDetector != null) {
+            sensorManager.unregisterListener(tiltDetector);
+        }
+        if (darknessDetector != null) {
+            sensorManager.unregisterListener(darknessDetector);
+        }
     }
 
     //TODO Link this to other activity
     private void checkIn(){
         TextView output = findViewById(R.id.gestureOutput);
         output.setText("Checked In");
+
+        Intent intent = new Intent();
+        intent.putExtra("activityId", activityId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override
