@@ -217,10 +217,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 .zoom(10)  // Set zoom level
                                 .build();
 
-                        // testing
-
-                        // testing
-
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
@@ -398,8 +394,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             startLocationChecker();
 
-
-
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -432,7 +426,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         // You now have the user's location, you can check and trigger pop-up or other actions.
                     }
-                    locationHandler.postDelayed(this, 3000);  // Check again after 3 seconds
+                    locationHandler.postDelayed(this, 1000);  // Check again after 3 seconds
                 }
             }
         };
@@ -511,7 +505,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             for(Features f : featureList) {
 
                 Activity tmpActivity = null;
-                Log.i("activity Id",f.getActivityID()+ "");
 
                 for (Activity activity : eventsActivities) {
                     if(Integer.parseInt(activity.getActivityId()) == f.getActivityID()) {
@@ -549,6 +542,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         @Override
                         public void onClick(View view) {
                             popupLayout.removeView(checkInCardView);
+
                             Intent intent = new Intent(MapActivity.this, CheckIn.class);
                             intent.putExtra("activityId", finalTmpActivity.getActivityId());
                             activityResultLauncher.launch(intent);
@@ -627,7 +621,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
                                     @Override
                                     public void onSuccess(String result) {
+                                        Log.i("currentActivityid", checkedInActivityId);
                                         avoidPopUp.add(checkedInActivityId);
+                                        popupLayout.removeAllViews();
                                     }
 
                                     @Override

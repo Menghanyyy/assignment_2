@@ -207,7 +207,15 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                 iconIgnorePlacement(true)
         );
 
-        loadedMapStyle.addLayer(destinationSymbolLayer);
+        // To remove the layer with ID "maine"
+        Layer layer = loadedMapStyle.getLayer("maine0");
+        if (layer != null) {
+            loadedMapStyle.addLayerAbove(destinationSymbolLayer, "maine0");
+        }
+        else {
+            loadedMapStyle.addLayer(destinationSymbolLayer);
+        }
+
     }
 
 
@@ -283,13 +291,14 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                     PropertyFactory.fillOpacity(0.5f)
             );
 
-            style.addLayer(fillLayer);
+            if (style.getLayer(ICON_LAYER_ID) != null) {
+                style.addLayerAbove(fillLayer, ICON_LAYER_ID);
 
-            // To remove the layer with ID "maine"
-            Layer layer = style.getLayer(ICON_LAYER_ID);
-            if (layer != null) {
-                style.addLayerBelow(fillLayer, ICON_LAYER_ID);
             }
+            else {
+                style.addLayer(fillLayer);
+            }
+
 
             // Adding outline layer to the map
             LineLayer lineLayer = new LineLayer("outline" + pointsList.indexOf(p), "maine" + pointsList.indexOf(p));
@@ -300,9 +309,7 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
             style.addLayerAbove(lineLayer, "maine" + pointsList.indexOf(p)); // Make sure the outline layer is above the fill layer
 
             circleManager.deleteAll();
-
         }
-
 
     }
 
