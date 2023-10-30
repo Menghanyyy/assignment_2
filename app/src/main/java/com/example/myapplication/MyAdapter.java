@@ -3,17 +3,21 @@ package com.example.myapplication;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.component.Activity;
+
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private List<MyTestBean> data;
+    private Activity data;
 
-    public MyAdapter(List<MyTestBean> data) {
+    public MyAdapter(Activity data) {
         this.data = data;
     }
 
@@ -26,24 +30,45 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MyTestBean item = data.get(position);
-        holder.textView1.setText(item.getNum1()+"");
-        holder.textView2.setText(item.getNum2()+"");
+        holder.activityName.setText(data.getActivityName());
+        holder.activityLocation.setText(data.getLocationName());
+        holder.activityDescription.setText(data.getDescription());
+        holder.activityTime.setText(data.getStartTime() + " - " + data.getEndTime());
+
+        holder.closeActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Here, you can define what happens when the close button is clicked.
+                // For instance, if you want to hide the layout:
+                v.getRootView().findViewById(R.id.rvView).setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return (data == null) ? 0 : 1;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView1;
-        public TextView textView2;
+        public ImageView activityImage;
+        public TextView activityName;
+        public TextView activityLocation;
+        public TextView activityTime;
+        public TextView activityDescription;
+        public ImageButton closeActivityButton;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-//            textView1 = itemView.findViewById(R.id.tv1);
-//            textView2 = itemView.findViewById(R.id.tv2);
+            activityImage = itemView.findViewById(R.id.activity_image);
+            activityName = itemView.findViewById(R.id.activity_name);
+            activityLocation = itemView.findViewById(R.id.activity_location);
+            activityTime = itemView.findViewById(R.id.activity_time);
+            activityDescription = itemView.findViewById(R.id.activity_description);
+            closeActivityButton = itemView.findViewById(R.id.closeButton);
+
         }
     }
 }

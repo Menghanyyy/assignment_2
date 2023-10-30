@@ -73,6 +73,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -81,10 +82,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -97,36 +101,39 @@ import javax.security.auth.login.LoginException;
 
 import com.example.myapplication.component.Detect;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnDetectResultListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnDetectResultListener, MapboxMap.OnMapClickListener {
 
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
-    private static final String ICON_LAYER_ID = "icon-layer-id";
-    private static final String ICON_SOURCE_ID = "icon-source-id";
-    private static final String MARKER_ICON_ID = "my-marker-icon";
+    private static final String ACTIVITY_FILL_LAYER_ID = "activity_fill_id";
+    private static final String ACTIVITY_OUTLINE_LAYER_ID = "activity_outline_id";
+    private static final String ACTIVITY_SOURCE_ID = "activity_source_id";
+
+    private static final String MARKER_LAYER_ID = "activity-marker-layer-id";
+    private static final String MARKER_SOURCE_ID = "activity-marker-source-id";
+    private static final String MARKER_ICON_ID = "activity-marker-icon-id";
 
     private MapView mapView;
     private MapboxMap mapboxMap;
-    
-    private FillManager fillManager;
-    private CircleManager circleManager;
-    private CircleManager markerManager;
-    private long downTime;
-    private static final long LONG_PRESS_TIME = 3000; // Set the time for a long press
-    List<List<Point>> pointsList = new ArrayList<>();
-    List<Point> eventCenterPointsList = new ArrayList<>();
-    private SymbolManager symbolManager;
+
     private DatabaseManager databaseManager;
 
+    private ArrayList<Activity> eventsActivities;
+    private ArrayList<String> activitiesMarkerId;
+
     private boolean isLocationEnabled = false;
-    RecyclerView rvView;
+    private RecyclerView rvView;
+    private MyAdapter rvAdapter;
 
     private LocationComponent locationComponent;
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
     
-    Detect testDetect = new Detect(this);
+    private Detect testDetect = new Detect(this);
+
+    private ViewGroup popupLayout;
+    private ArrayList<String> avoidPopUp;
 
 
     @Override
@@ -136,27 +143,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
 
+        eventsActivities = new ArrayList<>();
+        activitiesMarkerId = new ArrayList<>();
+
+        avoidPopUp = new ArrayList<>();
+
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-        List<MyTestBean> datas = new ArrayList<>();
-        MyTestBean bean1 = new MyTestBean();
-        bean1.setNum1("100");
-        bean1.setNum2("10");
-        datas.add(bean1);
-
-        MyTestBean bean2 = new MyTestBean();
-        bean2.setNum1("200");
-        bean1.setNum2("20");
-        datas.add(bean2);
-
-        MyAdapter myAdapter = new MyAdapter(datas);
 
         setContentView(R.layout.activity_map);
+
+        popupLayout = findViewById(R.id.check_in_popup_layout);
 
         rvView = findViewById(R.id.rvView);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        rvView.setAdapter(myAdapter);
         mapView.getMapAsync(this);
 
 
@@ -180,21 +181,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
-                        initSource(style);
-                        initLayers(style);
+//                        initSource(style);
+//                        initLayers(style);
 
-                        circleManager = new CircleManager(mapView, mapboxMap, style);
 
-                        databaseManager.getAllActivities("133", new DatabaseCallback<ArrayList<Activity>>() {
+                        databaseManager.getAllActivities("140", new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
                                 Log.i("activity", result.size()+"");
-                                for(Activity a : result) {
-                                    Log.i("activity", a.getActivityName()+"");
-                                    Log.i("activitycenter", a.getActivityId()+"");
-                                    pointsList.add(a.getActivityRange());
-                                }
+                                eventsActivities = result;
                                 drawPolygon_Geojson(style);
+                                addMarker(style);
+
                             }
 
                             @Override
@@ -224,23 +222,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Enable zoom controls (+ and - buttons)
         mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
+        mapboxMap.addOnMapClickListener(this);
 
     }
 
-
-    private void initSource(@NonNull Style loadedMapStyle) {
-        GeoJsonSource gj = new GeoJsonSource(ICON_SOURCE_ID);
-        loadedMapStyle.addSource(gj);
-    }
-
-    private void initLayers(@NonNull Style loadedMapStyle) {
-
-        loadedMapStyle.addLayer(new SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).withProperties(
-                iconImage(MARKER_ICON_ID),
-                iconIgnorePlacement(true),
-                iconAllowOverlap(true)));
-
-    }
 
     private Bitmap getBitmapFromDrawable(int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(this, drawableId);
@@ -261,45 +246,43 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void drawPolygon_Geojson(Style style) {
 
-        Log.i("polygonpl", String.valueOf(pointsList));
-
-        for (List<Point> p : pointsList)
+        for (Activity activity : eventsActivities)
         {
             // To remove the layer with ID "maine"
-            Layer layer = style.getLayer("maine" + pointsList.indexOf(p));
+            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity));
             if (layer != null) {
                 style.removeLayer(layer);
             }
 
             // To remove the layer with ID "outline"
-            Layer outlineLayer = style.getLayer("outline"+ pointsList .indexOf(p));
+            Layer outlineLayer = style.getLayer(ACTIVITY_OUTLINE_LAYER_ID + eventsActivities.indexOf(activity));
             if (outlineLayer != null) {
                 style.removeLayer(outlineLayer);
             }
 
             // To remove the source with ID "maine"
-            Source source = style.getSource("maine"+ pointsList.indexOf(p));
+            Source source = style.getSource(ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
             if (source != null) {
                 style.removeSource(source);
             }
 
         }
 
-        for (List<Point> p : pointsList)
+        for (Activity activity : eventsActivities)
         {
 
             // Create a Polygon
-            Polygon polygon = Polygon.fromLngLats(Collections.singletonList(p));
+            Polygon polygon = Polygon.fromLngLats(Collections.singletonList(activity.getActivityRange()));
             Log.i("poly", polygon.toString()+"");
 
             // Create a GeoJsonSource
-            GeoJsonSource geoJsonSource_2 = new GeoJsonSource("maine" + pointsList.indexOf(p), Feature.fromGeometry(polygon));
+            GeoJsonSource geoJsonSource_2 = new GeoJsonSource(ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity), Feature.fromGeometry(polygon));
 
             // add geojson
             style.addSource(geoJsonSource_2);
 
             // Adding fill layer to the map
-            FillLayer fillLayer = new FillLayer("maine" + pointsList.indexOf(p), "maine" + pointsList.indexOf(p));
+            FillLayer fillLayer = new FillLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity), ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
             fillLayer.setProperties(
                     PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
                     PropertyFactory.fillOpacity(0.5f)
@@ -307,17 +290,61 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             style.addLayer(fillLayer);
 
             // Adding outline layer to the map
-            LineLayer lineLayer = new LineLayer("outline" + pointsList.indexOf(p), "maine" + pointsList.indexOf(p));
+            LineLayer lineLayer = new LineLayer(ACTIVITY_OUTLINE_LAYER_ID + eventsActivities.indexOf(activity), ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
             lineLayer.setProperties(
                     PropertyFactory.lineColor(Color.parseColor("#000000")), // black color line
                     PropertyFactory.lineWidth(3f)
             );
-            style.addLayerAbove(lineLayer, "maine" + pointsList.indexOf(p)); // Make sure the outline layer is above the fill layer
-
-            circleManager.deleteAll();
+            style.addLayerAbove(lineLayer, ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity)); // Make sure the outline layer is above the fill layer
 
         }
 
+
+    }
+
+    private void addMarker(Style loadedMapStyle) {
+
+
+        for(Activity activity : eventsActivities) {
+
+            // Remove the existing layer if it's present
+            if (loadedMapStyle.getLayer(MARKER_LAYER_ID + eventsActivities.indexOf(activity)) != null) {
+                loadedMapStyle.removeLayer(MARKER_LAYER_ID + eventsActivities.indexOf(activity));
+            }
+
+            // Remove the existing source if it's present
+            if (loadedMapStyle.getSource(MARKER_SOURCE_ID + eventsActivities.indexOf(activity)) != null) {
+                loadedMapStyle.removeSource(MARKER_SOURCE_ID + eventsActivities.indexOf(activity));
+            }
+
+            loadedMapStyle.addImage(MARKER_ICON_ID, getBitmapFromDrawable(R.drawable.location_pointer));
+
+            GeoJsonSource geoJsonSource = new GeoJsonSource(MARKER_SOURCE_ID + eventsActivities.indexOf(activity));
+            Point destinationPoint = activity.getActivityLocation();
+
+            Feature feature = Feature.fromGeometry(destinationPoint);
+            feature.addStringProperty("activityId", activity.getActivityId());
+
+            geoJsonSource.setGeoJson(feature);
+            loadedMapStyle.addSource(geoJsonSource);
+
+            SymbolLayer destinationSymbolLayer = new SymbolLayer(MARKER_LAYER_ID + eventsActivities.indexOf(activity),
+                    MARKER_SOURCE_ID + eventsActivities.indexOf(activity));
+
+            activitiesMarkerId.add(MARKER_LAYER_ID + eventsActivities.indexOf(activity));
+
+            destinationSymbolLayer.withProperties(
+                    iconImage(MARKER_ICON_ID),
+                    iconAllowOverlap(true),
+                    iconIgnorePlacement(true)
+            );
+
+            // render above outline layer
+            loadedMapStyle.addLayerAbove(destinationSymbolLayer, ACTIVITY_OUTLINE_LAYER_ID + eventsActivities.indexOf(activity));
+
+
+
+        }
 
     }
 
@@ -362,7 +389,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             startLocationChecker();
 
-            ensureUserLocationIsOnTop(loadedMapStyle);
 
 
         } else {
@@ -386,16 +412,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void ensureUserLocationIsOnTop(Style style) {
-        Layer userLocationLayer = style.getLayer("com.mapbox.mapboxsdk.location.LocationComponentController.locationComponentLayer");
-        if (userLocationLayer != null) {
-            // For demonstration purposes, adjust as per your needs:
-            // Assuming 'yourLastCustomLayerId' is the ID of the last layer you've added.
-            // If you don't have any custom layers or if you are unsure, you can comment out the next line.
-            style.addLayerAbove(userLocationLayer, ICON_LAYER_ID);
-        }
-    }
-
     private void startLocationChecker() {
         locationRunnable = new Runnable() {
             @Override
@@ -408,7 +424,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         // You now have the user's location, you can check and trigger pop-up or other actions.
                     }
-                    locationHandler.postDelayed(this, 10000);  // Check again after 10 seconds
+                    locationHandler.postDelayed(this, 3000);  // Check again after 3 seconds
                 }
             }
         };
@@ -478,14 +494,93 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onDetectResult(List<Features> featureList) {
         Log.i("featurelist", String.valueOf(featureList.size()));
-        if(featureList.size()>0) {
+
+
+        if(featureList.size() > 0) {
+
 
             for(Features f : featureList) {
-                Log.i("distance", f.getDistance()+"");
-                Log.i("activityId", f.getActivityID()+"");
+
+                Activity tmpActivity = null;
+                Log.i("activity Id",f.getActivityID()+ "");
+
+                for (Activity activity : eventsActivities) {
+                    if(Integer.parseInt(activity.getActivityId()) == f.getActivityID()) {
+                        tmpActivity = activity;
+                        break;
+                    }
+                }
+
+                if(tmpActivity != null && avoidPopUp.contains(tmpActivity.getActivityId()) == false)
+                {
+
+                    LayoutInflater inflater = LayoutInflater.from(this);
+
+                    // Inflate the card layout
+                    View checkInCardView = inflater.inflate(R.layout.detected_activity_card, popupLayout, false);
+
+                    // Find views within the card and populate them
+                    TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
+                    Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
+                    Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
+
+                    activityName.setText(tmpActivity.getActivityName());
+
+                    Activity finalTmpActivity = tmpActivity;
+
+                    cancelCheckInBth.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            avoidPopUp.add(finalTmpActivity.getActivityId());
+                            popupLayout.removeView(checkInCardView);
+
+                        }
+                    });
+
+                    popupLayout.addView(checkInCardView);
+
+                }
+                else {
+                    Log.i("features", "No Matching Event");
+                }
             }
         }
 
 
+    }
+
+    /**
+     * Called when the user clicks on the map view.
+     *
+     * @param point The projected map coordinate the user clicked on.
+     * @return True if this click should be consumed and not passed further to other listeners registered afterwards,
+     * false otherwise.
+     */
+    @Override
+    public boolean onMapClick(@NonNull LatLng point) {
+        PointF touchPoint = mapboxMap.getProjection().toScreenLocation(point);
+
+        String[] markerLayerId = activitiesMarkerId.toArray(new String[0]);
+
+        Log.i("cickedMarker", String.valueOf(markerLayerId));
+        List<Feature> features = mapboxMap.queryRenderedFeatures(touchPoint, markerLayerId);
+
+        if (!features.isEmpty()) {
+            // A marker was clicked. You can retrieve its data from the feature.
+            Feature clickedMarkerFeature = features.get(0);
+            String activityId = clickedMarkerFeature.getStringProperty("activityId");
+
+            for(Activity a : eventsActivities) {
+                if(a.getActivityId().equals(activityId)) {
+                    rvAdapter = new MyAdapter(a);
+                    rvView.setAdapter(rvAdapter);
+                    rvView.setVisibility(View.VISIBLE);
+                    break;
+
+                }
+            }
+            return true; // return true to indicate that we handled the click
+        }
+        return false; // return false to let the map handle the click as normal (e.g., pan or zoom)
     }
 }

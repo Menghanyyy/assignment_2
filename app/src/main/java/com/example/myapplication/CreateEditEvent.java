@@ -30,8 +30,6 @@ import java.util.List;
 
 public class CreateEditEvent extends AppCompatActivity {
 
-    // Assuming you're in an activity
-    int ADD_ACTIVITY_REQUEST_CODE = 1; // this can be any number
 
     // Views for Create, Edit, and Activity
     View create_event_layout, edit_event_layout, activity_layout;
@@ -44,6 +42,8 @@ public class CreateEditEvent extends AppCompatActivity {
     private DatabaseManager databaseManager;
 
     private Event createEvent;
+
+    private int activityNum = 1;
 
 
     @Override
@@ -225,8 +225,11 @@ public class CreateEditEvent extends AppCompatActivity {
 
         // Find views within the card and populate them
         TextView activityName = cardView.findViewById(R.id.activity_name);
+        TextView activityIndex = cardView.findViewById(R.id.activity_num);
 
         activityName.setText(name);
+        activityIndex.setText("0"+activityNum);
+        activityNum += 1;
 
 
         activity_list.addView(cardView);
