@@ -20,7 +20,6 @@ public class CheckIn extends AppCompatActivity implements
         TiltDetector.OnTiltListener,
         DarknessDetector.OnDarknessListener {
 
-    
     private ShakeDetector shakeDetector;
     private TiltDetector tiltDetector;
     private DarknessDetector darknessDetector;

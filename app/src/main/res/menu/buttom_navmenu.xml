@@ -10,8 +10,8 @@
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Map"
-        android:icon="@drawable/baseline_location_on_24"
+        android:title="Create"
+        android:icon="@drawable/bi"
         android:id="@+id/map"/>
     <item
         android:layout_width="wrap_content"

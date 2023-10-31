@@ -23,7 +23,7 @@ public class Home extends AppCompatActivity {
     public static GeneralUser currentUser;
 
     BottomNavigationView bottomNavigationView ;
-    EventFragment mEventFragment;
+    HomeFragment mEventFragment;
     MapFragment mMapFragment;
     ProfileFragment mProfileFragment;
 
@@ -61,7 +61,7 @@ public class Home extends AppCompatActivity {
 
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        mEventFragment =EventFragment.newInstance("","");
+        mEventFragment =HomeFragment.newInstance();//EventFragment.newInstance("","");
         mMapFragment =MapFragment.newInstance("","");
         mProfileFragment =ProfileFragment.newInstance("","");
 
