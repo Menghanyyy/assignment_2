@@ -51,6 +51,12 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_edit_event);
 
+        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         // Initialize views here for Create
         create_event_layout = findViewById(R.id.event_create_layout);
         create_event_name = findViewById(R.id.create_event_name);

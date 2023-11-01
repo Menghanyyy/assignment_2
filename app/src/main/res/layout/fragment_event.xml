@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             tools:context=".MainPageActivity"
             android:orientation="vertical"
+
             android:id="@+id/eventsCardView"
             >
             <LinearLayout
@@ -30,12 +31,9 @@
                 android:layout_height="48dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 >
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/ic_launcher"
-                    />
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -43,6 +41,7 @@
                     android:textColor="#09264C"
                     android:textStyle="bold"
                     android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
                     android:text="Events Happening"
                     android:layout_weight="1"
                     />
@@ -51,14 +50,15 @@
                     android:layout_width="88dp"
                     android:layout_height="32dp"
                     android:orientation="horizontal"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/rounded_background"
                     android:gravity="center"
-                    android:layout_marginRight="15dp"
+                    android:paddingLeft="10dp"
                     >
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@mipmap/ic_launcher"
+                        android:src="@drawable/search1"
                         />
 
                     <ImageView
@@ -122,7 +122,7 @@
                     android:textColor="#09264C"
                     android:textStyle="bold"
                     android:textSize="20sp"
-                    android:text="Events Happening"
+                    android:text=""
                     android:layout_weight="1"
                     />
             </LinearLayout>
@@ -149,6 +149,7 @@
                         android:textColor="#000" />
 
                     <ImageView
+                        android:id="@+id/iv_add"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

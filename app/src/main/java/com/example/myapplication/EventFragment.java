@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class EventFragment extends Fragment{
 
+    ImageView ivadd;
+
     ImageView imageView;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,6 +91,7 @@ public class EventFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
 
+
         emptyEventLayout = view.findViewById(R.id.emptyEventsView);
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
@@ -97,7 +100,7 @@ public class EventFragment extends Fragment{
         imageView.setClickable(true);
         imageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(getActivity().getApplicationContext(), NewLink.class);
+                Intent i = new Intent(getActivity(), CreateEditEvent.class);
                 startActivity(i);
             }
         });

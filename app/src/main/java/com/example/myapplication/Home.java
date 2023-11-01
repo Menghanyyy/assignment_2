@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.database.DatabaseCallback;
@@ -37,6 +38,12 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(Home.this, CreateEditEvent.class);
+                startActivity(i);
+            }
+        });
 
         if(currentUser == null) {
             Intent intent = getIntent();
@@ -123,7 +130,7 @@ public class Home extends AppCompatActivity {
             if(1==currentIndex){
 
             }else{
-                Intent intent = new Intent(this, CreateEditEvent.class);
+                Intent intent = new Intent(this, NewLink.class);
                 startActivity(intent);
 
             }
