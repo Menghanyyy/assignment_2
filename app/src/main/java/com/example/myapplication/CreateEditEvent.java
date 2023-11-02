@@ -45,7 +45,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSIONS = 1001;
 
-
     // Views for Create, Edit, and Activity
     View create_event_layout, edit_event_layout, activity_layout;
     TextView create_event_name, create_event_description, create_event_organisation, create_event_address;
@@ -146,7 +145,7 @@ public class CreateEditEvent extends AppCompatActivity {
                                 Home.currentUser,
                                 Point.fromLngLat(0,0),
                                 testP,
-                                eventOrganisation, eventDescription);
+                                eventOrganisation, eventDescription, "");
 
 
                         // Proceed to the next activity using an Intent

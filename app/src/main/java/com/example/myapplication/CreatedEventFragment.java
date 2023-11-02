@@ -28,6 +28,7 @@ import java.util.List;
 public class CreatedEventFragment extends Fragment{
 
     ImageView imageView;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,8 +63,8 @@ public class CreatedEventFragment extends Fragment{
      * @return A new instance of fragment EventFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EventFragment newInstance(String param1, String param2) {
-        EventFragment fragment = new EventFragment();
+    public static CreatedEventFragment newInstance(String param1, String param2) {
+        CreatedEventFragment fragment = new CreatedEventFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

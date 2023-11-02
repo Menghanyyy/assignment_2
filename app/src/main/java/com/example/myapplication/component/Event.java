@@ -19,8 +19,10 @@ public class Event {
 
     private String description;
 
+    private String image;
+
     public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation,
-                 List<Point> EventRange, String organisationName, String description) {
+                 List<Point> EventRange, String organisationName, String description, String image) {
 
         this.eventId = EventID;
         this.eventName = EventName;
@@ -31,6 +33,16 @@ public class Event {
         this.eventVisit = new ArrayList<Visit>();
         this.organisationName = organisationName;
         this.description = description;
+
+        if(image.isEmpty()) {
+            this.image = "";
+        }else {
+            this.image = "image";
+        }
+    }
+
+    public String getImage() {
+        return image;
     }
 
     public String getEventId() {

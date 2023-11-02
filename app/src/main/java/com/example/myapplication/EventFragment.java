@@ -84,22 +84,17 @@ public class EventFragment extends Fragment{
 
         Log.i("Getting Events", "get");
 
-        databaseManager.getJoinedEvents("8", new DatabaseCallback<ArrayList<Event>>() {
+        databaseManager.getJoinedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
-
-                if(result.size() > 0) {
-                    showEventsView(result);
-                }
-                else {
-                    showEmptyEventsView();
-                };
+                showEventsView(result);
             }
 
             @Override
             public void onError(String error) {
                 Log.println(Log.ASSERT, "Error joined events", error);
+                showEmptyEventsView();
             }
         });
     }
@@ -116,6 +111,7 @@ public class EventFragment extends Fragment{
         emptyEventLayout = view.findViewById(R.id.emptyEventsView);
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
+        empty_add = view.findViewById(R.id.iv_add);
 
         imageView = (ImageView) view.findViewById(R.id.add);
         imageView.setClickable(true);

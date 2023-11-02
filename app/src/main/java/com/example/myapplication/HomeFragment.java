@@ -32,6 +32,7 @@ public class HomeFragment extends Fragment {
         // 在这里可以对布局视图中的 UI 元素进行初始化和操作
         fragments.add(EventFragment.newInstance("","")); // 0
         fragments.add(CreatedEventFragment.newInstance("","")); // 1
+
         viewPager2.setOffscreenPageLimit(1);
         //Adapter
         viewPager2.setAdapter(new FragmentStateAdapter(getChildFragmentManager(), getLifecycle()) {

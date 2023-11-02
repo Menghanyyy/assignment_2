@@ -55,7 +55,8 @@ public class dbTesting {
                 null,
                 dummyRange,
                 "Unimelb",
-                "A big event"
+                "A big event",
+                ""
         );
 
         // Assuming latitude and longitude values

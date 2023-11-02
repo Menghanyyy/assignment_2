@@ -217,7 +217,8 @@ public class JSONObjectParsing {
                     null,
                     bbox,
                     organisationName,
-                    description
+                    description,
+                    ""
             );
         } catch (JSONException e) {
             e.printStackTrace();

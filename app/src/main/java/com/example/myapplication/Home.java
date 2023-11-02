@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.myapplication.component.GeneralUser;
+import com.example.myapplication.component.User;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,6 +50,8 @@ public class Home extends AppCompatActivity {
         if(currentUser == null) {
             Intent intent = getIntent();
             String userId = intent.getStringExtra("userId").toString().trim();
+
+            currentUser = new GeneralUser(userId, "", "", "", "");
 
             Log.i("userId", userId);
 
