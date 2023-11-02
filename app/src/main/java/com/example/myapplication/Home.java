@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.database.DatabaseCallback;
@@ -101,7 +102,10 @@ public class Home extends AppCompatActivity {
         super.onResume();
         changeTable(MyApplication.getInstance().eventPagerTabIndex);
     }
-
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(Home.this,"Cannot get back anymore", Toast.LENGTH_SHORT).show();
+    }
     private void replaceFg(Fragment myFragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
 
