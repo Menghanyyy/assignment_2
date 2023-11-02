@@ -18,13 +18,13 @@ public interface DatabaseInterface {
     public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
 
     // Users signing up to attend an event
-    public void joinEvent(User user, Event event, final DatabaseCallback<String> callback);
+    public void joinEvent(String userId, String eventId, final DatabaseCallback<String> callback);
 
     // Returns all users currently signed up for an event
     public void getUsersAtEvent(Event event, final DatabaseCallback<ArrayList<User>> callback);
 
     // Returns all events an individual has signed up for
-    public void getJoinedEvents(User user, final DatabaseCallback<ArrayList<Event>> callback);
+    public void getJoinedEvents(String userId, final DatabaseCallback<ArrayList<Event>> callback);
 
 
 

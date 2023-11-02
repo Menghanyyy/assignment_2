@@ -10,7 +10,7 @@
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Create"
+        android:title="Join"
         android:icon="@drawable/bi"
         android:id="@+id/map"/>
     <item

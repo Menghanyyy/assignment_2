@@ -131,13 +131,13 @@ public class JSONObjectParsing {
         return null;
     }
 
-    public static JSONObject buildUserEventObject(Event event, User user) {
+    public static JSONObject buildUserEventObject(String eventId, String userId) {
         try {
             JSONObject jsonObject = new JSONObject();
 
             // Add individual fields to the JSON object
-            jsonObject.put("userID", user.getUserId());
-            jsonObject.put("eventID", event.getEventId());
+            jsonObject.put("userID", userId);
+            jsonObject.put("eventID", eventId);
 
             return jsonObject;
         } catch (JSONException e) {

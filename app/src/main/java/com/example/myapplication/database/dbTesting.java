@@ -132,7 +132,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.joinEvent(testUser, testEvent, new DatabaseCallback<String>() {
+            databaseManager.joinEvent(testUser.getUserId(), testEvent.getEventId(), new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     Log.i("join event success", result.toString());
@@ -168,7 +168,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getJoinedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
+            databaseManager.getJoinedEvents(testUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
                     Log.i("get joined events", Integer.toString(result.size()));

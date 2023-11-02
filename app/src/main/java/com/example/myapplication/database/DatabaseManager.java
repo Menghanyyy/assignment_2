@@ -237,11 +237,11 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void joinEvent(User user, Event event, DatabaseCallback<String> callback) {
+    public void joinEvent(String userId, String eventId, DatabaseCallback<String> callback) {
         sendJsonObjectRequest(
                 Request.Method.POST,
                 "/events/joinEvent",
-                objectParser.buildUserEventObject(event, user),
+                objectParser.buildUserEventObject(eventId, userId),
                 callback,
                 ClassCodes.STRING_CLASS
         );
@@ -259,12 +259,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void getJoinedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
+    public void getJoinedEvents(String userId, DatabaseCallback<ArrayList<Event>> callback) {
 
         try{
             sendJsonObjectRequest(
                     Request.Method.GET,
-                    "/events/getJoinedEvents/" + Integer.valueOf(user.getUserId()),
+                    "/events/getJoinedEvents/" + Integer.valueOf(userId),
                     null,
                     callback,
                     ClassCodes.EVENT_ARRAYLIST_CLASS

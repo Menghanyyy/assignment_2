@@ -1,7 +1,15 @@
 package com.example.myapplication;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +23,11 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.component.*;
 import com.example.myapplication.database.DatabaseCallback;
@@ -24,11 +35,15 @@ import com.example.myapplication.database.DatabaseManager;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class CreateEditEvent extends AppCompatActivity {
+
+    private static final int REQUEST_PERMISSIONS = 1001;
 
 
     // Views for Create, Edit, and Activity
@@ -38,6 +53,8 @@ public class CreateEditEvent extends AppCompatActivity {
     TextView event_activity_name;
     Button create_event_btn, edit_event_btn, activity_add_button, activity_event_confirm_button;
     ViewGroup activity_list;
+
+    ImageView uploadImageView;
 
     private DatabaseManager databaseManager;
 
@@ -80,6 +97,10 @@ public class CreateEditEvent extends AppCompatActivity {
         activity_list = findViewById(R.id.event_activity_list);
         activity_event_confirm_button = findViewById(R.id.event_activity_confirm_btn);
 
+        uploadImageView = findViewById(R.id.create_eventImage);
+        uploadImageView.setDrawingCacheEnabled(true);
+        uploadImageView.buildDrawingCache();
+
         databaseManager = new DatabaseManager(this);
 
         Intent intent = getIntent();
@@ -93,6 +114,15 @@ public class CreateEditEvent extends AppCompatActivity {
         }
         else {
             Log.i("check id", "is empty should be create");
+
+            uploadImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    galleryAccessPermissions();
+
+                }
+            });
 
             create_event_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -280,6 +310,84 @@ public class CreateEditEvent extends AppCompatActivity {
                         }
                     }
             );
+
+    // Define an ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> imageUploadResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult> () {
+
+                        /**
+                         * Called when result is available
+                         *
+                         * @param result
+                         */
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+
+                            if(result.getResultCode() == RESULT_OK) {
+
+                                Log.i("image","image uploaded");
+
+                                Intent imageIntent = result.getData();
+
+                                try {
+                                    Uri imageUri = imageIntent.getData();
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(CreateEditEvent.this.getContentResolver(), imageUri);
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                                    byte[] imageBytes = baos.toByteArray();
+                                    String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                                    byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+                                    Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                                    uploadImageView.setImageBitmap(decodedBitmap);
+                                    // Use the bitmap as needed...
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+//                                Bitmap bitmap = uploadImageView.getDrawingCache();
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                                byte[] imageBytes = baos.toByteArray();
+//                                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+//
+//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+//                                uploadImageView.setImageBitmap(decodedBitmap);
+
+                            }
+                        }
+                    }
+            );
+
+
+    private void galleryAccessPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
+
+        } else {
+
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            imageUploadResultLauncher.launch(intent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            imageUploadResultLauncher.launch(intent);
+        } else {
+            // Permission denied. Inform the user.
+            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 
 }

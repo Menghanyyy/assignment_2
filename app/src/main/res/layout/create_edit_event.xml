@@ -31,6 +31,7 @@
                 android:divider="@drawable/divider"
                 android:showDividers="middle"
                 android:orientation="vertical"
+                android:gravity="center_horizontal"
                 >
 
                 <TextView
@@ -40,12 +41,23 @@
                     android:layout_marginStart="50dp"
                     android:layout_marginTop="50dp"
                     android:layout_marginEnd="50dp"
-                    android:layout_marginBottom="50dp"
                     android:gravity="center_horizontal"
                     android:text="Create Event"
                     android:textColor="@color/black"
                     android:textSize="35dp"
                     android:textStyle="bold" />
+
+                <ImageView
+
+                    android:id="@+id/create_eventImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/img_placeholder"
+                    android:background="@color/grey"
+                    android:clickable="true"
+                    android:focusable="true"
+                    ></ImageView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -54,6 +66,7 @@
                     android:orientation="horizontal"
                     android:gravity="center"
                     >
+
 
                     <TextView
                         android:id="@+id/create_event_name_label"
@@ -185,7 +198,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
-                    android:paddingTop="90dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal"
                     android:gravity="center">
 
@@ -498,11 +512,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="10dp"
-        />
-
-
-
-
+    />
 
 
 </FrameLayout>

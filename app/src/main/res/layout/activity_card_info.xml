@@ -6,15 +6,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <RelativeLayout android:layout_width="match_parent"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         >
-
-        <androidx.core.widget.NestedScrollView
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
 
             <LinearLayout
@@ -57,24 +53,29 @@
 
                 </LinearLayout>
 
-
-                <androidx.cardview.widget.CardView
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="#fff"
-                    app:cardCornerRadius="8dp">
+                    >
 
-                    <LinearLayout
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="16dp"
+                        app:cardBackgroundColor="#fff"
+                        app:cardCornerRadius="8dp">
+
+                        <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
                         <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            >
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                                 <ImageView
                                     android:id="@+id/eventImage"
                                     android:layout_width="match_parent"
-                                    android:layout_height="150dp"
+                                    android:layout_height="200dp"
                                     android:scaleType="centerCrop"
                                     android:src="@mipmap/bbbb" />
 
@@ -92,6 +93,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="18dp"
+                                    android:layout_marginBottom="10dp"
                                     android:orientation="vertical">
 
                                     <TextView
@@ -99,10 +101,9 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginHorizontal="16dp"
-                                        android:layout_marginTop="15dp"
                                         android:text="Colonial Conservation: A Green assault on Indigenous Land"
                                         android:textColor="#1D428A"
-                                        android:textSize="16sp"
+                                        android:textSize="18sp"
                                         android:textStyle="bold" />
 
                                 </LinearLayout>
@@ -110,36 +111,47 @@
 
                             </LinearLayout>
 
-                            <RelativeLayout
-                                android:layout_width="295dp"
-                                android:layout_height="60dp"
-                                android:layout_marginLeft="40dp"
-                                android:layout_marginTop="120dp"
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:maxWidth="300dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="165dp"
                                 android:background="@drawable/cardinfo_background"
                                 android:elevation="3dp"
-                                android:gravity="center_vertical"
-                                android:paddingHorizontal="16dp">
+                                android:gravity="center"
+                                android:layout_gravity="center_horizontal"
+                                android:paddingHorizontal="16dp"
+                                android:paddingVertical="10dp"
+                                android:orientation="horizontal">
 
-
-
-
-
-
-
-
+                                <!-- New TextView that appears when "Invite" is clicked -->
                                 <TextView
+                                    android:id="@+id/invite_link"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_toStartOf="@+id/invite"
+                                    android:text="New Text"
+                                    android:textSize="15sp"
+                                    android:layout_marginEnd= "20dp"
+                                    android:visibility="gone" />
+
+                                <!-- Invite TextView -->
+                                <TextView
+                                    android:id="@+id/invite"
                                     android:layout_width="67dp"
                                     android:layout_height="28dp"
-                                    android:layout_marginLeft="8dp"
+                                    android:layout_centerInParent="true"
                                     android:background="@drawable/btn_background"
                                     android:gravity="center"
-                                    android:layout_centerInParent="true"
                                     android:text="Invite"
                                     android:textColor="#fff"
                                     android:textSize="15sp"
                                     android:textStyle="bold" />
 
-                            </RelativeLayout>
+                            </LinearLayout>
+
                         </FrameLayout>
 
 
@@ -147,7 +159,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="16dp"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="10dp"
                             android:orientation="vertical">
 
                             <!--map start-->
@@ -156,75 +168,71 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_width="18dp"
-                                    android:layout_height="18dp"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
                                     android:src="@drawable/locationpoint" />
 
                                 <TextView
-                                    android:layout_width="50dp"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="30dp"
+                                    android:layout_marginLeft="20dp"
                                     android:text="Location:"
                                     android:textColor="#1D428A"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
-
-                                    />
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/eventLocation"
-                                    android:layout_width="match_parent"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="87dp"
                                     android:layout_weight="1"
+                                    android:gravity="end"
                                     android:text="Ground Floor - Sydney Mayer"
-                                    android:textSize="10sp"
+                                    android:textSize="15sp"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
-
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
+                                android:layout_marginBottom="10dp"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
                                     android:layout_marginLeft="2dp"
                                     android:src="@drawable/building" />
 
                                 <TextView
-                                    android:layout_width="50dp"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="30dp"
+                                    android:layout_marginLeft="20dp"
                                     android:text="Host:"
                                     android:textColor="#1D428A"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold"
-
-                                    />
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/eventOrganisation"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="87dp"
+                                    android:layout_weight="1"
+                                    android:gravity="end"
                                     android:text="Australian Centre"
                                     android:textColor="#0057FF"
-                                    android:textColorLink="#0057FF"
-                                    android:textSize="12sp"
+                                    android:textSize="15sp"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
+
 
 
                             <View
@@ -252,65 +260,79 @@
                                     android:layout_marginTop="4dp"
                                     android:text="About Event"
                                     android:textColor="#1D428A"
-                                    android:textSize="18sp"
+                                    android:textSize="20sp"
                                     android:textStyle="bold" />
 
                                 <TextView
                                     android:id="@+id/eventDescription"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:minHeight="140dp"
                                     android:layout_marginHorizontal="16dp"
                                     android:layout_marginTop="4dp"
                                     android:ellipsize="end"
+                                    android:justificationMode="inter_word"
                                     android:maxLines="5"
-                                    android:text="Scientific evidence shows that Indigenous sdsdsdsd mkmkmkeqweqeqwemkmkmmkmkmkmkmkmmkmkmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to."
+                                    android:minHeight="140dp"
+                                    android:text="Scientific evidence kmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to."
                                     android:textColor="#818C99"
-                                    android:textSize="12sp"
-                                    android:justificationMode="inter_word"/>
+                                    android:textSize="16sp" />
 
                                 <TextView
                                     android:id="@+id/eventDescriptionExpend"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="right"
                                     android:layout_marginLeft="16dp"
                                     android:layout_marginRight="16dp"
+                                    android:clickable="true"
+                                    android:gravity="right"
                                     android:text="Read More"
-                                    android:textColor="#f00"
-                                    android:clickable="true"/>
+                                    android:textColor="#f00" />
 
                             </LinearLayout>
 
 
                         </RelativeLayout>
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"/>
+
 
                     </LinearLayout>
 
 
-                </androidx.cardview.widget.CardView>
+                    </androidx.cardview.widget.CardView>
 
+
+                </androidx.core.widget.NestedScrollView>
 
             </LinearLayout>
 
 
-        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:background="@color/tranparent_white"
+        android:gravity="center"
+        android:padding="8dp"> <!-- Padding creates a gap between the TextView and the FrameLayout borders -->
 
         <TextView
             android:id="@+id/tv_gotomap"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/btn_background15dp"
             android:gravity="center"
             android:text="GO TO MAP"
             android:textColor="#fff"
             android:textSize="16sp"
             android:textStyle="bold" />
-    </RelativeLayout>
+    </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -323,4 +345,6 @@
 
 
 </LinearLayout>
+
+
 

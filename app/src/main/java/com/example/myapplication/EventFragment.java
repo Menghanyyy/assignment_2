@@ -80,6 +80,27 @@ public class EventFragment extends Fragment{
         }
         databaseManager = new DatabaseManager(this.getContext());
         events = new ArrayList<>();
+
+        Log.i("Getting Events", "get");
+
+        databaseManager.getJoinedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+            @Override
+            public void onSuccess(ArrayList<Event> result) {
+                events = result;
+
+                if(result.size() > 0) {
+                    showEventsView(result);
+                }
+                else {
+                    showEmptyEventsView();
+                };
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error joined events", error);
+            }
+        });
     }
 
     @Override
@@ -115,28 +136,6 @@ public class EventFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.i("Getting Events", "get");
-
-        databaseManager.getAllEvents(new DatabaseCallback<ArrayList<Event>>() {
-            @Override
-            public void onSuccess(ArrayList<Event> result) {
-                events = result;
-
-                if(result.size() > 0) {
-                    showEventsView(result);
-                }
-                else {
-                    showEmptyEventsView();
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error getting count", error);
-            }
-        });
-
 
     }
 

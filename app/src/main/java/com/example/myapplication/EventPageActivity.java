@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ public class EventPageActivity extends AppCompatActivity {
 
     DatabaseManager databaseManager;
     TextView tv_gotomap;
+    TextView invite;
+    TextView link_view;
 
 
     @SuppressLint("MissingInflatedId")
@@ -32,13 +35,28 @@ public class EventPageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_info);
+
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
+
+        databaseManager = new DatabaseManager(this);
+
+        invite = findViewById(R.id.invite);
+        link_view = findViewById(R.id.invite_link);
+
+        invite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Make the new TextView v isible
+                link_view.setVisibility(View.VISIBLE);
+            }
+        });
 
         tv_gotomap = findViewById(R.id.tv_gotomap);
         tv_gotomap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent  mapIntent = new Intent(EventPageActivity.this,MapActivity.class);
                 mapIntent.putExtra("eventId", eventId);
                 startActivity(mapIntent);
@@ -46,7 +64,6 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
 
-        databaseManager = new DatabaseManager(this);
 
         databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {
             @Override
