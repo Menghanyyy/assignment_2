@@ -180,7 +180,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.getCreatedEvents(testUser, new DatabaseCallback<ArrayList<Event>>() {
+            databaseManager.getCreatedEvents(testUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
                     Log.i("get created events", Integer.toString(result.size()));

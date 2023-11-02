@@ -118,9 +118,7 @@ public class CreateEditEvent extends AppCompatActivity {
             uploadImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     galleryAccessPermissions();
-
                 }
             });
 
@@ -235,7 +233,7 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
-    private void AddingActivity(String name, String description, String organisation, String address, Point center, ArrayList<Point> range) {
+    private void AddingActivity(String image, String name, String description, String organisation, String address, Point center, ArrayList<Point> range) {
 
         Activity tmpActivity = new Activity("0",
                 name,
@@ -248,7 +246,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 null,
                 "2023-09-21T12:00:00Z",
                 "2023-09-21T12:00:00Z",
-                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA");
+                image);
 
         createEvent.addEventActivity(tmpActivity);
 
@@ -260,8 +258,13 @@ public class CreateEditEvent extends AppCompatActivity {
         View cardView = inflater.inflate(R.layout.event_activity_item, activity_list, false);
 
         // Find views within the card and populate them
+        ImageView activityImage = cardView.findViewById(R.id.activity_image);
         TextView activityName = cardView.findViewById(R.id.activity_name);
         TextView activityIndex = cardView.findViewById(R.id.activity_num);
+
+        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
+        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+        activityImage.setImageBitmap(decodedBitmap);
 
         activityName.setText(name);
         activityIndex.setText("0"+activityNum);
@@ -288,7 +291,12 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
+//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
+//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+//                                uploadImageView.setImageBitmap(decodedBitmap);
+
                                 Intent intent = result.getData();
+                                String activity_image = intent.getStringExtra("activityImage");
                                 String activity_name = intent.getStringExtra("activityName");
                                 String activity_description = intent.getStringExtra("activityDescription");
                                 String activity_organisation = intent.getStringExtra("activityOrganisation");
@@ -304,7 +312,7 @@ public class CreateEditEvent extends AppCompatActivity {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
-                                AddingActivity(activity_name, activity_description, activity_organisation, activity_address, activity_center_point, activity_range_points);
+                                AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_center_point, activity_range_points);
 
                             }
                         }

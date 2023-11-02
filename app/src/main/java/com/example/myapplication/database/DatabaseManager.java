@@ -275,12 +275,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback) {
+    public void getCreatedEvents(String userId, DatabaseCallback<ArrayList<Event>> callback) {
 
         try{
             sendJsonObjectRequest(
                     Request.Method.GET,
-                    "/events/getCreatedEvents/" + Integer.valueOf(user.getUserId()),
+                    "/events/getCreatedEvents/" + Integer.valueOf(userId),
                     null,
                     callback,
                     ClassCodes.EVENT_ARRAYLIST_CLASS
