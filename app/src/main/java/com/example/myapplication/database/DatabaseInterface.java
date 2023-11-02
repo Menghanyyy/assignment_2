@@ -30,7 +30,7 @@ public interface DatabaseInterface {
 
     ///////////////// Activity Methods /////////////////
 
-    void getCreatedEvents(User user, DatabaseCallback<ArrayList<Event>> callback);
+    void getCreatedEvents(String userId, DatabaseCallback<ArrayList<Event>> callback);
 
     public void addActivity(Activity activity, final DatabaseCallback<String> callback);
 

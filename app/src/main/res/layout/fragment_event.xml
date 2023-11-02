@@ -55,6 +55,7 @@
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     >
+
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -69,7 +70,6 @@
                         android:src="@drawable/baseline_add_50"
                         android:contentDescription="E"
                         />
-
 
                 </LinearLayout>
 

@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class CreatedEventFragment extends Fragment{
 
-    ImageView ivadd;
-
     ImageView imageView;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,6 +46,8 @@ public class CreatedEventFragment extends Fragment{
     private View emptyEventLayout;
     private View eventsLayout;
     private ViewGroup eventsCardLayout;
+
+    private ImageView empty_add;
 
     public CreatedEventFragment() {
         // Required empty public constructor
@@ -90,11 +90,10 @@ public class CreatedEventFragment extends Fragment{
         //return inflater.inflate(R.layout.fragment_event, container, false);
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
-
-
         emptyEventLayout = view.findViewById(R.id.emptyEventsView);
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
+        empty_add = view.findViewById(R.id.iv_add);
 
         imageView = (ImageView) view.findViewById(R.id.add);
         imageView.setClickable(true);
@@ -116,9 +115,9 @@ public class CreatedEventFragment extends Fragment{
     public void onResume() {
         super.onResume();
 
-        Log.i("Getting Events", "get");
+        Log.i("Getting Creating Events", "get");
 
-        databaseManager.getAllEvents(new DatabaseCallback<ArrayList<Event>>() {
+        databaseManager.getCreatedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
@@ -133,7 +132,7 @@ public class CreatedEventFragment extends Fragment{
 
             @Override
             public void onError(String error) {
-                Log.println(Log.ASSERT, "Error getting count", error);
+                Log.println(Log.ASSERT, "Error created events", error);
             }
         });
 
@@ -143,6 +142,14 @@ public class CreatedEventFragment extends Fragment{
     private void showEmptyEventsView() {
         emptyEventLayout.setVisibility(View.VISIBLE);
         eventsLayout.setVisibility(View.GONE);
+
+        empty_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), CreateEditEvent.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void showEventsView(ArrayList<Event> events) {

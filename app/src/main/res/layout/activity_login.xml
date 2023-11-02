@@ -79,17 +79,6 @@
         android:backgroundTint="@color/dark_blue"
         android:text="Log In" />
 
-    <Button
-        android:id="@+id/mapView_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go Map"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.904" />
-
     <TextView
         android:id="@+id/forget"
         android:layout_width="match_parent"
@@ -106,14 +95,6 @@
         android:textStyle="normal"
         tools:ignore="TextSizeCheck" />
 
-    <Button
-        android:id="@+id/editable_mapview_btn"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="236dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="50dp"
-        android:text="Editable Map" />
 
     <TextView
         android:id="@+id/register"

@@ -83,23 +83,6 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        Button mapView_Btn = (Button) findViewById(R.id.mapView_Btn);
-
-        mapView_Btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(Login.this, MapActivity.class));
-            }
-        });
-
-        Button editable_mapView_Btn = (Button) findViewById(R.id.editable_mapview_btn);
-
-        editable_mapView_Btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(Login.this, EditableMapActivity.class));
-            }
-        });
-
 //        new dbTesting().runTests(this);
     }
 }
