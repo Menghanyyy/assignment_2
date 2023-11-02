@@ -30,8 +30,8 @@ public class HomeFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager2 = view.findViewById(R.id.view_pager);
         // 在这里可以对布局视图中的 UI 元素进行初始化和操作
-        fragments.add(EventFragment.newInstance("",""));
-        fragments.add(EventFragment.newInstance("",""));
+        fragments.add(EventFragment.newInstance("","")); // 0
+        fragments.add(CreatedEventFragment.newInstance("","")); // 1
         viewPager2.setOffscreenPageLimit(1);
         //Adapter
         viewPager2.setAdapter(new FragmentStateAdapter(getChildFragmentManager(), getLifecycle()) {

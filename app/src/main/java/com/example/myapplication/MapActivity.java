@@ -192,7 +192,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        initLayers(style);
 
 
-                        databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
+                        databaseManager.getAllActivities("140", new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
                                 Log.i("activity", result.size()+"");

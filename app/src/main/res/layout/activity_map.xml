@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MapActivity">
 
-
-
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
@@ -50,9 +48,9 @@
         android:id="@+id/check_in_popup_layout"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:paddingStart= "20dp"
-        android:paddingEnd= "20dp"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
 
     </FrameLayout>
