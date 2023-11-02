@@ -58,7 +58,6 @@
 
         >
             <ImageView
-
                 android:id="@+id/activity_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
@@ -67,6 +66,7 @@
                 android:background="@color/grey"
                 android:clickable="true"
                 android:focusable="true"
+                android:scaleType="fitCenter"
                 ></ImageView>
 
 
