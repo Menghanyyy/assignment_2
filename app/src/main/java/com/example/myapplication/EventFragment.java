@@ -1,11 +1,14 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +85,6 @@ public class EventFragment extends Fragment{
         databaseManager = new DatabaseManager(this.getContext());
         events = new ArrayList<>();
 
-        Log.i("Getting Events", "get");
 
         databaseManager.getJoinedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
@@ -166,10 +168,20 @@ public class EventFragment extends Fragment{
             TextView time = cardView.findViewById(R.id.eventTime);
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
-            mainImage.setImageResource(R.mipmap.aaaa);
             title.setText(event.getEventName());
             location.setText("Location: Melbourne");
             desc.setText(event.getDescription());
+
+            if(event.getImage().isEmpty()) {
+                Log.i("Image", "No" );
+                mainImage.setImageResource(R.mipmap.aaaa);
+            } else {
+                Log.i("Image", "Yes" );
+                byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                mainImage.setImageBitmap(decodedBitmap);
+            }
+
 
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override

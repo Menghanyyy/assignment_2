@@ -122,18 +122,13 @@ public class CreatedEventFragment extends Fragment{
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
-
-                if(result.size() > 0) {
-                    showEventsView(result);
-                }
-                else {
-                    showEmptyEventsView();
-                }
+                showEventsView(result);
             }
 
             @Override
             public void onError(String error) {
                 Log.println(Log.ASSERT, "Error created events", error);
+                showEmptyEventsView();
             }
         });
 

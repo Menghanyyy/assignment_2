@@ -204,6 +204,11 @@ public class JSONObjectParsing {
             int creatorID = jsonEvent.getInt("creatorID");
             String organisationName = jsonEvent.getString("organisationName");
             String description = jsonEvent.getString("description");
+            String image = jsonEvent.getString("backgroundPicture");
+
+            if(image == null) {
+                image = "";
+            }
 
             String bboxString = jsonEvent.getString("bbox");
             //Log.i("bboxString", String.valueOf(bboxString));
@@ -218,8 +223,9 @@ public class JSONObjectParsing {
                     bbox,
                     organisationName,
                     description,
-                    ""
+                    image
             );
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

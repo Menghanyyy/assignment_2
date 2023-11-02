@@ -42,9 +42,14 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                databaseManager.verifyPassword(password.getText().toString(),username.getText().toString() , new DatabaseCallback<String>() {
+                databaseManager.verifyPassword(password.getText().toString().trim(),username.getText().toString().trim(), new DatabaseCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
+
+                        if (result.equalsIgnoreCase("false")) {
+                            Toast.makeText(Login.this, "Invalid password or user ID", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         Intent i = new Intent(Login.this, Home.class);
                         Log.println(Log.ASSERT, "Logging in", result);
                         i.putExtra("userId", result);

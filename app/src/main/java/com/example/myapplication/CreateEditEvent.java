@@ -73,6 +73,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 finish();
             }
         });
+
         // Initialize views here for Create
         create_event_layout = findViewById(R.id.event_create_layout);
         create_event_name = findViewById(R.id.create_event_name);
@@ -139,13 +140,20 @@ public class CreateEditEvent extends AppCompatActivity {
                         List<Point> testP = new ArrayList<Point>();
                         testP.add(Point.fromLngLat(0,0));
                         Log.i("getcurretnuser", Home.currentUser.getName());
+
+                        Bitmap bitmap = uploadImageView.getDrawingCache();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
                         createEvent = new Event(
                                 "0",
                                 eventName,
                                 Home.currentUser,
                                 Point.fromLngLat(0,0),
                                 testP,
-                                eventOrganisation, eventDescription, "");
+                                eventOrganisation, eventDescription, encodedImage);
 
 
                         // Proceed to the next activity using an Intent
@@ -337,25 +345,11 @@ public class CreateEditEvent extends AppCompatActivity {
                                 Log.i("image","image uploaded");
 
                                 Intent imageIntent = result.getData();
-
-                                try {
-                                    Uri imageUri = imageIntent.getData();
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(CreateEditEvent.this.getContentResolver(), imageUri);
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                                    byte[] imageBytes = baos.toByteArray();
-                                    String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-                                    byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-                                    Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-                                    uploadImageView.setImageBitmap(decodedBitmap);
-                                    // Use the bitmap as needed...
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                Uri imageUri = imageIntent.getData();
+                                uploadImageView.setImageURI(imageUri);
 
 //                                Bitmap bitmap = uploadImageView.getDrawingCache();
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                //ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 //                                byte[] imageBytes = baos.toByteArray();
 //                                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
