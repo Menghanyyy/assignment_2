@@ -16,6 +16,12 @@ public class NewLink extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_link);
         MaterialButton loginBt= (MaterialButton)findViewById(R.id.insertButton);
+        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         loginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
