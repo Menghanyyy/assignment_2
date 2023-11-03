@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,17 @@ public class CheckIn extends AppCompatActivity implements
 
     private static final int GESTURE_COUNT = 3;
 
+    // need to delete this is use to test the view of the map...
+
+    private Handler handler = new Handler();
+
+    private Runnable checkInRunnable = new Runnable() {
+        @Override
+        public void run() {
+            checkIn();
+        }
+    };
+
     private void setInstructions(String instructionString){
         TextView output = findViewById(R.id.instructions);
         output.setText(instructionString);
@@ -46,13 +58,16 @@ public class CheckIn extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+
+        // use to test need to delete
+        handler.postDelayed(checkInRunnable, 3000);
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         Random random = new Random();
         int randomInt = random.nextInt(GESTURE_COUNT);
-        randomInt = 1;
 
         switch (randomInt) {
             case 0:

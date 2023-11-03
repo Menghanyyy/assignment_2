@@ -115,15 +115,6 @@ public class EventFragment extends Fragment{
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
 
-        imageView = (ImageView) view.findViewById(R.id.add);
-        imageView.setClickable(true);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), CreateEditEvent.class);
-                startActivity(i);
-            }
-        });
-
         return view;
     }
 

@@ -139,7 +139,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Detect testDetect = new Detect(this);
 
     private ViewGroup popupLayout;
+
     private ArrayList<String> avoidPopUp;
+    private ArrayList<View> currentPopUp;
 
     private String eventId;
 
@@ -155,6 +157,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         activitiesMarkerId = new ArrayList<>();
 
         avoidPopUp = new ArrayList<>();
+        currentPopUp = new ArrayList<>();
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
@@ -501,7 +504,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(featureList.size() > 0) {
 
-
             for(Features f : featureList) {
 
                 Activity tmpActivity = null;
@@ -513,48 +515,68 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 }
 
-                if(tmpActivity != null && avoidPopUp.contains(tmpActivity.getActivityId()) == false)
-                {
 
-                    LayoutInflater inflater = LayoutInflater.from(this);
+                if(tmpActivity != null) {
 
-                    // Inflate the card layout
-                    View checkInCardView = inflater.inflate(R.layout.detected_activity_card, popupLayout, false);
+                    View tmpView = null;
 
-                    // Find views within the card and populate them
-                    TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
-                    Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
-                    Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
-
-                    activityName.setText(tmpActivity.getActivityName());
-
-                    Activity finalTmpActivity = tmpActivity;
-
-                    cancelCheckInBth.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            avoidPopUp.add(finalTmpActivity.getActivityId());
-                            popupLayout.removeView(checkInCardView);
+                    for (View v : currentPopUp) {
+                        if(v.getId() == Integer.parseInt(tmpActivity.getActivityId())) {
+                            tmpView = v;
+                            break;
                         }
-                    });
+                    }
 
-                    checkInBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            popupLayout.removeView(checkInCardView);
+                    if(avoidPopUp.contains(tmpActivity.getActivityId()) == false && tmpView == null)
+                    {
 
-                            Intent intent = new Intent(MapActivity.this, CheckIn.class);
-                            intent.putExtra("activityId", finalTmpActivity.getActivityId());
-                            activityResultLauncher.launch(intent);
-                        }
-                    });
+                        LayoutInflater inflater = LayoutInflater.from(this);
 
-                    popupLayout.addView(checkInCardView);
+                        // Inflate the card layout
+                        View checkInCardView = inflater.inflate(R.layout.detected_activity_card, popupLayout, false);
+
+                        checkInCardView.setId(Integer.parseInt(tmpActivity.getActivityId()));
+
+                        // Find views within the card and populate them
+                        TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
+                        Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
+                        Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
+
+                        activityName.setText(tmpActivity.getActivityName());
+
+                        Activity finalTmpActivity = tmpActivity;
+
+                        cancelCheckInBth.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                avoidPopUp.add(finalTmpActivity.getActivityId());
+                                currentPopUp.remove(checkInCardView);
+                                popupLayout.removeView(checkInCardView);
+                            }
+                        });
+
+                        checkInBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(MapActivity.this, CheckIn.class);
+                                intent.putExtra("activityId", finalTmpActivity.getActivityId());
+                                activityResultLauncher.launch(intent);
+                            }
+                        });
+
+                        currentPopUp.add(checkInCardView);
+                        popupLayout.addView(checkInCardView);
+
+                    }
+                    else {
+                        Log.i("features", "No Matching Event");
+                    }
+
+
 
                 }
-                else {
-                    Log.i("features", "No Matching Event");
-                }
+
+
             }
         }
 
@@ -622,8 +644,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     @Override
                                     public void onSuccess(String result) {
                                         Log.i("currentActivityid", checkedInActivityId);
+
                                         avoidPopUp.add(checkedInActivityId);
-                                        popupLayout.removeAllViews();
+
+                                        View currentView = null;
+
+                                        for (View v : currentPopUp) {
+                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                                currentView = v;
+                                                break;
+                                            }
+                                        }
+
+                                        popupLayout.removeView(currentView);
+                                        currentPopUp.remove(currentView);
+
                                     }
 
                                     @Override
