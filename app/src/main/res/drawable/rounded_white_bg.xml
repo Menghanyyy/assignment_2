@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#fff"/> <!-- 背景颜色 -->
-    <corners android:radius="14dp"/> <!-- 圆角半径 -->
+    <solid android:color="#FFFFFF"/> <!-- Background color -->
+    <!-- Define individual corner radii -->
+    <corners
+        android:topLeftRadius="14dp"
+        android:topRightRadius="14dp"
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp" />
     <stroke android:color="#707070" android:width="1dp"/>
 </shape>

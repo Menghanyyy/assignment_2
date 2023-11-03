@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.component.Activity;
+import com.example.myapplication.component.Visit;
 
 import java.util.List;
 
@@ -35,6 +36,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.activityDescription.setText(data.getDescription());
         holder.activityTime.setText(data.getStartTime() + " - " + data.getEndTime());
 
+        if(data.getActivityVisits().size() > 0){
+
+            Visit activityVisit = data.getActivityVisits().get(0);
+
+            holder.activityVisitStatus.setText(activityVisit.getVisitingTime().toString());
+
+        } else {
+            holder.activityVisitStatus.setText("No Record");
+        }
+
         holder.closeActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +69,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView activityTime;
         public TextView activityDescription;
         public ImageButton closeActivityButton;
+        public TextView activityVisitStatus;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -68,6 +80,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             activityTime = itemView.findViewById(R.id.activity_time);
             activityDescription = itemView.findViewById(R.id.activity_description);
             closeActivityButton = itemView.findViewById(R.id.closeButton);
+            activityVisitStatus = itemView.findViewById(R.id.activity_check_in_status);
 
         }
     }

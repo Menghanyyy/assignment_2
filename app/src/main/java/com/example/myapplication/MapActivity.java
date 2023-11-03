@@ -143,6 +143,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<String> avoidPopUp;
     private ArrayList<View> currentPopUp;
 
+    private ArrayList<Visit> existingVisit;
+
     private String eventId;
 
 
@@ -155,6 +157,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         eventsActivities = new ArrayList<>();
         activitiesMarkerId = new ArrayList<>();
+
+        existingVisit = new ArrayList<>();
 
         avoidPopUp = new ArrayList<>();
         currentPopUp = new ArrayList<>();
@@ -195,7 +199,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        initLayers(style);
 
 
-                        databaseManager.getAllActivities("140", new DatabaseCallback<ArrayList<Activity>>() {
+                        databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
                                 Log.i("activity", result.size()+"");
@@ -203,7 +207,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
 
-                                // handle get visit..
+                                for(Activity a : result) {
+
+                                    databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
+                                        @Override
+                                        public void onSuccess(Visit result) {
+                                            existingVisit.add(result);
+                                            avoidPopUp.add(result.getVisitActivityId());
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Log.println(Log.ASSERT, "Error getting visit", error);
+                                        }
+                                    });
+                                }
 
                             }
 
@@ -506,70 +524,75 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             for(Features f : featureList) {
 
-                Activity tmpActivity = null;
+                ArrayList<Activity> tmpActivityList = new ArrayList<>();
 
                 for (Activity activity : eventsActivities) {
                     if(Integer.parseInt(activity.getActivityId()) == f.getActivityID()) {
-                        tmpActivity = activity;
-                        break;
+                        tmpActivityList.add(activity);
                     }
                 }
 
 
-                if(tmpActivity != null) {
+                if(tmpActivityList.size() > 0) {
 
-                    View tmpView = null;
+                    for(Activity a : tmpActivityList) {
 
-                    for (View v : currentPopUp) {
-                        if(v.getId() == Integer.parseInt(tmpActivity.getActivityId())) {
-                            tmpView = v;
-                            break;
+                        Activity tmpActivity = a;
+
+                        View tmpView = null;
+
+                        for (View v : currentPopUp) {
+                            if(v.getId() == Integer.parseInt(tmpActivity.getActivityId())) {
+                                tmpView = v;
+                                break;
+                            }
                         }
-                    }
 
-                    if(avoidPopUp.contains(tmpActivity.getActivityId()) == false && tmpView == null)
-                    {
+                        if(avoidPopUp.contains(tmpActivity.getActivityId()) == false && tmpView == null)
+                        {
 
-                        LayoutInflater inflater = LayoutInflater.from(this);
+                            LayoutInflater inflater = LayoutInflater.from(this);
 
-                        // Inflate the card layout
-                        View checkInCardView = inflater.inflate(R.layout.detected_activity_card, popupLayout, false);
+                            // Inflate the card layout
+                            View checkInCardView = inflater.inflate(R.layout.detected_activity_card, popupLayout, false);
 
-                        checkInCardView.setId(Integer.parseInt(tmpActivity.getActivityId()));
+                            checkInCardView.setId(Integer.parseInt(tmpActivity.getActivityId()));
 
-                        // Find views within the card and populate them
-                        TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
-                        Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
-                        Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
+                            // Find views within the card and populate them
+                            TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
+                            Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
+                            Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
 
-                        activityName.setText(tmpActivity.getActivityName());
+                            activityName.setText(tmpActivity.getActivityName());
 
-                        Activity finalTmpActivity = tmpActivity;
+                            Activity finalTmpActivity = tmpActivity;
 
-                        cancelCheckInBth.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                avoidPopUp.add(finalTmpActivity.getActivityId());
-                                currentPopUp.remove(checkInCardView);
-                                popupLayout.removeView(checkInCardView);
-                            }
-                        });
+                            cancelCheckInBth.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    avoidPopUp.add(finalTmpActivity.getActivityId());
+                                    currentPopUp.remove(checkInCardView);
+                                    popupLayout.removeView(checkInCardView);
+                                }
+                            });
 
-                        checkInBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(MapActivity.this, CheckIn.class);
-                                intent.putExtra("activityId", finalTmpActivity.getActivityId());
-                                activityResultLauncher.launch(intent);
-                            }
-                        });
+                            checkInBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(MapActivity.this, CheckIn.class);
+                                    intent.putExtra("activityId", finalTmpActivity.getActivityId());
+                                    activityResultLauncher.launch(intent);
+                                }
+                            });
 
-                        currentPopUp.add(checkInCardView);
-                        popupLayout.addView(checkInCardView);
+                            currentPopUp.add(checkInCardView);
+                            popupLayout.addView(checkInCardView);
 
-                    }
-                    else {
-                        Log.i("features", "No Matching Event");
+                        }
+                        else {
+                            Log.i("features", "No Matching Event");
+                        }
+
                     }
 
 
@@ -605,6 +628,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             String activityId = clickedMarkerFeature.getStringProperty("activityId");
 
             for(Activity a : eventsActivities) {
+
+                Visit tmpVisit = null;
+                for(Visit v : existingVisit) {
+                    if(v.getVisitActivityId().equals(a.getActivityId())) {
+                        tmpVisit = v;
+                    }
+
+                }
+
+                a.addActivityVisit(tmpVisit);
+
                 if(a.getActivityId().equals(activityId)) {
                     rvAdapter = new MyAdapter(a);
                     rvView.setAdapter(rvAdapter);
@@ -659,11 +693,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         popupLayout.removeView(currentView);
                                         currentPopUp.remove(currentView);
 
+                                        databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(checkedInActivityId), new DatabaseCallback<Visit>() {
+                                            @Override
+                                            public void onSuccess(Visit result) {
+                                               existingVisit.add(result);
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+                                                Log.println(Log.ASSERT, "Error getting visit", error);
+                                            }
+                                        });
+
                                     }
 
                                     @Override
                                     public void onError(String error) {
                                         Log.println(Log.ASSERT, "Error adding visit", error);
+
+                                        // need to delete just for testing
+                                        avoidPopUp.add(checkedInActivityId);
+
+                                        View currentView = null;
+
+                                        for (View v : currentPopUp) {
+                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                                currentView = v;
+                                                break;
+                                            }
+                                        }
+
+                                        popupLayout.removeView(currentView);
+                                        currentPopUp.remove(currentView);
                                     }
                                 });
 
