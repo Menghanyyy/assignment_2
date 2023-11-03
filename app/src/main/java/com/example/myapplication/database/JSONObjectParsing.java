@@ -65,6 +65,7 @@ public class JSONObjectParsing {
             jsonObject.put("organisationName", event.getOrganisationName());
             jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
             jsonObject.put("description", event.getDescription());
+            jsonObject.put("backgroundPicture", event.getImage());
 
             return jsonObject;
         } catch (JSONException e) {
