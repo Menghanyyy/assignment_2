@@ -144,7 +144,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<Activity> eventsActivities;
     private ArrayList<String> activitiesMarkerId;
 
-    private boolean isLocationEnabled = false;
+    private boolean isLocationEnabled = true;
     private RecyclerView rvView;
     private MyAdapter rvAdapter;
 
@@ -270,6 +270,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
                         }
+
+                        enableLocationComponent(style);
 
 
 
