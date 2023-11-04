@@ -69,11 +69,13 @@
             android:orientation="horizontal"
             android:layout_marginTop="5dp">
 
-            <Button
+            <TextView
                 android:id="@+id/cancel_check_in_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_width="70dp"
+                android:layout_height="35dp"
                 android:background="@drawable/rounded_background_2"
+                android:backgroundTint="@color/dark_blue"
                 android:text="Cancel"
                 android:textColor="#FFFFFF"
                 android:paddingLeft="10dp"
@@ -83,11 +85,13 @@
                 android:textSize="12sp"
                 android:layout_marginEnd="20dp"/>
 
-            <Button
+            <TextView
                 android:id="@+id/activity_check_in_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_width="70dp"
+                android:layout_height="35dp"
                 android:background="@drawable/rounded_background_2"
+                android:backgroundTint="@color/dark_blue"
                 android:text="Check In"
                 android:textColor="#FFFFFF"
                 android:paddingLeft="10dp"

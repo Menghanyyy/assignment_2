@@ -48,7 +48,7 @@ public class AddRemoveActivity extends AppCompatActivity {
 
     TextView add_activity_button;
 
-    Button confirm_activity_button;
+    TextView confirm_activity_button;
 
     ViewGroup registerMapCenterStatus;
     ViewGroup registerMapRangeStatus;
