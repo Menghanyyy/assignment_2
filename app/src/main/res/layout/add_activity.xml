@@ -56,8 +56,9 @@
         </LinearLayout>
 
 
-        <LinearLayout
-            android:id="@+id/activity_fill_container"
+
+        <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -78,8 +79,12 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/img_placeholder"></ImageView>
 
+            android:scrollbars="vertical"
+            android:scrollbarSize="5dp"
+            android:scrollbarThumbVertical="@color/dark_blue">
 
             <LinearLayout
+                android:id="@+id/activity_fill_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -329,6 +334,221 @@
             </LinearLayout>
 
         </LinearLayout>
+                android:divider="@drawable/divider"
+                android:showDividers="middle"
+                android:orientation="vertical"
+            >
+                <ImageView
+                    android:id="@+id/activity_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center_horizontal"
+                    android:src="@drawable/img_placeholder"
+                    android:background="@color/grey"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="fitCenter"
+                    ></ImageView>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    >
+
+                    <TextView
+                        android:id="@+id/activity_name_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Name:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:id="@+id/activity_name"
+                        android:hint="Activity name ?"
+                        android:background="@drawable/rounded_background_2"
+                        android:textColorHint="@color/white"
+                        android:textColor="@color/white"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawablePadding="20dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/activity_description_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Description:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:id="@+id/activity_description"
+                        android:hint="Explain about the activity ?"
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:maxLines="10"
+                        android:gravity="top"
+                        android:textColorHint="@color/white"
+                        android:background="@drawable/rounded_background_2"
+                        android:textColor="@color/white"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawablePadding="20dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/activity_organisation_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Organisation:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:id="@+id/activity_organisation"
+                        android:hint="Who host the activity ?"
+                        android:textColorHint="@color/white"
+                        android:textColor="@color/white"
+                        android:background="@drawable/rounded_background_2"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawablePadding="20dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/activity_address_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Address:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:id="@+id/activity_address"
+                        android:hint="Where did the activity host ?"
+                        android:textColorHint="@color/white"
+                        android:background="@drawable/rounded_background_2"
+                        android:textColor="@color/white"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawablePadding="20dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/activity_map_range_register_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Map Range Register:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:drawableStart="@drawable/ic_baseline_done_40"
+                        android:drawablePadding="8dp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/activity_map_center_register_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart ="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="Map Center Register:"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:drawableStart="@drawable/ic_baseline_done_40"
+                        android:drawablePadding="8dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <!-- Create Event Button -->
 

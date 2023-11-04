@@ -255,6 +255,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 "2023-09-21T12:00:00Z",
                 image);
 
+        // adding activity to event
         createEvent.addEventActivity(tmpActivity);
 
         Log.i("activity", String.valueOf(range));
@@ -268,14 +269,28 @@ public class CreateEditEvent extends AppCompatActivity {
         ImageView activityImage = cardView.findViewById(R.id.activity_image);
         TextView activityName = cardView.findViewById(R.id.activity_name);
         TextView activityIndex = cardView.findViewById(R.id.activity_num);
+        TextView removeBtn = cardView.findViewById(R.id.activity_remove_button);
+
+        activityIndex.setText("0"+activityNum);
+        activityNum += 1;
+
+        activityName.setText(name);
 
         byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
         activityImage.setImageBitmap(decodedBitmap);
 
-        activityName.setText(name);
-        activityIndex.setText("0"+activityNum);
-        activityNum += 1;
+        removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createEvent.removeEventActivity(tmpActivity);
+                activity_list.removeView(cardView);
+            }
+        });
+
+
+
+
 
 
         activity_list.addView(cardView);
@@ -352,6 +367,8 @@ public class CreateEditEvent extends AppCompatActivity {
                                 //ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 //                                byte[] imageBytes = baos.toByteArray();
+
+                                // this will pass to the db
 //                                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 //
 //                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);

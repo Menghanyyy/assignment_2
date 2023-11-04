@@ -37,7 +37,7 @@ public class Event {
         if(image.isEmpty()) {
             this.image = "";
         }else {
-            this.image = "image";
+            this.image = image;
         }
     }
 
@@ -97,6 +97,24 @@ public class Event {
 
         // checking repeating if needed
         return this.eventActivity.add(eventActivity);
+
+    }
+
+    public boolean removeEventActivity(String ActivityId) {
+
+        for(Activity a : eventActivity) {
+            if(a.getActivityId().equals(a)) {
+                return eventActivity.remove(a);
+            }
+        }
+
+        return false;
+
+    }
+
+    public boolean removeEventActivity(Activity eventActivity) {
+
+        return this.eventActivity.remove(eventActivity);
 
     }
 
