@@ -241,25 +241,23 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
-    private void AddingActivity(String image, String name, String description, String organisation, String address, Point center, ArrayList<Point> range) {
+    private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
-        Activity tmpActivity = new Activity("0",
-                name,
+        Activity tmpActivity = new Activity( name,
                 Home.currentUser,
                 null,
                 center,
                 range,
                 description,
                 address,
-                null,
-                "2023-09-21T12:00:00Z",
-                "2023-09-21T12:00:00Z",
+                organisation,
+                activity_start_time,
+                activity_end_time,
                 image);
 
         // adding activity to event
         createEvent.addEventActivity(tmpActivity);
 
-        Log.i("activity", String.valueOf(range));
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -288,10 +286,6 @@ public class CreateEditEvent extends AppCompatActivity {
                 activity_list.removeView(cardView);
             }
         });
-
-
-
-
 
 
         activity_list.addView(cardView);
@@ -324,6 +318,8 @@ public class CreateEditEvent extends AppCompatActivity {
                                 String activity_description = intent.getStringExtra("activityDescription");
                                 String activity_organisation = intent.getStringExtra("activityOrganisation");
                                 String activity_address = intent.getStringExtra("activityAddress");
+                                String activity_start_time = intent.getStringExtra("activityStartTime");
+                                String activity_end_time = intent.getStringExtra("activityEndTime");
 
                                 LatLng activity_center = intent.getParcelableExtra("activityCenter");
                                 ArrayList<LatLng> activity_range = intent.getParcelableArrayListExtra("activityRange");
@@ -335,7 +331,7 @@ public class CreateEditEvent extends AppCompatActivity {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
-                                AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_center_point, activity_range_points);
+                                AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_start_time, activity_end_time, activity_center_point, activity_range_points);
 
                             }
                         }

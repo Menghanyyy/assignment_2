@@ -67,7 +67,6 @@ public class dbTesting {
         Point centrePoint = Point.fromLngLat(longitude, latitude);
 
         Activity testActivity = new Activity(
-                null,
                 "Random activity",
                 testUser,
                 testEvent,
@@ -75,11 +74,10 @@ public class dbTesting {
                 dummyRange,
                 "A great activity",
                 "Melbourne",
-                dummyRange,
+                "Melbourne",
                 "2023-09-21T12:00:00Z",
                 "2023-09-21T12:00:00Z",
-                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA",
-                Integer.parseInt(testUser.getUserId())
+                "/9j/4AAQSkZJRgABAQEAAAAAAAD/4QBYRXhpZgAATU0AKgAAAAgAAkAAAAMAAAABAAEAQAAEAA"
                 );
 
         Visit testVisit = new Visit(
