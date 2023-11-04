@@ -244,13 +244,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             Type listType = new TypeToken<List<Point>>(){}.getType();
                             List<Point> bbox = new Gson().fromJson(pointsJson, listType);
 
+                            Log.println(Log.ASSERT, "ABOUT TO BUILD", "BUILD");
+
                             LatLngBounds boundsBuilder = new LatLngBounds.Builder()
                                     .include(getNorthWest(bbox))
                                     .include(getSouthEast(bbox))
                                     .build();
 
+
+
                             mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder,
                                     EVENT_SCREEN_PADDING), EASE_DURATION);
+                            Log.println(Log.ASSERT, "Success in ease", boundsBuilder.toString());
+                            Log.println(Log.ASSERT, "Success in ease", boundsBuilder.getNorthWest().toString());
+                            Log.println(Log.ASSERT, "Success in ease", boundsBuilder.getSouthEast().toString());
+
 
                         } catch (Exception e){
                             Log.println(Log.ASSERT, "BBOX parsing failed", e.getMessage());
@@ -267,9 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         }
 
-
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
-
                     }
 
                 });
@@ -277,16 +283,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Enable zoom controls (+ and - buttons)
         mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
         mapboxMap.addOnMapClickListener(this);
-
     }
 
     private LatLng getNorthWest(List<Point> bbox) {
+
         double minLat = Double.MAX_VALUE;
-        double maxLon = Double.MIN_VALUE;
+        double maxLon = - Double.MAX_VALUE;
 
         for (Point point : bbox) {
-            double lat = point.coordinates().get(0);
-            double lon = point.coordinates().get(1);
+            double lat = point.coordinates().get(1);
+            double lon = point.coordinates().get(0);
 
             minLat = Math.min(minLat, lat);
             maxLon = Math.max(maxLon, lon);
@@ -296,12 +302,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private LatLng getSouthEast(List<Point> bbox) {
-        double maxLat = Double.MIN_VALUE;
+        double maxLat = - Double.MAX_VALUE;
         double minLon = Double.MAX_VALUE;
 
         for (Point point : bbox) {
-            double lat = point.coordinates().get(0);
-            double lon = point.coordinates().get(1);
+            double lat = point.coordinates().get(1);
+            double lon = point.coordinates().get(0);
 
             maxLat = Math.max(maxLat, lat);
             minLon = Math.min(minLon, lon);
