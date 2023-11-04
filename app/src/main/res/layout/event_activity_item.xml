@@ -47,11 +47,21 @@
             android:layout_marginEnd="8dp" />/>
 
         <!-- Button -->
-        <Button
+        <TextView
             android:id="@+id/activity_remove_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Remove" />
+            android:padding= "10dp"
+            android:text="Remove"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:background="@drawable/rounded_background_2"
+            android:backgroundTint="@color/dark_blue"
+            android:clickable="true"
+            android:textSize="18sp"
+            android:focusable="true"
+        />
+
 
     </LinearLayout>
 

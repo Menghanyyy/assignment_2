@@ -21,7 +21,10 @@ import com.example.myapplication.component.OnDetectResultListener;
 import com.example.myapplication.component.Visit;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.location.LocationEngineRequest;
+import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.FeatureCollection;
@@ -112,6 +115,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
+    private static final long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
+    private static final long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 30;
+
     private static final String ACTIVITY_FILL_LAYER_ID = "activity_fill_id";
     private static final String ACTIVITY_OUTLINE_LAYER_ID = "activity_outline_id";
     private static final String ACTIVITY_SOURCE_ID = "activity_source_id";
@@ -133,8 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MyAdapter rvAdapter;
 
     private LocationComponent locationComponent;
-    private Handler locationHandler = new Handler();
-    private Runnable locationRunnable;
+    private LocationEngine locationEngine;
     
     private Detect testDetect = new Detect(this);
 
@@ -165,7 +170,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-
         setContentView(R.layout.activity_map);
 
         popupLayout = findViewById(R.id.check_in_popup_layout);
@@ -176,6 +180,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.getMapAsync(this);
 
         this.databaseManager = new DatabaseManager(this);
+
 
 
     }
@@ -190,19 +195,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
         MapActivity.this.mapboxMap = mapboxMap;
+
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/light-v11"),
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
-//                        initSource(style);
-//                        initLayers(style);
-
-
                         databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
-                                Log.i("activity", result.size()+"");
+
                                 eventsActivities = result;
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
@@ -214,6 +216,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
+                                            enableLocationComponent(style);
                                         }
 
                                         @Override
@@ -240,6 +243,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
+
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
 
                     }
@@ -249,6 +253,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Enable zoom controls (+ and - buttons)
         mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
         mapboxMap.addOnMapClickListener(this);
+
 
     }
 
@@ -379,10 +384,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void toggleUserLocation() {
         LocationComponent locationComponent = mapboxMap.getLocationComponent();
         if (isLocationEnabled) {
+
             locationComponent.setLocationComponentEnabled(false);
+
             isLocationEnabled = false;
-            if (locationHandler != null && locationRunnable != null) {
-                locationHandler.removeCallbacks(locationRunnable);
+            if (locationEngine != null) {
+                locationEngine.removeLocationUpdates(callback);
             }
         } else {
             enableLocationComponent(mapboxMap.getStyle());
@@ -397,12 +404,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
-            // Get an instance of the component
+            locationEngine = LocationEngineProvider.getBestLocationEngine(this);
+
+            LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
+                    .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
+                    .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
+
+            locationEngine.requestLocationUpdates(request, callback, getMainLooper());
+
+            locationEngine.getLastLocation(callback);
+
             locationComponent = mapboxMap.getLocationComponent();
 
-            // Activate with options
+            // activate user location
             locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
+                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
+                            .locationEngine(locationEngine)
+                            .build());
 
             // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
@@ -413,7 +431,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            startLocationChecker();
 
         } else {
             ActivityCompat.requestPermissions(this,
@@ -436,23 +453,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void startLocationChecker() {
-        locationRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (locationComponent != null) {
-                    Location userLocation = locationComponent.getLastKnownLocation();
-                    if (userLocation != null) {
-                        testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
 
-                        // You now have the user's location, you can check and trigger pop-up or other actions.
-                    }
-                    locationHandler.postDelayed(this, 1000);  // Check again after 3 seconds
-                }
+    private final LocationEngineCallback<LocationEngineResult> callback = new LocationEngineCallback<LocationEngineResult>() {
+        @Override
+        public void onSuccess(LocationEngineResult result) {
+            Location userLocation = result.getLastLocation();
+            if (userLocation != null) {
+                testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
             }
-        };
-        locationHandler.post(locationRunnable);
-    }
+        }
+
+        @Override
+        public void onFailure(@NonNull Exception exception) {
+            Log.e("Unable get use location", exception.toString());
+        }
+    };
 
 
 
@@ -483,8 +498,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         mapView.onPause();
-        if (locationHandler != null && locationRunnable != null) {
-            locationHandler.removeCallbacks(locationRunnable);
+
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates(callback);
         }
     }
 
@@ -510,6 +526,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates(callback);
+        }
     }
 
 
@@ -517,7 +537,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // this function return 
     @Override
     public void onDetectResult(List<Features> featureList) {
-        Log.i("featurelist", String.valueOf(featureList.size()));
 
 
         if(featureList.size() > 0) {
@@ -619,7 +638,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         String[] markerLayerId = activitiesMarkerId.toArray(new String[0]);
 
-        Log.i("cickedMarker", String.valueOf(markerLayerId));
         List<Feature> features = mapboxMap.queryRenderedFeatures(touchPoint, markerLayerId);
 
         if (!features.isEmpty()) {
@@ -677,7 +695,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
                                     @Override
                                     public void onSuccess(String result) {
-                                        Log.i("currentActivityid", checkedInActivityId);
 
                                         avoidPopUp.add(checkedInActivityId);
 

@@ -32,14 +32,21 @@ public class Home extends AppCompatActivity {
 
     DatabaseManager databaseManager;
 
-    CreateEditEvent mCreateEvent;
-
     private int currentIndex = 0; //当前Frament索引
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
+
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        mEventFragment = HomeFragment.newInstance();//EventFragment.newInstance("","");
+        mMapFragment = MapFragment.newInstance("","");
+        mProfileFragment = ProfileFragment.newInstance("","");
+
+
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(Home.this, CreateEditEvent.class);
@@ -51,8 +58,6 @@ public class Home extends AppCompatActivity {
             Intent intent = getIntent();
             String userId = intent.getStringExtra("userId").toString().trim();
 
-            currentUser = new GeneralUser(userId, "", "", "", "");
-
             Log.i("userId", userId);
 
             databaseManager = new DatabaseManager(this);
@@ -60,6 +65,7 @@ public class Home extends AppCompatActivity {
                 @Override
                 public void onSuccess(GeneralUser result) {
                     currentUser = result;
+                    replaceFg(mEventFragment);
                 }
 
                 @Override
@@ -69,14 +75,12 @@ public class Home extends AppCompatActivity {
             });
 
         }
+        else {
 
+            replaceFg(mEventFragment);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        mEventFragment =HomeFragment.newInstance();//EventFragment.newInstance("","");
-        mMapFragment =MapFragment.newInstance("","");
-        mProfileFragment =ProfileFragment.newInstance("","");
+        }
 
-        replaceFg(mEventFragment);
 
         bottomNavigationView.setOnItemSelectedListener(
                 new BottomNavigationView.OnItemSelectedListener() {
