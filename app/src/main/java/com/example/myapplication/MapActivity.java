@@ -39,6 +39,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.LocationComponentOptions;
@@ -89,6 +90,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -122,9 +124,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String MARKER_SOURCE_ID = "activity-marker-source-id";
     private static final String MARKER_ICON_ID = "activity-marker-icon-id";
 
-    private static Integer DEFAULT_ZOOM = 10;
+    private static double DEFAULT_ZOOM = 10;
     private static double DEFAULT_LATITUDE = -37.7951;
     private static double DEFAULT_LONGITUDE = 144.9620;
+    private static int EVENT_SCREEN_PADDING = 50;
+    private static int EASE_DURATION = 3000;
 
     private MapView mapView;
     private MapboxMap mapboxMap;
@@ -235,31 +239,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             }
                         });
 
-                        Integer zoom = DEFAULT_ZOOM;
-                        double lat = DEFAULT_LATITUDE;
-                        double lon = DEFAULT_LONGITUDE;
-
                         // Setting screen zoom and location to event centre
                         try {
                             Type listType = new TypeToken<List<Point>>(){}.getType();
                             List<Point> bbox = new Gson().fromJson(pointsJson, listType);
 
-                            // Read details from bbox
-                            zoom = getZoom(bbox);
-                            lat = getLat(bbox);
-                            lon = getLon(bbox);
+                            LatLngBounds boundsBuilder = new LatLngBounds.Builder()
+                                    .include(getNorthWest(bbox))
+                                    .include(getSouthEast(bbox))
+                                    .build();
+
+                            mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder,
+                                    EVENT_SCREEN_PADDING), EASE_DURATION);
 
                         } catch (Exception e){
                             Log.println(Log.ASSERT, "BBOX parsing failed", e.getMessage());
-                        }
 
-                        // Set initial map viewport and zoom
-                        CameraPosition initialPosition = new CameraPosition.Builder()
-                                .target(new LatLng(lat, lon))  // Set the latitude and longitude
-                                .zoom(zoom)  // Set zoom level
+                            // Set initial map viewport and zoom
+                            CameraPosition initialPosition = new CameraPosition.Builder()
+                                .target(new LatLng(
+                                        DEFAULT_LATITUDE, DEFAULT_LONGITUDE
+                                ))  // Set the latitude and longitude
+                                .zoom(DEFAULT_ZOOM)  // Set zoom level
                                 .build();
 
-                        mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
+                            mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
+
+                        }
+
 
                         // Map is set up and the style has loaded. Now you can add data or make other map adjustments
 
@@ -273,16 +280,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    private Integer getZoom(List<Point> bbox){
-        return 10;
+    private LatLng getNorthWest(List<Point> bbox) {
+        double minLat = Double.MAX_VALUE;
+        double maxLon = Double.MIN_VALUE;
+
+        for (Point point : bbox) {
+            double lat = point.coordinates().get(0);
+            double lon = point.coordinates().get(1);
+
+            minLat = Math.min(minLat, lat);
+            maxLon = Math.max(maxLon, lon);
+        }
+
+        return new LatLng(minLat, maxLon);
     }
 
-    private double getLat(List<Point> bbox){
-        return 10;
-    }
+    private LatLng getSouthEast(List<Point> bbox) {
+        double maxLat = Double.MIN_VALUE;
+        double minLon = Double.MAX_VALUE;
 
-    private double getLon(List<Point> bbox){
-        return 10;
+        for (Point point : bbox) {
+            double lat = point.coordinates().get(0);
+            double lon = point.coordinates().get(1);
+
+            maxLat = Math.max(maxLat, lat);
+            minLon = Math.min(minLon, lon);
+        }
+
+        return new LatLng(maxLat, minLon);
     }
 
     private Bitmap getBitmapFromDrawable(int drawableId) {
