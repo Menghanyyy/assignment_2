@@ -49,8 +49,9 @@ public class CreateEditEvent extends AppCompatActivity {
     View create_event_layout, edit_event_layout, activity_layout;
     TextView create_event_name, create_event_description, create_event_organisation, create_event_address;
     TextView edit_event_name, edit_event_description, edit_event_organisation, edit_event_address;
-    TextView event_activity_name;
-    Button create_event_btn, edit_event_btn, activity_add_button, activity_event_confirm_button;
+    TextView event_activity_name, activity_event_confirm_button, activity_add_button;
+    Button edit_event_btn;
+    TextView create_event_btn;
     ViewGroup activity_list;
 
     ImageView uploadImageView;

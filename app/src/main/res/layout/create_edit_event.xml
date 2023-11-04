@@ -14,7 +14,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <FrameLayout
@@ -492,7 +492,7 @@
         android:id="@+id/activity_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@drawable/background">
 
 

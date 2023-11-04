@@ -639,8 +639,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                             // Find views within the card and populate them
                             TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
-                            Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
-                            Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
+                            TextView checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
+                            TextView cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
 
                             activityName.setText(tmpActivity.getActivityName());
 
