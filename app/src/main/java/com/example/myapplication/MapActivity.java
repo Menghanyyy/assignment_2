@@ -23,7 +23,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.location.LocationEngineRequest;
+import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.FeatureCollection;
@@ -116,6 +119,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
+    private static final long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
+    private static final long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 30;
+
     private static final String ACTIVITY_FILL_LAYER_ID = "activity_fill_id";
     private static final String ACTIVITY_OUTLINE_LAYER_ID = "activity_outline_id";
     private static final String ACTIVITY_SOURCE_ID = "activity_source_id";
@@ -138,13 +144,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<Activity> eventsActivities;
     private ArrayList<String> activitiesMarkerId;
 
-    private boolean isLocationEnabled = false;
+    private boolean isLocationEnabled = true;
     private RecyclerView rvView;
     private MyAdapter rvAdapter;
 
     private LocationComponent locationComponent;
-    private Handler locationHandler = new Handler();
-    private Runnable locationRunnable;
+    private LocationEngine locationEngine;
     
     private Detect testDetect = new Detect(this);
 
@@ -199,29 +204,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
         MapActivity.this.mapboxMap = mapboxMap;
+
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/light-v11"),
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
-//                        initSource(style);
-//                        initLayers(style);
-
                         databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
                             public void onSuccess(ArrayList<Activity> result) {
-                                Log.i("activity", result.size()+"");
+
                                 eventsActivities = result;
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
 
-                                for(Activity a : result) {
+                                for (Activity a : result) {
 
                                     databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
                                         @Override
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
+                                            enableLocationComponent(style);
                                         }
 
                                         @Override
@@ -241,7 +245,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         // Setting screen zoom and location to event centre
                         try {
-                            Type listType = new TypeToken<List<Point>>(){}.getType();
+                            Type listType = new TypeToken<List<Point>>() {
+                            }.getType();
                             List<Point> bbox = new Gson().fromJson(pointsJson, listType);
 
                             Log.println(Log.ASSERT, "ABOUT TO BUILD", "BUILD");
@@ -252,7 +257,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     .build();
 
 
-
                             mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder,
                                     EVENT_SCREEN_PADDING), EASE_DURATION);
                             Log.println(Log.ASSERT, "Success in ease", boundsBuilder.toString());
@@ -260,16 +264,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             Log.println(Log.ASSERT, "Success in ease", boundsBuilder.getSouthEast().toString());
 
 
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             Log.println(Log.ASSERT, "BBOX parsing failed", e.getMessage());
 
                             // Set initial map viewport and zoom
                             CameraPosition initialPosition = new CameraPosition.Builder()
-                                .target(new LatLng(
-                                        DEFAULT_LATITUDE, DEFAULT_LONGITUDE
-                                ))  // Set the latitude and longitude
-                                .zoom(DEFAULT_ZOOM)  // Set zoom level
-                                .build();
+                                    .target(new LatLng(
+                                            DEFAULT_LATITUDE, DEFAULT_LONGITUDE
+                                    ))  // Set the latitude and longitude
+                                    .zoom(DEFAULT_ZOOM)  // Set zoom level
+                                    .build();
 
                             mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
 
@@ -442,10 +446,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void toggleUserLocation() {
         LocationComponent locationComponent = mapboxMap.getLocationComponent();
         if (isLocationEnabled) {
+
             locationComponent.setLocationComponentEnabled(false);
+
             isLocationEnabled = false;
-            if (locationHandler != null && locationRunnable != null) {
-                locationHandler.removeCallbacks(locationRunnable);
+            if (locationEngine != null) {
+                locationEngine.removeLocationUpdates(callback);
             }
         } else {
             enableLocationComponent(mapboxMap.getStyle());
@@ -460,12 +466,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
-            // Get an instance of the component
+            locationEngine = LocationEngineProvider.getBestLocationEngine(this);
+
+            LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
+                    .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
+                    .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
+
+            locationEngine.requestLocationUpdates(request, callback, getMainLooper());
+
+            locationEngine.getLastLocation(callback);
+
             locationComponent = mapboxMap.getLocationComponent();
 
-            // Activate with options
+            // activate user location
             locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
+                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
+                            .locationEngine(locationEngine)
+                            .build());
 
             // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
@@ -476,7 +493,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            startLocationChecker();
 
         } else {
             ActivityCompat.requestPermissions(this,
@@ -499,23 +515,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void startLocationChecker() {
-        locationRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (locationComponent != null) {
-                    Location userLocation = locationComponent.getLastKnownLocation();
-                    if (userLocation != null) {
-                        testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
 
-                        // You now have the user's location, you can check and trigger pop-up or other actions.
-                    }
-                    locationHandler.postDelayed(this, 1000);  // Check again after 3 seconds
-                }
+    private final LocationEngineCallback<LocationEngineResult> callback = new LocationEngineCallback<LocationEngineResult>() {
+        @Override
+        public void onSuccess(LocationEngineResult result) {
+            Location userLocation = result.getLastLocation();
+            if (userLocation != null) {
+                testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
             }
-        };
-        locationHandler.post(locationRunnable);
-    }
+        }
+
+        @Override
+        public void onFailure(@NonNull Exception exception) {
+            Log.e("Unable get use location", exception.toString());
+        }
+    };
 
 
 
@@ -546,8 +560,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         mapView.onPause();
-        if (locationHandler != null && locationRunnable != null) {
-            locationHandler.removeCallbacks(locationRunnable);
+
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates(callback);
         }
     }
 
@@ -573,6 +588,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates(callback);
+        }
     }
 
 
@@ -580,7 +599,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // this function return 
     @Override
     public void onDetectResult(List<Features> featureList) {
-        Log.i("featurelist", String.valueOf(featureList.size()));
 
 
         if(featureList.size() > 0) {
@@ -623,8 +641,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                             // Find views within the card and populate them
                             TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
-                            Button checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
-                            Button cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
+                            TextView checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
+                            TextView cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
 
                             activityName.setText(tmpActivity.getActivityName());
 
@@ -682,7 +700,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         String[] markerLayerId = activitiesMarkerId.toArray(new String[0]);
 
-        Log.i("cickedMarker", String.valueOf(markerLayerId));
         List<Feature> features = mapboxMap.queryRenderedFeatures(touchPoint, markerLayerId);
 
         if (!features.isEmpty()) {
@@ -740,7 +757,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
                                     @Override
                                     public void onSuccess(String result) {
-                                        Log.i("currentActivityid", checkedInActivityId);
 
                                         avoidPopUp.add(checkedInActivityId);
 
