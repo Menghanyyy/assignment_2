@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,6 +180,11 @@ public class EventFragment extends Fragment{
                 public void onClick(View view) {
                     Intent cardInfo = new Intent(getActivity(), EventPageActivity.class);//src to tagactivity
                     cardInfo.putExtra("eventId", event.getEventId());
+
+                    // Add bbox to intent as a String
+                    String pointsJson = new Gson().toJson(event.getEventRange());
+                    cardInfo.putExtra("bbox", pointsJson);
+
                     getActivity().startActivity(cardInfo);
                 }
             });

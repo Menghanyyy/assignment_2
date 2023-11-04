@@ -17,6 +17,12 @@ import com.example.myapplication.component.Event;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.mapbox.geojson.Point;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class EventPageActivity extends AppCompatActivity {
 
@@ -38,6 +44,7 @@ public class EventPageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
+        String pointsJson = intent.getStringExtra("bbox");
 
         databaseManager = new DatabaseManager(this);
 
@@ -59,6 +66,8 @@ public class EventPageActivity extends AppCompatActivity {
 
                 Intent  mapIntent = new Intent(EventPageActivity.this,MapActivity.class);
                 mapIntent.putExtra("eventId", eventId);
+                mapIntent.putExtra("bbox", pointsJson);
+
                 startActivity(mapIntent);
 
             }

@@ -20,6 +20,8 @@ import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.component.OnDetectResultListener;
 import com.example.myapplication.component.Visit;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -97,6 +99,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -109,7 +112,6 @@ import com.example.myapplication.component.Detect;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, OnDetectResultListener, MapboxMap.OnMapClickListener {
 
-
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 101;
 
     private static final String ACTIVITY_FILL_LAYER_ID = "activity_fill_id";
@@ -119,6 +121,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String MARKER_LAYER_ID = "activity-marker-layer-id";
     private static final String MARKER_SOURCE_ID = "activity-marker-source-id";
     private static final String MARKER_ICON_ID = "activity-marker-icon-id";
+
+    private static Integer DEFAULT_ZOOM = 10;
+    private static double DEFAULT_LATITUDE = -37.7951;
+    private static double DEFAULT_LONGITUDE = 144.9620;
 
     private MapView mapView;
     private MapboxMap mapboxMap;
@@ -146,6 +152,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<Visit> existingVisit;
 
     private String eventId;
+    private String pointsJson;
 
 
     @Override
@@ -154,6 +161,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
+        pointsJson = intent.getStringExtra("bbox");
 
         eventsActivities = new ArrayList<>();
         activitiesMarkerId = new ArrayList<>();
@@ -165,7 +173,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-
         setContentView(R.layout.activity_map);
 
         popupLayout = findViewById(R.id.check_in_popup_layout);
@@ -176,8 +183,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.getMapAsync(this);
 
         this.databaseManager = new DatabaseManager(this);
-
-
     }
 
     /**
@@ -197,7 +202,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 //                        initSource(style);
 //                        initLayers(style);
-
 
                         databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
@@ -231,11 +235,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             }
                         });
 
+                        Integer zoom = DEFAULT_ZOOM;
+                        double lat = DEFAULT_LATITUDE;
+                        double lon = DEFAULT_LONGITUDE;
+
+                        // Setting screen zoom and location to event centre
+                        try {
+                            Type listType = new TypeToken<List<Point>>(){}.getType();
+                            List<Point> bbox = new Gson().fromJson(pointsJson, listType);
+
+                            // Read details from bbox
+                            zoom = getZoom(bbox);
+                            lat = getLat(bbox);
+                            lon = getLon(bbox);
+
+                        } catch (Exception e){
+                            Log.println(Log.ASSERT, "BBOX parsing failed", e.getMessage());
+                        }
 
                         // Set initial map viewport and zoom
                         CameraPosition initialPosition = new CameraPosition.Builder()
-                                .target(new LatLng(-37.7951, 144.9620))  // Set the latitude and longitude
-                                .zoom(10)  // Set zoom level
+                                .target(new LatLng(lat, lon))  // Set the latitude and longitude
+                                .zoom(zoom)  // Set zoom level
                                 .build();
 
                         mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(initialPosition));
@@ -252,6 +273,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    private Integer getZoom(List<Point> bbox){
+        return 10;
+    }
+
+    private double getLat(List<Point> bbox){
+        return 10;
+    }
+
+    private double getLon(List<Point> bbox){
+        return 10;
+    }
 
     private Bitmap getBitmapFromDrawable(int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(this, drawableId);
