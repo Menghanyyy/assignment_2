@@ -17,8 +17,12 @@ import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,6 +119,23 @@ public class JSONObjectParsing {
         return null;
     }
 
+    private static String convertTime(String inputTime){
+        String inputDateFormat = "yyyy-MM-dd HH:mm";
+        String outputDateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+        SimpleDateFormat inputSdf = new SimpleDateFormat(inputDateFormat);
+        SimpleDateFormat outputSdf = new SimpleDateFormat(outputDateFormat);
+        inputSdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        outputSdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        try {
+            Date date = inputSdf.parse(inputTime);
+            return outputSdf.format(date);
+        } catch (ParseException e) {
+            return "2000-01-01T00:00:00Z";
+        }
+    }
+
     public static JSONObject unpackActivity(Activity activity) {
         try {
             JSONObject jsonObject = new JSONObject();
@@ -123,8 +144,16 @@ public class JSONObjectParsing {
             jsonObject.put("centreLocation", convertPoint(activity.getActivityLocation()));
             jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
             jsonObject.put("description", activity.getDescription());
-            jsonObject.put("startTime", activity.getStartTime());
-            jsonObject.put("endTime", activity.getEndTime());
+
+            String startString = activity.getStartTime();
+            String endString = activity.getEndTime();
+
+            Log.i("START", startString);
+            Log.i("END", endString);
+
+            jsonObject.put("startTime", convertTime(startString));
+            jsonObject.put("endTime", convertTime(endString));
+
             jsonObject.put("name", activity.getActivityName());
             jsonObject.put("eventID", activity.getHostedEvent().getEventId());
             jsonObject.put("locationName", activity.getLocationName());
@@ -135,8 +164,6 @@ public class JSONObjectParsing {
 
             jsonObject.put("backgroundPicture", imageString);
             jsonObject.put("creatorID", activity.getActivityCreator().getUserId());
-
-//            Log.i("Image send activity", activity.getImage());
 
             return jsonObject;
         } catch (JSONException e) {
