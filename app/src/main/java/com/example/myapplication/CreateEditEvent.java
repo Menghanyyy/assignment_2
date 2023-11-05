@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -141,7 +142,27 @@ public class CreateEditEvent extends AppCompatActivity {
             Log.i("check id", "is empty should be create");
 
             create_event_address.setOnItemClickListener((parent, view, position, id) -> {
-                // Handle the address selection
+                String selection = (String) parent.getItemAtPosition(position);
+                create_event_address.setText(selection);
+            });
+
+            create_event_address.setOnFocusChangeListener((v, hasFocus) -> {
+                if (!hasFocus) {
+                    String enteredText = create_event_address.getText().toString();
+                    // Check if the enteredText matches any item in the adapter
+                    boolean isMatch = false;
+                    for (int i = 0; i < adapter.getCount(); i++) {
+                        String item = adapter.getItem(i);
+                        if (enteredText.equals(item)) {
+                            isMatch = true;
+                            break;
+                        }
+                    }
+                    // If there is no match, clear the AutoCompleteTextView
+                    if (!isMatch) {
+                        create_event_address.setText("");
+                    }
+                }
             });
 
             create_event_address.addTextChangedListener(new TextWatcher() {
@@ -190,13 +211,13 @@ public class CreateEditEvent extends AppCompatActivity {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         byte[] imageBytes = baos.toByteArray();
-                        String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
+                        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
                         createEvent = new Event(
                                 "0",
                                 eventName,
                                 Home.currentUser,
-                                Point.fromLngLat(0,0),
+                                eventAddress,
                                 testP,
                                 eventOrganisation, eventDescription, encodedImage);
 
@@ -350,7 +371,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
         activityName.setText(name);
 
-        byte[] decodedImageBytes = Base64.decode(image, Base64.URL_SAFE);
+        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
         activityImage.setImageBitmap(decodedBitmap);
 

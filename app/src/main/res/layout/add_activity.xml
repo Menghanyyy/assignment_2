@@ -251,7 +251,7 @@
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardUseCompatPadding="true"
                     app:cardPreventCornerOverlap="false">
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/activity_address"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"

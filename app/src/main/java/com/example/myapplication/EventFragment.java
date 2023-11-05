@@ -166,9 +166,12 @@ public class EventFragment extends Fragment{
 
             if(event.getImage().isEmpty()) {
                 Log.i("Image", "No" );
+
                 mainImage.setImageResource(R.mipmap.aaaa);
+
             } else {
                 Log.i("Image", "Yes" );
+
                 byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
                 mainImage.setImageBitmap(decodedBitmap);

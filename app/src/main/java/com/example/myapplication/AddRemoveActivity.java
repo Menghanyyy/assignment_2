@@ -10,10 +10,14 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -32,6 +36,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.component.*;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.w3c.dom.Text;
@@ -42,7 +50,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddRemoveActivity extends AppCompatActivity {
 
@@ -54,7 +67,7 @@ public class AddRemoveActivity extends AppCompatActivity {
     TextView activity_name;
     TextView activity_description;
     TextView activity_organisation;
-    TextView activity_address;
+    AutoCompleteTextView activity_address;
     TextView activity_start_time;
     TextView activity_end_time;
 
@@ -67,6 +80,8 @@ public class AddRemoveActivity extends AppCompatActivity {
 
     LatLng activityCenter;
     ArrayList<LatLng> activityRange;
+
+    private ArrayAdapter<String> adapter;
 
     int timeStatusSelect = 0;
 
@@ -98,6 +113,51 @@ public class AddRemoveActivity extends AppCompatActivity {
         confirm_activity_button.setVisibility(View.GONE);
         registerMapCenterStatus.setVisibility(View.GONE);
         registerMapRangeStatus.setVisibility(View.GONE);
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+        activity_address.setAdapter(adapter);
+
+        activity_address.setOnItemClickListener((parent, view, position, id) -> {
+            String selection = (String) parent.getItemAtPosition(position);
+            activity_address.setText(selection);
+        });
+
+        activity_address.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                String enteredText = activity_address.getText().toString();
+                // Check if the enteredText matches any item in the adapter
+                boolean isMatch = false;
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    String item = adapter.getItem(i);
+                    if (enteredText.equals(item)) {
+                        isMatch = true;
+                        break;
+                    }
+                }
+                // If there is no match, clear the AutoCompleteTextView
+                if (!isMatch) {
+                    activity_address.setText("");
+                }
+            }
+        });
+
+        activity_address.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Perform search
+                if (!s.toString().isEmpty()) {
+                    performSearch(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+
 
         activity_start_time.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +226,7 @@ public class AddRemoveActivity extends AppCompatActivity {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
                 String activityName = activity_name.getText().toString().trim();
                 String activityDescription = activity_description.getText().toString().trim();
@@ -191,6 +251,37 @@ public class AddRemoveActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void performSearch(String query) {
+        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+                .accessToken(Mapbox.getAccessToken())
+                .query(query)
+                .build();
+
+        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if (response.body() != null) {
+                    List<CarmenFeature> results = response.body().features();
+                    List<String> addresses = new ArrayList<>();
+                    for (CarmenFeature feature : results) {
+                        addresses.add(feature.placeName());
+                    }
+                    // Update the adapter and the dropdown list.
+                    runOnUiThread(() -> {
+                        adapter.clear();
+                        adapter.addAll(addresses);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
     // Define an ActivityResultLauncher

@@ -163,6 +163,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String eventId;
     private String pointsJson;
 
+    private static final String[] COLORS = new String[] {
+            "#008000", // Green
+            "#0000FF", // Blue
+            "#00FFFF", // Cyan
+            "#FF00FF", // Magenta
+            "#A52A2A", // Brown
+            "#FFA500", // Orange
+            "#800080", // Purple
+            "#FFFF00", // Yellow
+            "#808000", // Olive
+            "#00FF00", // Lime
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -376,8 +389,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // Adding fill layer to the map
             FillLayer fillLayer = new FillLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity), ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
+            String color = COLORS[eventsActivities.indexOf(activity) % COLORS.length]; // Cycle through the COLORS array
             fillLayer.setProperties(
-                    PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
+                    PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
                     PropertyFactory.fillOpacity(0.5f)
             );
             style.addLayer(fillLayer);

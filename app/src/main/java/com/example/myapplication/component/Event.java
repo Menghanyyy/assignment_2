@@ -9,19 +9,17 @@ public class Event {
     private String eventId;
     private String eventName;
     private User eventOrganiser;
-    private Point eventLocation;
+    private String eventLocation;
     private List<Point> eventRange;
     private List<Activity> eventActivity;
     private List<Visit> eventVisit;
 
     // Optional, refers to company/organisation running event
     private String organisationName;
-
     private String description;
-
     private String image;
 
-    public Event(String EventID, String EventName, User EventOrganiser, Point EventLocation,
+    public Event(String EventID, String EventName, User EventOrganiser, String EventLocation,
                  List<Point> EventRange, String organisationName, String description, String image) {
 
         this.eventId = EventID;
@@ -69,11 +67,11 @@ public class Event {
         this.eventOrganiser = eventOrganiser;
     }
 
-    public Point getEventLocation() {
+    public String getEventLocation() {
         return this.eventLocation;
     }
 
-    public void setEventLocation( Point eventLocation) {
+    public void setEventLocation( String eventLocation) {
         this.eventLocation = eventLocation;
     }
 
