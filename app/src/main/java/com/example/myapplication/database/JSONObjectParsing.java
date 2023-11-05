@@ -129,14 +129,11 @@ public class JSONObjectParsing {
             jsonObject.put("eventID", activity.getHostedEvent().getEventId());
             jsonObject.put("locationName", activity.getLocationName());
 
-
             String imageString = activity.getImage();
             imageString = imageString.replaceAll("\\n", "").
                     replaceAll("\\r", ""); // Remove newline characters
 
             jsonObject.put("backgroundPicture", imageString);
-            jsonObject.put("creatorID", activity.getActivityCreator().getUserId());
-            jsonObject.put("backgroundPicture", activity.getImage());
             jsonObject.put("creatorID", activity.getActivityCreator().getUserId());
 
 //            Log.i("Image send activity", activity.getImage());
