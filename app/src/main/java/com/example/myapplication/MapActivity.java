@@ -93,6 +93,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -102,6 +103,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -548,7 +550,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            startLocationChecker();
+//            startLocationChecker();
 
 
         } else {
@@ -578,7 +580,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.show();
-
 
                 finish();
             }
@@ -637,7 +638,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 int indexOfCheckInActivity = -1;
 
                                 for (Activity a : eventsActivities) {
-                                    if (a.getActivityId() == checkedInActivityId) {
+                                    if (a.getActivityId().equals(checkedInActivityId)) {
                                         indexOfCheckInActivity = Integer.parseInt(a.getActivityId());
                                         break;
                                     }
@@ -839,11 +840,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             checkInCardView.setId(Integer.parseInt(tmpActivity.getActivityId()));
 
                             // Find views within the card and populate them
+                            ImageView activityImage = checkInCardView.findViewById(R.id.activity_image);
                             TextView activityName = checkInCardView.findViewById(R.id.check_in_activity_name);
                             TextView checkInBtn = checkInCardView.findViewById(R.id.activity_check_in_btn);
                             TextView cancelCheckInBth = checkInCardView.findViewById(R.id.cancel_check_in_btn);
 
                             activityName.setText(tmpActivity.getActivityName());
+
+                            byte[] decodedImageBytes = Base64.decode(tmpActivity.getImage(), Base64.DEFAULT);
+                            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                            activityImage.setImageBitmap(decodedBitmap);
 
                             Activity finalTmpActivity = tmpActivity;
 

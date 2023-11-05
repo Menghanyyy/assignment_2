@@ -2,7 +2,10 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,9 +51,36 @@ public class EventPageActivity extends AppCompatActivity {
 
         databaseManager = new DatabaseManager(this);
 
+        databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {
+            @Override
+            public void onSuccess(Event result) {
+
+                ImageView image = findViewById(R.id.eventImage);
+                TextView title = findViewById(R.id.eventTitle);
+                TextView desc = findViewById(R.id.eventDescription);
+                TextView location = findViewById(R.id.eventLocation);
+
+                TextView organisation = findViewById(R.id.eventOrganisation);
+
+                byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                image.setImageBitmap(decodedBitmap);
+
+
+                title.setText(result.getEventName());
+                desc.setText(result.getDescription());
+                location.setText("Melbourne");
+                organisation.setText(result.getOrganisationName());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error Retrieving json", error);
+            }
+        });
+
         invite = findViewById(R.id.invite);
         link_view = findViewById(R.id.invite_link);
-
         invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,30 +117,6 @@ public class EventPageActivity extends AppCompatActivity {
         });
 
 
-        databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {
-            @Override
-            public void onSuccess(Event result) {
-
-                ImageView image = findViewById(R.id.eventImage);
-                TextView title = findViewById(R.id.eventTitle);
-                TextView desc = findViewById(R.id.eventDescription);
-                TextView location = findViewById(R.id.eventLocation);
-
-                TextView organisation = findViewById(R.id.eventOrganisation);
-
-                image.setImageResource(R.mipmap.aaaa);
-
-                title.setText(result.getEventName());
-                desc.setText("Scientific evidence shows that Indigenous sdsdsdsd mkmkmkeqweqeqwemkmkmmkmkmkmkmkmmkmkmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way knnknknknknknknknknknknknknknknknknknknknknknknknknknknkto protect biodiversity is therefore to.");
-                location.setText("Melbourne");
-                organisation.setText(result.getOrganisationName());
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error Retrieving json", error);
-            }
-        });
 
         ImageView iv_edit = findViewById(R.id.eventEdit);
         iv_edit.setOnClickListener(new View.OnClickListener() {
