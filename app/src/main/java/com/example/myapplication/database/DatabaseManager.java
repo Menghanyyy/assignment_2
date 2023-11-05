@@ -59,16 +59,19 @@ public class DatabaseManager implements DatabaseInterface {
     ) {
 
         String url = baseUrl + urlExtension;
+        Log.println(Log.DEBUG, "Sending JSON", "Hee");
 
         // If jsonRequest is not null, convert it to a string and append as query parameter
-        if (jsonRequest != null) {
+        if (jsonRequest != null && method == Request.Method.GET) {
             try {
                 String jsonString = URLEncoder.encode(jsonRequest.toString(), "utf-8");
                 url += "?data=" + jsonString;
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Log.println(Log.DEBUG, "couldnt encode JSON", e.getMessage());
             }
         }
+
+        Log.println(Log.DEBUG, "encoded", "nice");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
             method,
@@ -194,6 +197,9 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void addEvent(Event event, final DatabaseCallback<String> callback) {
+
+        Log.i("about to send event", JSONObjectParsing.unpackEvent(event).toString());
+
         sendJsonObjectRequest(
             Request.Method.POST,
             "/events/addEvent",
@@ -201,6 +207,8 @@ public class DatabaseManager implements DatabaseInterface {
             callback,
             ClassCodes.STRING_CLASS
         );
+//        Log.i("json length (event)", Integer.toString(JSONObjectParsing.unpackEvent(event).toString().length()));
+
     }
 
     @Override
@@ -292,13 +300,20 @@ public class DatabaseManager implements DatabaseInterface {
 
     @Override
     public void addActivity(Activity activity, DatabaseCallback<String> callback) {
-        sendJsonObjectRequest(
-                Request.Method.POST,
-                "/activities/addActivity",
-                JSONObjectParsing.unpackActivity(activity),
-                callback,
-                ClassCodes.STRING_CLASS
-        );
+        try {
+            Log.i("about to send act", JSONObjectParsing.unpackActivity(activity).toString());
+
+            sendJsonObjectRequest(
+                    Request.Method.POST,
+                    "/activities/addActivity",
+                    JSONObjectParsing.unpackActivity(activity),
+                    callback,
+                    ClassCodes.STRING_CLASS
+            );
+        } catch (Exception e){
+            Log.i("Caught outgoing ex", e.getMessage());
+
+        }
     }
 
     @Override

@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -65,11 +67,18 @@ public class JSONObjectParsing {
             jsonObject.put("organisationName", event.getOrganisationName());
             jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
             jsonObject.put("description", event.getDescription());
-            jsonObject.put("backgroundPicture", event.getImage());
+
+            String imageString = event.getImage();
+            imageString = imageString.replaceAll("\\n", "").
+                    replaceAll("\\r", ""); // Remove newline characters
+
+            jsonObject.put("backgroundPicture", imageString);
+
+//            Log.i("Image length (event)", event.getImage());
 
             return jsonObject;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("Couldnt unpack event", e.getMessage());
         }
         return null;
     }
@@ -113,8 +122,6 @@ public class JSONObjectParsing {
 
             // Add individual fields to the JSON object
             jsonObject.put("centreLocation", convertPoint(activity.getActivityLocation()));
-            Log.i("Centre Location", convertPoint(activity.getActivityLocation()));
-
             jsonObject.put("polygonLocation", convertPoints(activity.getActivityRange()));
             jsonObject.put("description", activity.getDescription());
             jsonObject.put("startTime", activity.getStartTime());
@@ -122,12 +129,19 @@ public class JSONObjectParsing {
             jsonObject.put("name", activity.getActivityName());
             jsonObject.put("eventID", activity.getHostedEvent().getEventId());
             jsonObject.put("locationName", activity.getLocationName());
-            jsonObject.put("backgroundPicture", activity.getImage());
+
+            String imageString = activity.getImage();
+            imageString = imageString.replaceAll("\\n", "").
+                    replaceAll("\\r", ""); // Remove newline characters
+
+            jsonObject.put("backgroundPicture", imageString);
             jsonObject.put("creatorID", activity.getActivityOrganiser().getUserId());
+
+//            Log.i("Image send activity", activity.getImage());
 
             return jsonObject;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i("Could not unpack act", e.getMessage());
         }
         return null;
     }

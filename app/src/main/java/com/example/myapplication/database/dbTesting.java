@@ -33,8 +33,8 @@ public class dbTesting {
 
         GeneralUser testUser = new GeneralUser(
                 "10",
-                "zara2",
-                "zara2.com",
+                "zara2f",
+                "zara2f.com",
                 "Password",
                 "myname"
         );
@@ -252,7 +252,7 @@ public class dbTesting {
         }
 
         // Activity Tests
-        if (true) {
+        if (false) {
 
             databaseManager.addActivity(testActivity, new DatabaseCallback<String>() {
                 @Override
