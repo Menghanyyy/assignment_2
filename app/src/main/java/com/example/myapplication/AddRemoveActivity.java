@@ -166,7 +166,7 @@ public class AddRemoveActivity extends AppCompatActivity {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
 
                 String activityName = activity_name.getText().toString().trim();
                 String activityDescription = activity_description.getText().toString().trim();

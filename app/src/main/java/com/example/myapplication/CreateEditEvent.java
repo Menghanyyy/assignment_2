@@ -9,11 +9,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,13 +36,21 @@ import androidx.core.content.ContextCompat;
 import com.example.myapplication.component.*;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class CreateEditEvent extends AppCompatActivity {
@@ -47,14 +59,20 @@ public class CreateEditEvent extends AppCompatActivity {
 
     // Views for Create, Edit, and Activity
     View create_event_layout, edit_event_layout, activity_layout;
-    TextView create_event_name, create_event_description, create_event_organisation, create_event_address;
+    TextView create_event_name, create_event_description, create_event_organisation;
     TextView edit_event_name, edit_event_description, edit_event_organisation, edit_event_address;
     TextView event_activity_name, activity_event_confirm_button, activity_add_button;
     Button edit_event_btn;
     TextView create_event_btn;
+
     ViewGroup activity_list;
 
     ImageView uploadImageView;
+
+    AutoCompleteTextView create_event_address;
+
+
+    private ArrayAdapter<String> adapter;
 
     private DatabaseManager databaseManager;
 
@@ -66,6 +84,9 @@ public class CreateEditEvent extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+
         setContentView(R.layout.create_edit_event);
 
         findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
@@ -107,6 +128,9 @@ public class CreateEditEvent extends AppCompatActivity {
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
 
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+        create_event_address.setAdapter(adapter);
+
         if(eventId != null){
 
             Log.i("check id", "is not empty should be edit");
@@ -115,6 +139,26 @@ public class CreateEditEvent extends AppCompatActivity {
         }
         else {
             Log.i("check id", "is empty should be create");
+
+            create_event_address.setOnItemClickListener((parent, view, position, id) -> {
+                // Handle the address selection
+            });
+
+            create_event_address.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // Perform search
+                    if (!s.toString().isEmpty()) {
+                        performSearch(s.toString());
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
 
             uploadImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,7 +190,7 @@ public class CreateEditEvent extends AppCompatActivity {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         byte[] imageBytes = baos.toByteArray();
-                        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                        String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
 
                         createEvent = new Event(
                                 "0",
@@ -241,6 +285,37 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
+    private void performSearch(String query) {
+        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+                .accessToken(Mapbox.getAccessToken())
+                .query(query)
+                .build();
+
+        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if (response.body() != null) {
+                    List<CarmenFeature> results = response.body().features();
+                    List<String> addresses = new ArrayList<>();
+                    for (CarmenFeature feature : results) {
+                        addresses.add(feature.placeName());
+                    }
+                    // Update the adapter and the dropdown list.
+                    runOnUiThread(() -> {
+                        adapter.clear();
+                        adapter.addAll(addresses);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+    }
+
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
         Activity tmpActivity = new Activity( name,
@@ -275,7 +350,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
         activityName.setText(name);
 
-        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
+        byte[] decodedImageBytes = Base64.decode(image, Base64.URL_SAFE);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
         activityImage.setImageBitmap(decodedBitmap);
 
