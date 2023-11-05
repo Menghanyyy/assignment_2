@@ -145,13 +145,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<Activity> eventsActivities;
     private ArrayList<String> activitiesMarkerId;
 
-    private boolean isLocationEnabled = true;
+    private boolean isLocationEnabled = false;
     private RecyclerView rvView;
     private MyAdapter rvAdapter;
 
     private LocationComponent locationComponent;
     private LocationEngine locationEngine;
-    
+
     private Detect testDetect = new Detect(this);
 
     private ViewGroup popupLayout;
@@ -167,7 +167,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
 
-    private static final String[] COLORS = new String[] {
+    private static final String[] COLORS = new String[]{
             "#008000", // Green
             "#0000FF", // Blue
             "#00FFFF", // Cyan
@@ -188,6 +188,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
         pointsJson = intent.getStringExtra("bbox");
+
 
         eventsActivities = new ArrayList<>();
         activitiesMarkerId = new ArrayList<>();
@@ -245,10 +246,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
 
-                                            if(currentIndex == activitiesResult.size() -1) {
-                                                enableLocationComponent(style);
-                                            }
-
                                             // To remove the layer with ID "maine"
                                             Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
                                             if (layer != null) {
@@ -264,7 +261,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         @Override
                                         public void onError(String error) {
                                             Log.println(Log.ASSERT, "Error getting visit", error);
-                                            enableLocationComponent(style);
                                         }
                                     });
                                 }
@@ -326,7 +322,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LatLng getNorthWest(List<Point> bbox) {
 
         double minLat = Double.MAX_VALUE;
-        double maxLon = - Double.MAX_VALUE;
+        double maxLon = -Double.MAX_VALUE;
 
         for (Point point : bbox) {
             double lat = point.coordinates().get(1);
@@ -340,7 +336,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private LatLng getSouthEast(List<Point> bbox) {
-        double maxLat = - Double.MAX_VALUE;
+        double maxLat = -Double.MAX_VALUE;
         double minLon = Double.MAX_VALUE;
 
         for (Point point : bbox) {
@@ -373,8 +369,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void drawPolygon_Geojson(Style style) {
 
-        for (Activity activity : eventsActivities)
-        {
+        for (Activity activity : eventsActivities) {
             // To remove the layer with ID "maine"
             Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity));
             if (layer != null) {
@@ -395,12 +390,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         }
 
-        for (Activity activity : eventsActivities)
-        {
+        for (Activity activity : eventsActivities) {
 
             // Create a Polygon
             Polygon polygon = Polygon.fromLngLats(Collections.singletonList(activity.getActivityRange()));
-            Log.i("poly", polygon.toString()+"");
+            Log.i("poly", polygon.toString() + "");
 
             // Create a GeoJsonSource
             GeoJsonSource geoJsonSource_2 = new GeoJsonSource(ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity), Feature.fromGeometry(polygon));
@@ -433,7 +427,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void addMarker(Style loadedMapStyle) {
 
 
-        for(Activity activity : eventsActivities) {
+        for (Activity activity : eventsActivities) {
 
             // Remove the existing layer if it's present
             if (loadedMapStyle.getLayer(MARKER_LAYER_ID + eventsActivities.indexOf(activity)) != null) {
@@ -471,13 +465,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             loadedMapStyle.addLayerAbove(destinationSymbolLayer, ACTIVITY_OUTLINE_LAYER_ID + eventsActivities.indexOf(activity));
 
 
-
         }
 
     }
 
 
-    @SuppressWarnings( {"MissingPermission"})
+    @SuppressWarnings({"MissingPermission"})
     private void toggleUserLocation() {
         LocationComponent locationComponent = mapboxMap.getLocationComponent();
         if (isLocationEnabled) {
@@ -485,9 +478,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             locationComponent.setLocationComponentEnabled(false);
 
             isLocationEnabled = false;
+
             if (locationEngine != null) {
                 locationEngine.removeLocationUpdates(callback);
             }
+
+            if (locationHandler != null && locationRunnable != null) {
+                locationHandler.removeCallbacks(locationRunnable);
+            }
+
         } else {
             enableLocationComponent(mapboxMap.getStyle());
             isLocationEnabled = true;
@@ -513,7 +512,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-    @SuppressWarnings( {"MissingPermission"})
+    @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
         // Check if permissions are enabled and if not request
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -549,7 +548,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-//            startLocationChecker();
+            startLocationChecker();
 
 
         } else {
@@ -572,7 +571,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 View layout = inflater.inflate(R.layout.customise_toast, null, false);
 
                 TextView text = layout.findViewById(R.id.toast_text);
-                text.setText( R.string.user_location_permission_not_granted + "!");
+                text.setText(R.string.user_location_permission_not_granted + "!");
 
                 Toast toast = new Toast(MapActivity.this);
                 toast.setView(layout);
@@ -591,7 +590,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         public void onSuccess(LocationEngineResult result) {
             Location userLocation = result.getLastLocation();
-            Log.i("Location", userLocation.getLongitude() + " " +userLocation.getLatitude() + "");
+            Log.i("Location", userLocation.getLongitude() + " " + userLocation.getLatitude() + "");
             if (userLocation != null) {
                 testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
             }
@@ -618,7 +617,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         @Override
                         public void onActivityResult(ActivityResult result) {
 
-                            if(result.getResultCode() == RESULT_OK) {
+                            if (result.getResultCode() == RESULT_OK) {
 
                                 Intent intent = result.getData();
                                 String checkedInActivityId = intent.getStringExtra("activityId");
@@ -637,14 +636,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                                 int indexOfCheckInActivity = -1;
 
-                                for(Activity a : eventsActivities) {
-                                    if(a.getActivityId() == checkedInActivityId) {
+                                for (Activity a : eventsActivities) {
+                                    if (a.getActivityId() == checkedInActivityId) {
                                         indexOfCheckInActivity = Integer.parseInt(a.getActivityId());
                                         break;
                                     }
                                 }
 
-                                if(indexOfCheckInActivity >=0) {
+                                if (indexOfCheckInActivity >= 0) {
 
                                     Layer layer = mapboxMap.getStyle().getLayer(ACTIVITY_FILL_LAYER_ID + indexOfCheckInActivity);
                                     if (layer != null) {
@@ -669,7 +668,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         View currentView = null;
 
                                         for (View v : currentPopUp) {
-                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                            if (v.getId() == Integer.parseInt(checkedInActivityId)) {
                                                 currentView = v;
                                                 break;
                                             }
@@ -702,7 +701,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         View currentView = null;
 
                                         for (View v : currentPopUp) {
-                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                            if (v.getId() == Integer.parseInt(checkedInActivityId)) {
                                                 currentView = v;
                                                 break;
                                             }
@@ -718,10 +717,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             );
 
 
-
-
     @Override
-    @SuppressWarnings( {"MissingPermission"})
+    @SuppressWarnings({"MissingPermission"})
     protected void onStart() {
         super.onStart();
         mapView.onStart();
@@ -744,12 +741,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
+    @SuppressWarnings({"MissingPermission"})
     protected void onPause() {
         super.onPause();
         mapView.onPause();
 
+        toggleUserLocation();
+
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
+        }
+
+        if(locationHandler != null && locationRunnable != null) {
+            locationHandler.removeCallbacks(locationRunnable);
         }
     }
 
@@ -778,6 +782,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
+        }
+
+        if(locationHandler != null && locationRunnable != null) {
+            locationHandler.removeCallbacks(locationRunnable);
         }
     }
 
