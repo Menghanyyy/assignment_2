@@ -9,14 +9,15 @@ public class Activity {
 
     private String activityId;
     private String activityName;
-    private User activityOrganiser;
+    private User activityCreator;
     private Event hostedEvent;
     private Point activityLocation;
     private List<Point> activityRange;
     private List<Visit> activityVisits;
 
-    private String description;
+    private String activityOrganisation;
 
+    private String description;
     private String locationName;
 
     private List<Point> bbox;
@@ -27,43 +28,50 @@ public class Activity {
 
     private int creatorID;
 
-    public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
+
+    // when creating
+    public Activity(String ActivityName, User ActivityCreator,
                     Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
-                    String description, String locationName, List<Point> bbox,
-                    String startTime, String endTime, String image, int CreatorID) {
-        this.activityId = ActivityId;
+                    String description, String LocationName, String ActivityOrganisation,
+                    String StartTime, String EndTime, String Image) {
+
+        this.activityId = "Unknown";
         this.activityName = ActivityName;
-        this.activityOrganiser = ActivityOrganiser;
+        this.activityCreator = ActivityCreator;
         this.hostedEvent = HostedEvent;
         this.activityLocation = ActivityLocation;
         this.activityRange = ActivityRange;
         this.description = description;
         this.activityVisits = new ArrayList<Visit>();
+        this.locationName = LocationName;
+        this.activityOrganisation = ActivityOrganisation;
+        this.bbox = new ArrayList<>();
+        this.startTime = StartTime;
+        this.endTime = EndTime;
+        this.image = Image;
+        this.creatorID = Integer.parseInt(ActivityCreator.getUserId());
+    }
+
+    // use to call back from api
+    public Activity(String ActivityId, String ActivityName,
+                    Point ActivityLocation, List<Point> ActivityRange,
+                    String description, String locationName,
+                    String startTime, String endTime, String image, int CreatorID) {
+
+        this.activityId = ActivityId;
+        this.activityName = ActivityName;
+        this.activityCreator = null;
+        this.hostedEvent = null;
+        this.activityLocation = ActivityLocation;
+        this.activityRange = ActivityRange;
+        this.description = description;
+        this.activityVisits = new ArrayList<Visit>();
         this.locationName = locationName;
-        this.bbox = bbox;
+        this.bbox = null;
         this.startTime = startTime;
         this.endTime = endTime;
         this.image = image;
         this.creatorID = CreatorID;
-    }
-
-    public Activity(String ActivityId, String ActivityName, User ActivityOrganiser,
-                    Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
-                    String description, String locationName, List<Point> bbox,
-                    String startTime, String endTime, String image) {
-        this.activityId = ActivityId;
-        this.activityName = ActivityName;
-        this.activityOrganiser = ActivityOrganiser;
-        this.hostedEvent = HostedEvent;
-        this.activityLocation = ActivityLocation;
-        this.activityRange = ActivityRange;
-        this.description = description;
-        this.activityVisits = new ArrayList<Visit>();
-        this.locationName = locationName;
-        this.bbox = bbox;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.image = image;
     }
 
     public String getActivityId() {
@@ -82,12 +90,12 @@ public class Activity {
         this.activityName = activityName;
     }
 
-    public User getActivityOrganiser() {
-        return this.activityOrganiser;
+    public User getActivityCreator() {
+        return this.activityCreator;
     }
 
-    public void setActivityOrganiser(User activityOrganiser) {
-        this.activityOrganiser = activityOrganiser;
+    public void setActivityCreator(User activityCreator) {
+        this.activityCreator = activityCreator;
     }
 
     public Event getHostedEvent() {
@@ -139,6 +147,10 @@ public class Activity {
         this.locationName = locationName;
     }
 
+    public String getActivityOrganisation() {
+        return activityOrganisation;
+    }
+
     public List<Point> getBbox() {
         return bbox;
     }
@@ -173,7 +185,7 @@ public class Activity {
 
     @Override
     public String toString() {
-        String result = this.activityName + " Hosting In " + this.hostedEvent + " Organise By " + this.activityOrganiser;
+        String result = this.activityName + " Hosting In " + this.hostedEvent + " Organise By " + this.activityCreator;
         return result;
     }
 }

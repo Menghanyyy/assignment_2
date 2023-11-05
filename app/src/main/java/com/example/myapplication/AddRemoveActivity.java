@@ -103,12 +103,29 @@ public class AddRemoveActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                timeStatusSelect = 0;
+
                 new DatePickerDialog(AddRemoveActivity.this, dateSetListener,
                         dateTimeCalendar.get(Calendar.YEAR),
                         dateTimeCalendar.get(Calendar.MONTH),
                         dateTimeCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        activity_end_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                timeStatusSelect = 1;
+
+                new DatePickerDialog(AddRemoveActivity.this, dateSetListener,
+                        dateTimeCalendar.get(Calendar.YEAR),
+                        dateTimeCalendar.get(Calendar.MONTH),
+                        dateTimeCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+
 
         activity_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +172,8 @@ public class AddRemoveActivity extends AppCompatActivity {
                 String activityDescription = activity_description.getText().toString().trim();
                 String activityOrganisation = activity_organisation.getText().toString().trim();
                 String activityAddress = activity_address.getText().toString().trim();
+                String activityStartTime = activity_start_time.getText().toString();
+                String activityEndTime = activity_end_time.getText().toString();
 
                 Intent intent = new Intent();
                 intent.putExtra("activityImage", encodedImage);
@@ -162,7 +181,8 @@ public class AddRemoveActivity extends AppCompatActivity {
                 intent.putExtra("activityDescription", activityDescription);
                 intent.putExtra("activityOrganisation", activityOrganisation);
                 intent.putExtra("activityAddress", activityAddress);
-
+                intent.putExtra("activityStartTime", activityStartTime);
+                intent.putExtra("activityEndTime", activityEndTime);
                 intent.putExtra("activityCenter", activityCenter);
                 intent.putParcelableArrayListExtra("activityRange", activityRange);
 
@@ -296,15 +316,17 @@ public class AddRemoveActivity extends AppCompatActivity {
 
             // Format the dateTimeCalendar to your liking and display it
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-            activity_start_time.setText(dateFormat.format(dateTimeCalendar.getTime()));
+
+            if(timeStatusSelect == 0) {
+                activity_start_time.setText(dateFormat.format(dateTimeCalendar.getTime()));
+            }
+            else {
+                activity_end_time.setText(dateFormat.format(dateTimeCalendar.getTime()));
+            }
 
             // Use the dateTimeCalendar.getTime() as a Date object
             Date date = dateTimeCalendar.getTime();
 
-            // If you need to convert this Date object to the old java.sql.Timestamp
-            java.sql.Timestamp timeStampDate = new java.sql.Timestamp(date.getTime());
-
-            // TODO: Do something with the date or timestamp
         }
     };
 

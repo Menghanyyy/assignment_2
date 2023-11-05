@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi;
 import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.component.GeneralUser;
-import com.example.myapplication.component.User;
 import com.example.myapplication.component.Visit;
 
 import org.json.JSONArray;
@@ -130,12 +129,15 @@ public class JSONObjectParsing {
             jsonObject.put("eventID", activity.getHostedEvent().getEventId());
             jsonObject.put("locationName", activity.getLocationName());
 
+
             String imageString = activity.getImage();
             imageString = imageString.replaceAll("\\n", "").
                     replaceAll("\\r", ""); // Remove newline characters
 
             jsonObject.put("backgroundPicture", imageString);
-            jsonObject.put("creatorID", activity.getActivityOrganiser().getUserId());
+            jsonObject.put("creatorID", activity.getActivityCreator().getUserId());
+            jsonObject.put("backgroundPicture", activity.getImage());
+            jsonObject.put("creatorID", activity.getActivityCreator().getUserId());
 
 //            Log.i("Image send activity", activity.getImage());
 
@@ -285,13 +287,10 @@ public class JSONObjectParsing {
             return new Activity(
                     activityID,
                     activityName,
-                    null,
-                    null,
                     centrePoint,
                     activityPolygon,
                     description,
                     locationName,
-                    null,
                     startTime,
                     endTime,
                     image,
