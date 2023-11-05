@@ -36,7 +36,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.activityDescription.setText(data.getDescription());
         holder.activityTime.setText(data.getStartTime() + " - " + data.getEndTime());
 
-        if(data.getActivityVisits().size() > 0){
+        if(data.getActivityVisits().size() > 0 && data.getActivityVisits().get(0) != null){
 
             Visit activityVisit = data.getActivityVisits().get(0);
 

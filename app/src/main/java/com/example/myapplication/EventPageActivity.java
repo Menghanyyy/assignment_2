@@ -54,8 +54,21 @@ public class EventPageActivity extends AppCompatActivity {
         invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Make the new TextView v isible
+                // Make the new TextView visible
                 link_view.setVisibility(View.VISIBLE);
+                link_view.setText("Loading ...");
+
+                databaseManager.getEventLinkByID(Integer.parseInt(eventId), new DatabaseCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        link_view.setText(result);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.println(Log.ASSERT, "Error getting Link:", error);
+                    }
+                });
             }
         });
 

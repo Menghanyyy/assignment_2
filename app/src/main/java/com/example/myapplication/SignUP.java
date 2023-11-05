@@ -10,6 +10,8 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,10 +69,19 @@ public class SignUP extends AppCompatActivity {
                     @Override
                     public void onError(String error) {
                         Log.println(Log.ASSERT, "Error adding user", error);
-                        Toast.makeText(
-                                SignUP.this, "Failed To Sign Up",
-                                Toast.LENGTH_LONG
-                        ).show();
+
+
+                        LayoutInflater inflater = getLayoutInflater();
+                        View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                        TextView text = layout.findViewById(R.id.toast_text);
+                        text.setText("Failed To Sign Up");
+
+                        Toast toast = new Toast(SignUP.this);
+                        toast.setView(layout);
+                        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 });
             }

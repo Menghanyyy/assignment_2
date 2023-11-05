@@ -95,6 +95,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -163,6 +164,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String eventId;
     private String pointsJson;
 
+    private Handler locationHandler = new Handler();
+    private Runnable locationRunnable;
+
     private static final String[] COLORS = new String[] {
             "#008000", // Green
             "#0000FF", // Blue
@@ -225,25 +229,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         databaseManager.getAllActivities(eventId, new DatabaseCallback<ArrayList<Activity>>() {
                             @Override
-                            public void onSuccess(ArrayList<Activity> result) {
+                            public void onSuccess(ArrayList<Activity> activitiesResult) {
 
-                                eventsActivities = result;
+                                eventsActivities = activitiesResult;
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
 
-                                for (Activity a : result) {
+                                for (int i = 0; i < activitiesResult.size(); i++) {
+                                    final int currentIndex = i;
+                                    Activity a = activitiesResult.get(currentIndex);
 
-                                    databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
+                                    databaseManager.getVisitByID(8, Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
                                         @Override
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
-                                            enableLocationComponent(style);
+
+                                            if(currentIndex == activitiesResult.size() -1) {
+                                                enableLocationComponent(style);
+                                            }
+
+                                            // To remove the layer with ID "maine"
+                                            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
+                                            if (layer != null) {
+                                                String color = COLORS[currentIndex % COLORS.length]; // Cycle through the COLORS array
+
+                                                layer.setProperties(
+                                                        PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                                                        PropertyFactory.fillOpacity(0.5f)
+                                                );
+                                            }
                                         }
 
                                         @Override
                                         public void onError(String error) {
                                             Log.println(Log.ASSERT, "Error getting visit", error);
+                                            enableLocationComponent(style);
                                         }
                                     });
                                 }
@@ -391,7 +412,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             FillLayer fillLayer = new FillLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity), ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
             String color = COLORS[eventsActivities.indexOf(activity) % COLORS.length]; // Cycle through the COLORS array
             fillLayer.setProperties(
-                    PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                    PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
                     PropertyFactory.fillOpacity(0.5f)
             );
             style.addLayer(fillLayer);
@@ -473,6 +494,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
+    private void startLocationChecker() {
+        locationRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (locationComponent != null) {
+                    Location userLocation = locationComponent.getLastKnownLocation();
+                    if (userLocation != null) {
+                        testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
+
+                        // You now have the user's location, you can check and trigger pop-up or other actions.
+                    }
+                    locationHandler.postDelayed(this, 1000);  // Check again after 3 seconds
+                }
+            }
+        };
+        locationHandler.post(locationRunnable);
+    }
+
 
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
@@ -486,7 +525,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
                     .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
 
-            locationEngine.requestLocationUpdates(request, callback, getMainLooper());
+            locationEngine.requestLocationUpdates(request, callback, null);
 
             locationEngine.getLastLocation(callback);
 
@@ -498,6 +537,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .locationEngine(locationEngine)
                             .build());
 
+//            locationComponent.activateLocationComponent(
+//                LocationComponentActivationOptions.builder(this, loadedMapStyle).build());
+
             // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
 
@@ -506,6 +548,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
+//            startLocationChecker();
 
 
         } else {
@@ -523,7 +567,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableLocationComponent(mapboxMap.getStyle());
             } else {
-                Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                TextView text = layout.findViewById(R.id.toast_text);
+                text.setText( R.string.user_location_permission_not_granted + "!");
+
+                Toast toast = new Toast(MapActivity.this);
+                toast.setView(layout);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.show();
+
+
                 finish();
             }
         }
@@ -534,6 +591,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         public void onSuccess(LocationEngineResult result) {
             Location userLocation = result.getLastLocation();
+            Log.i("Location", userLocation.getLongitude() + " " +userLocation.getLatitude() + "");
             if (userLocation != null) {
                 testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
             }
@@ -544,6 +602,98 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Log.e("Unable get use location", exception.toString());
         }
     };
+
+    // Define an ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> activityResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+
+                        /**
+                         * Called when result is available
+                         *
+                         * @param result
+                         */
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+
+                            if(result.getResultCode() == RESULT_OK) {
+
+                                Intent intent = result.getData();
+                                String checkedInActivityId = intent.getStringExtra("activityId");
+
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                                TextView text = layout.findViewById(R.id.toast_text);
+                                text.setText("Checked In Success!");
+
+                                Toast toast = new Toast(MapActivity.this);
+                                toast.setView(layout);
+                                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.show();
+
+                                Visit newVisit = new Visit(Home.currentUser.getUserId(), checkedInActivityId);
+
+                                databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
+                                    @Override
+                                    public void onSuccess(String result) {
+
+                                        avoidPopUp.add(checkedInActivityId);
+
+                                        View currentView = null;
+
+                                        for (View v : currentPopUp) {
+                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                                currentView = v;
+                                                break;
+                                            }
+                                        }
+
+                                        popupLayout.removeView(currentView);
+                                        currentPopUp.remove(currentView);
+
+                                        databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(checkedInActivityId), new DatabaseCallback<Visit>() {
+                                            @Override
+                                            public void onSuccess(Visit result) {
+                                                existingVisit.add(result);
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+                                                Log.println(Log.ASSERT, "Error getting visit", error);
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.println(Log.ASSERT, "Error adding visit", error);
+
+                                        // need to delete just for testing
+                                        avoidPopUp.add(checkedInActivityId);
+
+                                        View currentView = null;
+
+                                        for (View v : currentPopUp) {
+                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
+                                                currentView = v;
+                                                break;
+                                            }
+                                        }
+
+                                        popupLayout.removeView(currentView);
+                                        currentPopUp.remove(currentView);
+                                    }
+                                });
+                            }
+                        }
+                    }
+            );
+
 
 
 
@@ -614,10 +764,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onDetectResult(List<Features> featureList) {
 
-
         if(featureList.size() > 0) {
 
             for(Features f : featureList) {
+
+                Log.i("detectedId", f.getActivityID()+"");
 
                 ArrayList<Activity> tmpActivityList = new ArrayList<>();
 
@@ -630,7 +781,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(tmpActivityList.size() > 0) {
 
+                    Log.i("getting activity", tmpActivityList.size()+"");
+
                     for(Activity a : tmpActivityList) {
+                        Log.i("activity detected", a.getActivityId());
 
                         Activity tmpActivity = a;
 
@@ -746,82 +900,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return false; // return false to let the map handle the click as normal (e.g., pan or zoom)
     }
 
-    // Define an ActivityResultLauncher
-    private final ActivityResultLauncher<Intent> activityResultLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    new ActivityResultCallback<ActivityResult>() {
-
-                        /**
-                         * Called when result is available
-                         *
-                         * @param result
-                         */
-                        @RequiresApi(api = Build.VERSION_CODES.O)
-                        @Override
-                        public void onActivityResult(ActivityResult result) {
-
-                            if(result.getResultCode() == RESULT_OK) {
-
-                                Intent intent = result.getData();
-                                String checkedInActivityId = intent.getStringExtra("activityId");
-
-                                Visit newVisit = new Visit(Home.currentUser.getUserId(), checkedInActivityId);
-
-                                databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
-                                    @Override
-                                    public void onSuccess(String result) {
-
-                                        avoidPopUp.add(checkedInActivityId);
-
-                                        View currentView = null;
-
-                                        for (View v : currentPopUp) {
-                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
-                                                currentView = v;
-                                                break;
-                                            }
-                                        }
-
-                                        popupLayout.removeView(currentView);
-                                        currentPopUp.remove(currentView);
-
-                                        databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(checkedInActivityId), new DatabaseCallback<Visit>() {
-                                            @Override
-                                            public void onSuccess(Visit result) {
-                                               existingVisit.add(result);
-                                            }
-
-                                            @Override
-                                            public void onError(String error) {
-                                                Log.println(Log.ASSERT, "Error getting visit", error);
-                                            }
-                                        });
-
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-                                        Log.println(Log.ASSERT, "Error adding visit", error);
-
-                                        // need to delete just for testing
-                                        avoidPopUp.add(checkedInActivityId);
-
-                                        View currentView = null;
-
-                                        for (View v : currentPopUp) {
-                                            if(v.getId() == Integer.parseInt(checkedInActivityId)) {
-                                                currentView = v;
-                                                break;
-                                            }
-                                        }
-
-                                        popupLayout.removeView(currentView);
-                                        currentPopUp.remove(currentView);
-                                    }
-                                });
-                            }
-                        }
-                    }
-            );
 }

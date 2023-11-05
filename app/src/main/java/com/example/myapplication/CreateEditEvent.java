@@ -9,10 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +82,7 @@ public class CreateEditEvent extends AppCompatActivity {
     private Event createEvent;
 
     private int activityNum = 1;
+
 
 
     @Override
@@ -489,15 +492,53 @@ public class CreateEditEvent extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with accessing gallery
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                imageUploadResultLauncher.launch(intent);
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    // Permission denied without checking "Don't ask again"
 
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageUploadResultLauncher.launch(intent);
-        } else {
-            // Permission denied. Inform the user.
-            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                    TextView text = layout.findViewById(R.id.toast_text);
+                    text.setText("Permission denied!");
+
+                    Toast toast = new Toast(CreateEditEvent.this);
+                    toast.setView(layout);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.show();
+
+                } else {
+                    // User checked "Don't ask again"
+
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                    TextView text = layout.findViewById(R.id.toast_text);
+                    text.setText("Permission denied. Please enable it in app settings!");
+
+                    Toast toast = new Toast(CreateEditEvent.this);
+                    toast.setView(layout);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.show();
+
+                    // Optional: If you want to open the app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
         }
     }
+
+
 
 
 
