@@ -151,11 +151,6 @@ public class AddRemoveActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Perform search
                 if (!s.toString().isEmpty()) {
-
-                    adapter.clear();
-                    adapter.add("Loading...");
-                    adapter.notifyDataSetChanged();
-
                     performSearch(s.toString());
                 }
             }

@@ -239,7 +239,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     final int currentIndex = i;
                                     Activity a = activitiesResult.get(currentIndex);
 
-                                    databaseManager.getVisitByID(8, Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
+                                    databaseManager.getVisitByID(a.creatorID, Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
                                         @Override
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
@@ -634,6 +634,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
                                 toast.setDuration(Toast.LENGTH_LONG);
                                 toast.show();
+
+                                int indexOfCheckInActivity = -1;
+
+                                for(Activity a : eventsActivities) {
+                                    if(a.getActivityId() == checkedInActivityId) {
+                                        indexOfCheckInActivity = Integer.parseInt(a.getActivityId());
+                                        break;
+                                    }
+                                }
+
+                                if(indexOfCheckInActivity >=0) {
+
+                                    Layer layer = mapboxMap.getStyle().getLayer(ACTIVITY_FILL_LAYER_ID + indexOfCheckInActivity);
+                                    if (layer != null) {
+                                        String color = COLORS[indexOfCheckInActivity % COLORS.length]; // Cycle through the COLORS array
+
+                                        layer.setProperties(
+                                                PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                                                PropertyFactory.fillOpacity(0.5f)
+                                        );
+                                    }
+
+                                }
 
                                 Visit newVisit = new Visit(Home.currentUser.getUserId(), checkedInActivityId);
 
