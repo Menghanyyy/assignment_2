@@ -1,63 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/lighter_skin_color"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <!-- Top bar with profile title and icons -->
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/lighter_skin_color"
         android:gravity="center"
         android:orientation="vertical">
 
-        <!-- Your existing TextViews here -->
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_blue_light"
-            android:padding="8dp"
-            android:text="User's Progress"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
+        <!-- Spacer at the top -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
 
-    <!-- Progress bars and event names container -->
-    <LinearLayout
-        android:id="@+id/progressContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/tranparent_white"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="#1293u140j"
-            android:textColor="#A5A9AC"
-            android:textSize="13sp"
-            android:layout_marginTop="5dp"
-
-            />
-
-        <TextView
+        <!-- Top bar with profile title and icons -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Jonathan Latti"
-            android:textColor="#09264C"
-            android:textStyle="bold"
-            android:layout_marginTop="30px"
-            android:textSize="20sp"
-            />
+            android:orientation="vertical">
 
-        <!-- Progress bars and event names will be added here dynamically -->
+            <!-- Your existing TextViews here -->
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_blue_light"
+                android:padding="8dp"
+                android:text="User's Progress"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Progress bars and event names container -->
+        <LinearLayout
+            android:id="@+id/progressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/tranparent_white"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- Progress bars and event names will be added here dynamically -->
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
