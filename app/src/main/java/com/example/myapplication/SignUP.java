@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ public class SignUP extends AppCompatActivity {
 
     private DatabaseManager databaseManager;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,5 +107,15 @@ public class SignUP extends AppCompatActivity {
 
         textView.setText(ss);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        findViewById(R.id.Root_sign_up).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager im = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        0);
+            }
+        });
     }
 }

@@ -1,5 +1,10 @@
 package com.example.myapplication.component;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +25,11 @@ public class OrganisationUser extends User{
         this.subscriber = new ArrayList<User>();
 
     }
+
+    protected OrganisationUser(Parcel in) {
+        super(in.readString(), in.readString(), in.readString(), in.readString(), in.readString());
+    }
+
 
     public List<Event> getHostingEvent() {
         return this.hostingEvent;
@@ -49,4 +59,32 @@ public class OrganisationUser extends User{
                 ", subscriber=" + subscriber +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int i) {
+        dest.writeString(getUserId());
+        dest.writeString(getUserName());
+        dest.writeString(getUserEmail());
+        dest.writeString(getUserPin());
+        dest.writeString(getName());
+
+    }
+
+    // Parcelable.Creator implementation for OrganisationUser
+    public static final Parcelable.Creator<OrganisationUser> CREATOR = new Parcelable.Creator<OrganisationUser>() {
+        @Override
+        public OrganisationUser createFromParcel(Parcel in) {
+            return new OrganisationUser(in);
+        }
+
+        @Override
+        public OrganisationUser[] newArray(int size) {
+            return new OrganisationUser[size];
+        }
+    };
 }

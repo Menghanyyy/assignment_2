@@ -87,23 +87,9 @@ public class EventFragment extends Fragment{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         databaseManager = new DatabaseManager(this.getContext());
         events = new ArrayList<>();
-
-
-        databaseManager.getJoinedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
-            @Override
-            public void onSuccess(ArrayList<Event> result) {
-                events = result;
-                showEventsView(result);
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error joined events", error);
-                showEmptyEventsView();
-            }
-        });
     }
 
     @Override
@@ -151,7 +137,21 @@ public class EventFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        ((Home)getActivity()).setTopNavigationVisibility(true);
 
+        databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+            @Override
+            public void onSuccess(ArrayList<Event> result) {
+                events = result;
+                showEventsView(result);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error joined events", error);
+                showEmptyEventsView();
+            }
+        });
     }
 
     private void showEmptyEventsView() {
@@ -205,6 +205,7 @@ public class EventFragment extends Fragment{
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     Intent cardInfo = new Intent(getActivity(), EventPageActivity.class);//src to tagactivity
                     cardInfo.putExtra("eventId", event.getEventId());
 
@@ -227,4 +228,6 @@ public class EventFragment extends Fragment{
             eventsCardLayout.addView(cardView);
         }
     }
+
+
 }

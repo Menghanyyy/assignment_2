@@ -1,17 +1,21 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 public class NewLink extends AppCompatActivity {
@@ -25,17 +29,16 @@ public class NewLink extends AppCompatActivity {
 
         MaterialButton insertBt= (MaterialButton)findViewById(R.id.insertButton);
 
-        ImageView backBtn = findViewById(R.id.iv_back);
-
         TextView linkField = findViewById(R.id.link);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(NewLink.this, Home.class);
-                startActivity(i);
+                InputMethodManager im = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        0);
             }
-
         });
 
         insertBt.setOnClickListener(new View.OnClickListener() {
@@ -44,7 +47,7 @@ public class NewLink extends AppCompatActivity {
 
                 String link = linkField.getText().toString();
 
-                databaseManager.joinEvent(Home.currentUser.getUserId(), link, new DatabaseCallback<String>() {
+                databaseManager.joinEvent(MyApplication.getCurrentUser().getUserId(), link, new DatabaseCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         Log.i("join event success", result.toString());
@@ -62,5 +65,28 @@ public class NewLink extends AppCompatActivity {
 
             }
         });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.join);
+        bottomNavigationView.setOnItemSelectedListener(
+                new BottomNavigationView.OnItemSelectedListener() {
+
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.events:
+                                MyApplication.getInstance().eventPagerTabIndex = 0;
+                                finish();
+                                break;
+                            case R.id.profile:
+                                MyApplication.getInstance().eventPagerTabIndex = 2;
+                                finish();
+                                break;
+                        }
+                        return true;
+                    }
+                }
+        );
+
     }
 }

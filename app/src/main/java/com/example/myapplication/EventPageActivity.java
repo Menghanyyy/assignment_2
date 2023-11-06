@@ -133,34 +133,10 @@ public class EventPageActivity extends AppCompatActivity {
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                MyApplication.getInstance().eventPagerTabIndex = 0;
+                finish();
             }
         });
-
-
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(
-                new BottomNavigationView.OnItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.events:
-                                MyApplication.getInstance().eventPagerTabIndex = 0;
-                                finish();
-                                break;
-                            case R.id.map:
-                                MyApplication.getInstance().eventPagerTabIndex = 1;
-                                finish();
-                                break;
-                            case R.id.profile:
-                                MyApplication.getInstance().eventPagerTabIndex = 2;
-                                finish();
-                                break;
-                        }
-                        return false;
-                    }
-                }
-        );
     }
 
     @Override

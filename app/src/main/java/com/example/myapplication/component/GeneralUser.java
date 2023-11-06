@@ -1,5 +1,10 @@
 package com.example.myapplication.component;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +19,11 @@ public class GeneralUser extends User{
 
         this.visitedLocation = new ArrayList<Visit>();
         this.subscribedOrganisation = new ArrayList<String>();
+    }
+
+    // Parcelable implementation
+    protected GeneralUser(Parcel in) {
+        super(in.readString(), in.readString(), in.readString(), in.readString(), in.readString());
     }
 
     public List<Visit> getVisitedLocation() {
@@ -39,4 +49,32 @@ public class GeneralUser extends User{
                 ", subscribedOrganisation=" + subscribedOrganisation +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int i) {
+
+        dest.writeString(getUserId());
+        dest.writeString(getUserName());
+        dest.writeString(getUserEmail());
+        dest.writeString(getUserPin());
+        dest.writeString(getName());
+
+    }
+
+    public static final Parcelable.Creator<GeneralUser> CREATOR = new Parcelable.Creator<GeneralUser>() {
+        @Override
+        public GeneralUser createFromParcel(Parcel in) {
+            return new GeneralUser(in);
+        }
+
+        @Override
+        public GeneralUser[] newArray(int size) {
+            return new GeneralUser[size];
+        }
+    };
 }

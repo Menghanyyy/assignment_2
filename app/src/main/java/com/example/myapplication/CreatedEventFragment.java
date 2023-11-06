@@ -114,7 +114,7 @@ public class CreatedEventFragment extends Fragment{
 
         Log.i("Getting Creating Events", "get");
 
-        databaseManager.getCreatedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+        databaseManager.getCreatedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
@@ -175,7 +175,6 @@ public class CreatedEventFragment extends Fragment{
 
                 byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-                decodedBitmap = Bitmap.createScaledBitmap(decodedBitmap, 224, 224, false);
                 mainImage.setImageBitmap(decodedBitmap);
             }
 

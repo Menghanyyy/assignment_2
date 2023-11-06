@@ -1,6 +1,8 @@
 package com.example.myapplication.component;
 
-public abstract class User {
+import android.os.Parcelable;
+
+public abstract class User implements Parcelable {
 
     private String userId;
     private String userName;

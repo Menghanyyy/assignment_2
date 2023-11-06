@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -16,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,26 +53,22 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onSuccess(String result) {
 
-                        if (result.equalsIgnoreCase("false")) {
+                        databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
+                            @Override
+                            public void onSuccess(GeneralUser result) {
+                                Log.i("get User by ID", result.getUserId());
+                                MyApplication.setCurrentUser(result);
 
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.customise_toast, null, false);
+                                Intent i = new Intent(Login.this, Home.class);
+                                startActivity(i);
+                            }
 
-                            TextView text = layout.findViewById(R.id.toast_text);
-                            text.setText("Invalid password or user ID");
+                            @Override
+                            public void onError(String error) {
+                                Log.println(Log.ASSERT, "Error getting user", error);
+                            }
+                        });
 
-                            Toast toast = new Toast(Login.this);
-                            toast.setView(layout);
-                            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.show();
-
-                            return;
-                        }
-                        Intent i = new Intent(Login.this, Home.class);
-                        Log.println(Log.ASSERT, "Logging in", result);
-                        i.putExtra("userId", result);
-                        startActivity(i);
                     }
 
                     @Override
@@ -81,7 +79,7 @@ public class Login extends AppCompatActivity {
                         View layout = inflater.inflate(R.layout.customise_toast, null, false);
 
                         TextView text = layout.findViewById(R.id.toast_text);
-                        text.setText("Failed Login");
+                        text.setText("Invalid password or user ID");
 
                         Toast toast = new Toast(Login.this);
                         toast.setView(layout);
@@ -109,6 +107,16 @@ public class Login extends AppCompatActivity {
 
         textView.setText(ss);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        findViewById(R.id.Root_Sign_In).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager im = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        0);
+            }
+        });
 
     }
 
