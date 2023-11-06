@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -99,7 +103,6 @@ public class CreatedEventFragment extends Fragment{
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
-
         return view;
     }
 
