@@ -104,7 +104,7 @@ public class NewLinkFragment extends Fragment {
                                     @Override
                                     public void onError(String error) {
                                         Log.println(Log.ASSERT, "Error joining", error);
-                                        ((Home)getActivity()).navigationChange(0);
+//                                        ((Home)getActivity()).navigationChange(0);
                                     }
                                 });
                     }
