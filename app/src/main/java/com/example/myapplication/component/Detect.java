@@ -57,6 +57,7 @@ public class Detect {
                 .geometry(geoJsonGeometryString)
                 .dedupe(dedupe)
                 .layers(singleOrListOfMapLayerIds)
+                .limit(50)
                 .build();
 
         tilequery.enqueueCall(new Callback<FeatureCollection>() {

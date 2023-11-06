@@ -7,10 +7,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.component.GeneralUser;
@@ -23,7 +28,7 @@ import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
-    public static GeneralUser currentUser;
+    public static GeneralUser currentUser = null;
 
     BottomNavigationView bottomNavigationView ;
     HomeFragment mEventFragment;
@@ -111,7 +116,24 @@ public class Home extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        Toast.makeText(Home.this,"Cannot get back anymore", Toast.LENGTH_SHORT).show();
+
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+        TextView text = layout.findViewById(R.id.toast_text);
+        text.setText("Cannot get back anymore!");
+
+        Toast toast = new Toast(Home.this);
+        toast.setView(layout);
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.show();
+
+        // Optional: If you want to open the app settings
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.fromParts("package", getPackageName(), null));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
     private void replaceFg(Fragment myFragment){
         FragmentManager fragmentManager = getSupportFragmentManager();

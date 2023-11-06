@@ -41,9 +41,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.VectorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -131,9 +134,23 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                 }
                 else {
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Please add marker and range..", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 0);
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                    TextView text = layout.findViewById(R.id.toast_text);
+                    text.setText("Please add marker and range!");
+
+                    Toast toast = new Toast(EditableMapActivity.this);
+                    toast.setView(layout);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                    toast.setDuration(Toast.LENGTH_LONG);
                     toast.show();
+
+                    // Optional: If you want to open the app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
 
                 }
 

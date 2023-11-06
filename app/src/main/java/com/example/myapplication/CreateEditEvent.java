@@ -9,10 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -80,6 +83,7 @@ public class CreateEditEvent extends AppCompatActivity {
     private Event createEvent;
 
     private int activityNum = 1;
+
 
 
     @Override
@@ -474,30 +478,142 @@ public class CreateEditEvent extends AppCompatActivity {
             );
 
 
+//    private void galleryAccessPermissions() {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
+//
+//        } else {
+//
+//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            imageUploadResultLauncher.launch(intent);
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_PERMISSIONS) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission granted, proceed with accessing gallery
+//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                imageUploadResultLauncher.launch(intent);
+//            } else {
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                    // Permission denied without checking "Don't ask again"
+//
+//                    LayoutInflater inflater = getLayoutInflater();
+//                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+//
+//                    TextView text = layout.findViewById(R.id.toast_text);
+//                    text.setText("Permission denied!");
+//
+//                    Toast toast = new Toast(CreateEditEvent.this);
+//                    toast.setView(layout);
+//                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+//                    toast.setDuration(Toast.LENGTH_LONG);
+//                    toast.show();
+//
+//                } else {
+//                    // User checked "Don't ask again"
+//
+//                    LayoutInflater inflater = getLayoutInflater();
+//                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+//
+//                    TextView text = layout.findViewById(R.id.toast_text);
+//                    text.setText("Permission denied. Please enable it in app settings!");
+//
+//                    Toast toast = new Toast(CreateEditEvent.this);
+//                    toast.setView(layout);
+//                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+//                    toast.setDuration(Toast.LENGTH_LONG);
+//                    toast.show();
+//
+//                    // Optional: If you want to open the app settings
+//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                            Uri.fromParts("package", getPackageName(), null));
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }
+//            }
+//        }
+//    }
+//
+
+
     private void galleryAccessPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
-
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user
+                showRationaleDialog();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+            }
         } else {
-
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageUploadResultLauncher.launch(intent);
+            // Permission has already been granted
+            openGallery();
         }
+    }
+
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to access your gallery for image selection.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        CreateEditEvent.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS))
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imageUploadResultLauncher.launch(intent);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageUploadResultLauncher.launch(intent);
-        } else {
-            // Permission denied. Inform the user.
-            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                openGallery();
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    // Permission denied without checking "Don't ask again", show rationale again
+                    showRationaleDialog();
+                } else {
+                    // User checked "Don't ask again", guide the user towards app settings
+                    showAppSettingsDialog();
+                }
+            }
         }
     }
+
+    private void showAppSettingsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("Please enable access to storage in the app settings.")
+                .setPositiveButton("Settings", (dialog, which) -> {
+                    // Intent to open the app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
 
 
 

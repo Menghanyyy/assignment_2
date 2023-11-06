@@ -20,7 +20,8 @@
         android:layout_marginBottom="15dp"
         app:tabSelectedTextColor="#09264C"
         app:tabTextColor="#333333"
-        app:tabUnboundedRipple="true" />
+        app:tabUnboundedRipple="true"
+        android:background="@color/white"/>
 
     <!-- ViewPager2内置了RecyclerView
          所以需要通过orientation来设置页面切换方向-->

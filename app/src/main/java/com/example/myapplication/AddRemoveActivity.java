@@ -14,6 +14,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -205,7 +207,17 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                 if(activityName.isEmpty() || activityDescription.isEmpty() || activityOrganisation.isEmpty() || activityAddress.isEmpty()) {
 
-                    Toast.makeText(getApplicationContext(), "Please fill out all the fields.", Toast.LENGTH_SHORT).show();
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                    TextView text = layout.findViewById(R.id.toast_text);
+                    text.setText("Please fill out all the fields");
+
+                    Toast toast = new Toast(AddRemoveActivity.this);
+                    toast.setView(layout);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.show();
 
                 }
                 else {
@@ -378,8 +390,18 @@ public class AddRemoveActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             imageUploadResultLauncher.launch(intent);
         } else {
-            // Permission denied. Inform the user.
-            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+            TextView text = layout.findViewById(R.id.toast_text);
+            text.setText("Permission denied!");
+
+            Toast toast = new Toast(AddRemoveActivity.this);
+            toast.setView(layout);
+            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.show();
         }
     }
 

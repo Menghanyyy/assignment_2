@@ -12,7 +12,10 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,7 @@ import com.example.myapplication.component.GeneralUser;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class Login extends AppCompatActivity {
 
@@ -33,6 +37,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         databaseManager = new DatabaseManager(this);
+
 
         TextView username = (TextView)findViewById(R.id.userName);
         TextView password = (TextView)findViewById(R.id.password);
@@ -47,7 +52,19 @@ public class Login extends AppCompatActivity {
                     public void onSuccess(String result) {
 
                         if (result.equalsIgnoreCase("false")) {
-                            Toast.makeText(Login.this, "Invalid password or user ID", Toast.LENGTH_LONG).show();
+
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                            TextView text = layout.findViewById(R.id.toast_text);
+                            text.setText("Invalid password or user ID");
+
+                            Toast toast = new Toast(Login.this);
+                            toast.setView(layout);
+                            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                            toast.setDuration(Toast.LENGTH_LONG);
+                            toast.show();
+
                             return;
                         }
                         Intent i = new Intent(Login.this, Home.class);
@@ -59,7 +76,18 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onError(String error) {
                         Log.println(Log.ASSERT, "error verifying", error);
-                        Toast.makeText(Login.this, "Failed Login", Toast.LENGTH_LONG).show();
+
+                        LayoutInflater inflater = getLayoutInflater();
+                        View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                        TextView text = layout.findViewById(R.id.toast_text);
+                        text.setText("Failed Login");
+
+                        Toast toast = new Toast(Login.this);
+                        toast.setView(layout);
+                        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 });
 

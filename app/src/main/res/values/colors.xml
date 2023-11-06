@@ -11,6 +11,9 @@
     <color name="dark_blue">#1D428A</color>
     <color name="tranparent_white">#00000000</color>
     <color name="semi_transparent_white">#BFFFFFFF</color>
+    <color name="skin_color">#F3C2A6</color>
+    <color name="light_skin_color">#FAD9C1</color>
+    <color name="lighter_skin_color">#FDE0CD</color>
 
 
 </resources>

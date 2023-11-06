@@ -73,12 +73,12 @@
             <ImageView
                 android:id="@+id/activity_image"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="224dp"
                 android:background="@color/grey"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_horizontal"
-                android:scaleType="fitCenter"
+                android:scaleType="fitXY"
                 android:src="@drawable/img_placeholder"></ImageView>
 
 

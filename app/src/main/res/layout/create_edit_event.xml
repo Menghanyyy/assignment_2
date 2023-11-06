@@ -70,12 +70,12 @@
             </LinearLayout>
 
                 <ImageView
-
                     android:id="@+id/create_eventImage"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="224dp"
                     android:gravity="center_horizontal"
                     android:src="@drawable/img_placeholder"
+                    android:scaleType="fitXY"
                     android:background="@color/grey"
                     android:clickable="true"
                     android:focusable="true"

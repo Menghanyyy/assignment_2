@@ -26,7 +26,7 @@ public class Activity {
     private String endTime;
     private String image;
 
-    private int creatorID;
+    public int creatorID;
 
 
     // when creating
