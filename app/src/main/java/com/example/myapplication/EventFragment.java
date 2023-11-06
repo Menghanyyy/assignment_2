@@ -234,7 +234,14 @@ public class EventFragment extends Fragment{
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
             title.setText(event.getEventName());
-            location.setText("Location: Melbourne");
+
+            if(event.getEventLocation().isEmpty()) {
+                location.setText("Melbourne");
+            }
+            else {
+                location.setText(event.getEventLocation());
+            }
+
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {
