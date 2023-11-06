@@ -156,7 +156,7 @@ public class CreateEditEvent extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"Loading..."});
         create_event_address.setAdapter(adapter);
 
-        create_event_address.setDropDownVerticalOffset(-5000);
+        create_event_address.setDropDownVerticalOffset(-3000);
 
         if(eventId != null){
 

@@ -120,7 +120,7 @@ public class AddRemoveActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         activity_address.setAdapter(adapter);
 
-        activity_address.setDropDownVerticalOffset(-5000);
+        activity_address.setDropDownVerticalOffset(-3000);
 
         activity_address.setOnItemClickListener((parent, view, position, id) -> {
             String selection = (String) parent.getItemAtPosition(position);
