@@ -384,12 +384,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void visitCountForUserAtEvent(User user, Event event, DatabaseCallback<Integer> callback) {
+    public void visitCountForUserAtEvent(String userID, String eventID, DatabaseCallback<Integer> callback) {
         try{
             String url = "/activities/visitCountForUserAtEvent?userID="
-                    + Integer.toString(Integer.parseInt(user.getUserId()))
+                    + userID
                     + "&eventID="
-                    + Integer.toString(Integer.parseInt(event.getEventId()));
+                    + eventID;
 
             sendJsonObjectRequest(
                     Request.Method.GET,

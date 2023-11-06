@@ -49,7 +49,7 @@ public interface DatabaseInterface {
     public void visitCountForUser(int userID, final DatabaseCallback<Integer> callback);
 
     // Gives the total visits at an event for a specific user
-    public void visitCountForUserAtEvent(User user, Event event, final DatabaseCallback<Integer> callback);
+    public void visitCountForUserAtEvent(String userID, String eventID, final DatabaseCallback<Integer> callback);
 
     // Gives the total visits for a specific activity
     public void visitCountAtActivity(int activityID, final DatabaseCallback<Integer> callback);
