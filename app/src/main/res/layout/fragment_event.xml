@@ -67,7 +67,7 @@
                     android:layout_height="252dp"
                     android:layout_gravity="center">
 
-                    <Button
+                    <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rounded_btn_background"
@@ -83,6 +83,8 @@
                         android:layout_gravity="center"
                         android:src="@drawable/baseline_add_60"
                         android:elevation="3dp" />
+
+
                 </FrameLayout>
 
             </LinearLayout>

@@ -62,14 +62,22 @@ public class EventPageActivity extends AppCompatActivity {
 
                 TextView organisation = findViewById(R.id.eventOrganisation);
 
-                byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
-                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-                image.setImageBitmap(decodedBitmap);
-
+                if(result.getImage().isEmpty()) {
+                    image.setImageResource(R.mipmap.aaaa);
+                }else {
+                    byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
+                    Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                    image.setImageBitmap(decodedBitmap);
+                }
 
                 title.setText(result.getEventName());
                 desc.setText(result.getDescription());
-                location.setText("Melbourne");
+                if(result.getEventLocation().isEmpty()) {
+                    location.setText("Melbourne");
+                }
+                else {
+                    location.setText(result.getEventLocation());
+                }
                 organisation.setText(result.getOrganisationName());
             }
 

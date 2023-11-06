@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -18,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -76,15 +80,16 @@ public class CreateEditEvent extends AppCompatActivity {
 
     AutoCompleteTextView create_event_address;
 
-
     private ArrayAdapter<String> adapter;
 
     private DatabaseManager databaseManager;
 
     private Event createEvent;
 
-    private int activityNum = 1;
+    private final Handler searchHandler = new Handler();
+    private Runnable searchRunnable;
 
+    private int activityNum = 1;
 
 
     @Override
@@ -148,8 +153,10 @@ public class CreateEditEvent extends AppCompatActivity {
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"Loading..."});
         create_event_address.setAdapter(adapter);
+
+        create_event_address.setDropDownVerticalOffset(-3000);
 
         if(eventId != null){
 
@@ -190,14 +197,18 @@ public class CreateEditEvent extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // Perform search
-                    if (!s.toString().isEmpty()) {
-                        performSearch(s.toString());
-                    }
+
                 }
 
                 @Override
-                public void afterTextChanged(Editable s) {}
+                public void afterTextChanged(Editable s) {
+
+                    // Perform search
+                    if (s.toString().isEmpty() == false && s.length() >= 3) {
+                        performSearch(s.toString());
+                    }
+
+                }
             });
 
             uploadImageView.setOnClickListener(new View.OnClickListener() {
@@ -335,6 +346,11 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void performSearch(String query) {
         MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
                 .accessToken(Mapbox.getAccessToken())
@@ -345,17 +361,28 @@ public class CreateEditEvent extends AppCompatActivity {
             @Override
             public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
                 if (response.body() != null) {
+
                     List<CarmenFeature> results = response.body().features();
+
                     List<String> addresses = new ArrayList<>();
+
                     for (CarmenFeature feature : results) {
                         addresses.add(feature.placeName());
                     }
                     // Update the adapter and the dropdown list.
-                    runOnUiThread(() -> {
-                        adapter.clear();
-                        adapter.addAll(addresses);
-                        adapter.notifyDataSetChanged();
-                    });
+
+                    if(addresses.size() > 0) {
+                        runOnUiThread(() -> {
+                            adapter.clear();
+                            adapter.addAll(addresses);
+                            adapter.notifyDataSetChanged();
+                        });
+
+
+                    }
+
+//                    adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, addresses);
+
                 }
             }
 
@@ -638,6 +665,11 @@ public class CreateEditEvent extends AppCompatActivity {
                 .create()
                 .show();
     }
+
+
+
+
+
 
 
 

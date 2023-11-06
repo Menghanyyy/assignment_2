@@ -9,18 +9,18 @@ public abstract class User implements Parcelable {
     private String userEmail;
     private String userPin;
 
-    public String getName() {
-        return name;
-    }
-
     private String name;
 
-    public User(String UserId, String UserName, String UserEmail, String UserPin, String Name) {
+    public User(String UserId, String UserName, String Name, String UserEmail, String UserPin) {
         this.userId = UserId;
         this.userName = UserName;
         this.userEmail = UserEmail;
         this.userPin = UserPin;
         this.name = Name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getUserId() {

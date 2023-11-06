@@ -162,8 +162,6 @@ public class CreatedEventFragment extends Fragment{
     public void onResume() {
         super.onResume();
 
-        Log.i("Getting Creating Events", "get");
-
         databaseManager.getCreatedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
@@ -224,6 +222,7 @@ public class CreatedEventFragment extends Fragment{
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
 
         eventsCardLayout.removeAllViews();
+
         for (Event event : events) {
             // Inflate the card layout
             View cardView = inflater.inflate(R.layout.event_card, eventsCardLayout, false);

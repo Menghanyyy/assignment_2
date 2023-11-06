@@ -120,6 +120,8 @@ public class AddRemoveActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         activity_address.setAdapter(adapter);
 
+        activity_address.setDropDownVerticalOffset(-3000);
+
         activity_address.setOnItemClickListener((parent, view, position, id) -> {
             String selection = (String) parent.getItemAtPosition(position);
             activity_address.setText(selection);
@@ -151,14 +153,17 @@ public class AddRemoveActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Perform search
-                if (!s.toString().isEmpty()) {
-                    performSearch(s.toString());
-                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+
+                // Perform search
+                if (s.toString().isEmpty() == false && s.length() >= 3) {
+                    performSearch(s.toString());
+                }
+
+            }
         });
 
 

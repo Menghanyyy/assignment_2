@@ -73,7 +73,6 @@ public class ProfileFragment extends Fragment {
 
         if(getActivity() instanceof Home) {
             ((Home) getActivity()).setTopNavigationVisibility(false);
-
         }
     }
 
@@ -82,7 +81,6 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         databaseManager = new DatabaseManager(getContext());
 
         return view;

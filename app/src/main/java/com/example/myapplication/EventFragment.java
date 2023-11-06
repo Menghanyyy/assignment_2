@@ -161,36 +161,43 @@ public class EventFragment extends Fragment{
         super.onResume();
         ((Home)getActivity()).setTopNavigationVisibility(true);
 
-        databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
-            @Override
-            public void onSuccess(ArrayList<Event> result) {
-                events = result;
-                String searhText = searchBar.getText().toString();
-                if(searhText.isEmpty()) {
-                    // send view
-                    showEventsView(result);
+        if(MyApplication.getCurrentUser() != null) {
 
-                } else {
+            databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
 
-                    ArrayList<Event> tmpEvents = new ArrayList<>();
-                    for(Event e : result) {
-                        if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
-                            tmpEvents.add(e);
+                @Override
+                public void onSuccess(ArrayList<Event> result) {
+                    events = result;
+                    String searhText = searchBar.getText().toString();
+                    if(searhText.isEmpty()) {
+                        // send view
+                        showEventsView(result);
+
+                    } else {
+
+                        ArrayList<Event> tmpEvents = new ArrayList<>();
+                        for(Event e : result) {
+                            if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
+                                tmpEvents.add(e);
+                            }
                         }
+
+                        showEventsView(tmpEvents);
+
+
                     }
-
-                    showEventsView(tmpEvents);
-
-
                 }
-            }
 
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error joined events", error);
-                showEmptyEventsView();
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error joined events", error);
+                    showEmptyEventsView();
+                }
+            });
+
+        }
+    
+
     }
 
     private void showEmptyEventsView() {
@@ -214,6 +221,7 @@ public class EventFragment extends Fragment{
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
 
         eventsCardLayout.removeAllViews();
+
         for (Event event : events) {
             // Inflate the card layout
             View cardView = inflater.inflate(R.layout.event_card, eventsCardLayout, false);
@@ -226,7 +234,14 @@ public class EventFragment extends Fragment{
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
             title.setText(event.getEventName());
-            location.setText("Location: Melbourne");
+
+            if(event.getEventLocation().isEmpty()) {
+                location.setText("Melbourne");
+            }
+            else {
+                location.setText(event.getEventLocation());
+            }
+
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {

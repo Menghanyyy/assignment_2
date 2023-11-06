@@ -34,7 +34,28 @@
         android:layout_marginTop="16dp"
         android:background="@color/tranparent_white"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1293u140j"
+            android:textColor="#A5A9AC"
+            android:textSize="13sp"
+            android:layout_marginTop="5dp"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Jonathan Latti"
+            android:textColor="#09264C"
+            android:textStyle="bold"
+            android:layout_marginTop="30px"
+            android:textSize="20sp"
+            />
 
         <!-- Progress bars and event names will be added here dynamically -->
     </LinearLayout>
