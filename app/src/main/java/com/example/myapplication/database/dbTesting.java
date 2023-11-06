@@ -52,7 +52,7 @@ public class dbTesting {
                 "117",
                 "EVENT: " + Integer.toString(new Random().nextInt(10000000)),
                 testUser,
-                null,
+                "Test location",
                 dummyRange,
                 "Unimelb",
                 "A big event",
@@ -88,7 +88,7 @@ public class dbTesting {
         );
 
         // Event Tests
-        if (false) {
+        if (true) {
             databaseManager.addEvent(testEvent, new DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
