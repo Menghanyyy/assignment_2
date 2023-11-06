@@ -175,7 +175,6 @@ public class CreatedEventFragment extends Fragment{
 
                 byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-                decodedBitmap = Bitmap.createScaledBitmap(decodedBitmap, 224, 224, false);
                 mainImage.setImageBitmap(decodedBitmap);
             }
 

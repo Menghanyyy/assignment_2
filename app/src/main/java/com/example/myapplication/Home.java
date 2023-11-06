@@ -59,33 +59,9 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        if(currentUser == null) {
-            Intent intent = getIntent();
-            String userId = intent.getStringExtra("userId").toString().trim();
+        databaseManager = new DatabaseManager(this);
 
-            Log.i("userId", userId);
-
-            databaseManager = new DatabaseManager(this);
-            databaseManager.getUserByID(Integer.parseInt(userId), new DatabaseCallback<GeneralUser>() {
-                @Override
-                public void onSuccess(GeneralUser result) {
-                    currentUser = result;
-                    replaceFg(mEventFragment);
-                }
-
-                @Override
-                public void onError(String error) {
-                    Log.println(Log.ASSERT, "Error getting user", error);
-                }
-            });
-
-        }
-        else {
-
-            replaceFg(mEventFragment);
-
-        }
-
+        replaceFg(mEventFragment);
 
         bottomNavigationView.setOnItemSelectedListener(
                 new BottomNavigationView.OnItemSelectedListener() {
@@ -114,6 +90,12 @@ public class Home extends AppCompatActivity {
         super.onResume();
         changeTable(MyApplication.getInstance().eventPagerTabIndex);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     @Override
     public void onBackPressed() {
 
@@ -136,6 +118,12 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
     private void replaceFg(Fragment myFragment){
+
+        Intent intent = getIntent();
+        currentUser = (GeneralUser) intent.getParcelableExtra("user");
+
+        Log.i("userId", currentUser.getUserId()+"");
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // 开始一个Fragment事务

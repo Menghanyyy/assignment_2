@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -67,10 +68,23 @@ public class Login extends AppCompatActivity {
 
                             return;
                         }
-                        Intent i = new Intent(Login.this, Home.class);
-                        Log.println(Log.ASSERT, "Logging in", result);
-                        i.putExtra("userId", result);
-                        startActivity(i);
+
+                        databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
+                            @Override
+                            public void onSuccess(GeneralUser result) {
+                                Log.i("get User by ID", result.getUserId());
+
+                                Intent i = new Intent(Login.this, Home.class);
+                                i.putExtra("user", (Parcelable) result);
+                                startActivity(i);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.println(Log.ASSERT, "Error getting user", error);
+                            }
+                        });
+
                     }
 
                     @Override

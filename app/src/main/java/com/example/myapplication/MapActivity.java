@@ -242,7 +242,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     final int currentIndex = i;
                                     Activity a = activitiesResult.get(currentIndex);
 
-                                    databaseManager.getVisitByID(a.creatorID, Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
+                                    databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
                                         @Override
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
