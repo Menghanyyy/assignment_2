@@ -343,7 +343,7 @@ public class dbTesting {
                 }
             });
 
-            databaseManager.visitCountForUserAtEvent(testUser, testEvent, new DatabaseCallback<Integer>() {
+            databaseManager.visitCountForUserAtEvent(testUser.getUserId(), testEvent.getEventId(), new DatabaseCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer result) {
                     Log.i("user at event count:", result.toString());
