@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.example.myapplication.component.Event;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -83,17 +85,39 @@ public class NewLinkFragment extends Fragment {
         insertBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Log.i("Button clicked", "OK");
+
                 String link = linkField.getText().toString();
-                databaseManager.joinEvent(MyApplication.getCurrentUser().getUserId(), link, new DatabaseCallback<String>() {
+
+                // Try to get the event ID from the link
+                databaseManager.getEventByLink(link, new DatabaseCallback<Event>() {
                     @Override
-                    public void onSuccess(String result) {
-                        // back to home....
+                    public void onSuccess(Event result) {
+
+                        Log.i("Success link", link);
+
+                        // Use event ID to join the event
+                        databaseManager.joinEvent(MyApplication.getCurrentUser().getUserId(),
+                                result.getEventId(), new DatabaseCallback<String>() {
+
+                                    @Override
+                                    public void onSuccess(String result) {
+                                        Log.i("join event success", result.toString());
+                                        ((Home)getActivity()).navigationChange(0);
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.println(Log.ASSERT, "Error joining", error);
+//                                        ((Home)getActivity()).navigationChange(0);
+                                    }
+                                });
                     }
 
                     @Override
                     public void onError(String error) {
-                        ((Home)getActivity()).navigationChange(0);
-
+                        Log.println(Log.ASSERT, "Error Retrieving json", error);
                     }
                 });
             }

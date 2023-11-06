@@ -13,6 +13,8 @@ public interface DatabaseInterface {
 
     public void getEventByID(int eventID, final DatabaseCallback<Event> callback);
 
+    public void getEventByLink(String link, final DatabaseCallback<Event> callback);
+
     void getEventLinkByID(int eventID, DatabaseCallback<String> callback);
 
     public void getAllEvents(final DatabaseCallback<ArrayList<Event>> callback);
