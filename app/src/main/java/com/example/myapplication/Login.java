@@ -58,12 +58,6 @@ public class Login extends AppCompatActivity {
                             public void onSuccess(GeneralUser returnedUser) {
                                 Log.i("get User by ID", returnedUser.getUserId());
 
-                                Log.i("uuu", returnedUser.getUserName());
-                                Log.i("eee", returnedUser.getUserEmail());
-                                Log.i("nnn", returnedUser.getName());
-//                                Log.i("ppp", returnedUser.getUserPin());
-
-
                                 MyApplication.setCurrentUser(returnedUser);
 
                                 Intent i = new Intent(Login.this, Home.class);

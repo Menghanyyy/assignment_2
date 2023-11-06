@@ -59,7 +59,6 @@ public class DatabaseManager implements DatabaseInterface {
     ) {
 
         String url = baseUrl + urlExtension;
-        Log.println(Log.DEBUG, "Sending JSON", "Hee");
 
         // If jsonRequest is not null, convert it to a string and append as query parameter
         if (jsonRequest != null && method == Request.Method.GET) {
@@ -70,8 +69,6 @@ public class DatabaseManager implements DatabaseInterface {
                 Log.println(Log.DEBUG, "couldnt encode JSON", e.getMessage());
             }
         }
-
-        Log.println(Log.DEBUG, "encoded", "nice");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
             method,
