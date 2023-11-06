@@ -19,7 +19,9 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     >
+
     <LinearLayout
+        android:id="@+id/Root_activity_add"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -87,43 +89,43 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="10dp">
 
                 <TextView
                     android:id="@+id/activity_name_label"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:text="Activity Name"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:layout_marginBottom="2dp"
                     android:layout_weight="1"
                     android:paddingStart="4dp"
-                    android:layout_marginBottom="2dp"/>
+                    android:text="Activity Name"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
 
                     <EditText
                         android:id="@+id/activity_name"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:gravity="center_vertical"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
                         android:drawablePadding="20dp"
+                        android:gravity="center_vertical"
                         android:hint="Type activity name"
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="0dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -133,45 +135,46 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="0dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="0dp">
 
                 <TextView
                     android:id="@+id/activity_description_label"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:text="Description"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:layout_marginBottom="2dp"
                     android:layout_weight="1"
                     android:paddingStart="4dp"
-                    android:layout_marginBottom="2dp"/>
+                    android:text="Description"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
+
                     <EditText
                         android:id="@+id/activity_description"
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
-                        android:gravity="start"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
                         android:drawablePadding="20dp"
-                        android:inputType="textMultiLine"
+                        android:gravity="start"
                         android:hint="Explain about the activity"
-                        android:paddingHorizontal="15dp"
-                        android:paddingVertical="2dp"
+                        android:inputType="textMultiLine"
                         android:maxLines="10"
                         android:minLines="4"
+                        android:paddingHorizontal="15dp"
+                        android:paddingVertical="2dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -182,8 +185,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="0dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="0dp">
 
                 <TextView
                     android:id="@+id/activity_organisation_label"
@@ -191,35 +194,36 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="Organisation"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:paddingStart="4dp"/>
+                    android:textSize="14sp" />
 
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
+
                     <EditText
                         android:id="@+id/activity_organisation"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:gravity="center_vertical"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
                         android:drawablePadding="20dp"
-                        android:inputType="textMultiLine"
+                        android:gravity="center_vertical"
                         android:hint="Type your organisation"
+                        android:inputType="textMultiLine"
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="2dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -229,8 +233,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="0dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="0dp">
 
                 <TextView
                     android:id="@+id/activity_address_label"
@@ -238,34 +242,35 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="Address"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:paddingStart="4dp" />
+                    android:textSize="14sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
+
                     <AutoCompleteTextView
                         android:id="@+id/activity_address"
                         android:layout_width="match_parent"
                         android:layout_height="80dp"
-                        android:gravity="start"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
                         android:drawablePadding="20dp"
-                        android:inputType="textMultiLine"
+                        android:gravity="start"
                         android:hint="Where did the activity host"
+                        android:inputType="textMultiLine"
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="2dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -275,8 +280,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="0dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="0dp">
 
                 <TextView
                     android:id="@+id/activity_start_time_label"
@@ -284,38 +289,39 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="Start Time"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:paddingStart="4dp" />
+                    android:textSize="14sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
+
                     <EditText
                         android:id="@+id/activity_start_time"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:gravity="center_vertical"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:cursorVisible="false"
                         android:drawablePadding="20dp"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical"
                         android:hint="Select your start time"
+                        android:inputType="none"
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="2dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:clickable="true"
-                        android:cursorVisible="false"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -325,8 +331,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="0dp"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="0dp">
 
                 <TextView
                     android:id="@+id/activity_end_time_label"
@@ -334,38 +340,39 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="End Time"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:paddingStart="4dp" />
+                    android:textSize="14sp" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardUseCompatPadding="true"
-                    app:cardPreventCornerOverlap="false">
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true">
+
                     <EditText
                         android:id="@+id/activity_end_time"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:gravity="center_vertical"
                         android:layout_weight="2"
+                        android:background="@android:color/transparent"
+                        android:clickable="true"
+                        android:cursorVisible="false"
                         android:drawablePadding="20dp"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical"
                         android:hint="Select your end time"
+                        android:inputType="none"
                         android:paddingHorizontal="15dp"
                         android:paddingVertical="2dp"
                         android:textColor="#161618"
                         android:textColorHint="#A5A9AC"
-                        android:background="@android:color/transparent"
-                        android:textSize="20sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="none"
-                        android:clickable="true"
-                        android:cursorVisible="false"/>
+                        android:textSize="20sp" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -374,11 +381,11 @@
                 android:id="@+id/activity_map_range_register_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingTop="0dp"
-                android:layout_marginTop="14dp"
                 android:paddingHorizontal="30dp"
+                android:paddingTop="0dp"
                 android:visibility="gone">
 
                 <TextView
@@ -386,11 +393,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="Map Range Register"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:paddingStart="4dp"
-                    />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="100dp"
@@ -410,8 +416,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingTop="0dp"
                 android:paddingHorizontal="30dp"
+                android:paddingTop="0dp"
                 android:visibility="gone">
 
                 <TextView
@@ -419,11 +425,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:text="Map Center Register"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:paddingStart="4dp"
-                    />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="45dp"
@@ -461,7 +466,7 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
 
             <TextView
@@ -480,8 +485,7 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
         </FrameLayout>
 

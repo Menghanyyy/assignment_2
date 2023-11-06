@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -125,6 +126,7 @@ public class AddRemoveActivity extends AppCompatActivity {
             String selection = (String) parent.getItemAtPosition(position);
             activity_address.setText(selection);
         });
+
 
         activity_address.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
@@ -265,6 +267,14 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                 setResult(RESULT_OK, intent);
                 finish();
+            }
+        });
+
+        findViewById(R.id.Root_activity_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
             }
         });
 

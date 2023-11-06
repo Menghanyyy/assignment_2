@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -103,6 +104,20 @@ public class CreateEditEvent extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        findViewById(R.id.event_create_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
+                //InputMethodManager im = (InputMethodManager)
+                //        getSystemService(INPUT_METHOD_SERVICE);
+                //im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                //        0);
+                //Toast.makeText(getApplicationContext(), "This is my Toast message!",
+                //        Toast.LENGTH_LONG).show();
             }
         });
 

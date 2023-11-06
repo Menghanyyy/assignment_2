@@ -2,10 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Root_link"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewLink"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".NewLink">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".Login"
+        android:id="@+id/Root_new_link">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -28,13 +38,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
         android:layout_margin="50dp"
-        android:hint="  Insert Your Link"
         android:background="@drawable/round"
+        android:hint="  Insert Your Link"
         android:padding="20dp"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
-         />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/insertButton"
@@ -50,18 +59,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/link" />
 
-<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--        android:id="@+id/bottomNavigationView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
+    <!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+    <!--        android:id="@+id/bottomNavigationView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
 
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 
-<!--        app:menu="@menu/buttom_navmenu"-->
-<!--        app:itemIconTint="@drawable/bottom_navigation_selector"-->
-<!--        app:itemTextColor="@drawable/bottom_navigation_selector"/>-->
-
+    <!--        app:menu="@menu/buttom_navmenu"-->
+    <!--        app:itemIconTint="@drawable/bottom_navigation_selector"-->
+    <!--        app:itemTextColor="@drawable/bottom_navigation_selector"/>-->
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

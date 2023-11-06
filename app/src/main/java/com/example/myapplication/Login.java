@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -106,6 +107,16 @@ public class Login extends AppCompatActivity {
 
         textView.setText(ss);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        findViewById(R.id.Root_Sign_In).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager im = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        0);
+            }
+        });
 
     }
 
