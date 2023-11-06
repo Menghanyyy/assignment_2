@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,16 @@ public class NewLink extends AppCompatActivity {
         MaterialButton insertBt= (MaterialButton)findViewById(R.id.insertButton);
 
         TextView linkField = findViewById(R.id.link);
+
+        findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager im = (InputMethodManager)
+                        getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        0);
+            }
+        });
 
         insertBt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,5 +87,6 @@ public class NewLink extends AppCompatActivity {
                     }
                 }
         );
+
     }
 }
