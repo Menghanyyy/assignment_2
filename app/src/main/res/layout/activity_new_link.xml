@@ -7,17 +7,6 @@
     tools:context=".NewLink"
     android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="28dp"
-        android:layout_height="20dp"
-        android:src="@drawable/back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="10dp"
-        />
-
-
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/logo"
@@ -57,7 +46,22 @@
         android:layout_marginEnd="48dp"
         android:backgroundTint="#1D428A"
         android:text="Link"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/link" />
 
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottomNavigationView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+
+<!--        app:menu="@menu/buttom_navmenu"-->
+<!--        app:itemIconTint="@drawable/bottom_navigation_selector"-->
+<!--        app:itemTextColor="@drawable/bottom_navigation_selector"/>-->
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

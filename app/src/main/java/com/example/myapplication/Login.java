@@ -32,8 +32,6 @@ public class Login extends AppCompatActivity {
     //MAPBOX TOKEN = sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw
     private DatabaseManager databaseManager;
 
-    public static GeneralUser currentUser = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +56,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onSuccess(GeneralUser result) {
                                 Log.i("get User by ID", result.getUserId());
-                                currentUser = result;
+                                MyApplication.setCurrentUser(result);
 
                                 Intent i = new Intent(Login.this, Home.class);
                                 startActivity(i);

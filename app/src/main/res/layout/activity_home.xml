@@ -13,6 +13,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
+      android:id="@+id/topNavigationView"
       >
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,5 +91,4 @@
       app:menu="@menu/buttom_navmenu"
       app:itemIconTint="@drawable/bottom_navigation_selector"
       app:itemTextColor="@drawable/bottom_navigation_selector"/>
-
 </LinearLayout>

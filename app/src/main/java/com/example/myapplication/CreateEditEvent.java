@@ -209,7 +209,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                         List<Point> testP = new ArrayList<Point>();
                         testP.add(Point.fromLngLat(0,0));
-                        Log.i("getcurretnuser", Login.currentUser.getName());
+                        Log.i("getcurretnuser", MyApplication.getCurrentUser().getName());
 
                         Bitmap bitmap = uploadImageView.getDrawingCache();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -220,7 +220,7 @@ public class CreateEditEvent extends AppCompatActivity {
                         createEvent = new Event(
                                 "0",
                                 eventName,
-                                Login.currentUser,
+                                MyApplication.getCurrentUser(),
                                 eventAddress,
                                 testP,
                                 eventOrganisation, eventDescription, encodedImage);
@@ -354,7 +354,7 @@ public class CreateEditEvent extends AppCompatActivity {
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
         Activity tmpActivity = new Activity( name,
-                Login.currentUser,
+                MyApplication.getCurrentUser(),
                 null,
                 center,
                 range,

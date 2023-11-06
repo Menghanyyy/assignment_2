@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -22,6 +23,16 @@ public class HomeFragment extends Fragment {
     final String[] tabs = new String[]{"Event Joined", "Event created"};
     private TabLayoutMediator mediator;
 
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
+
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,10 +72,15 @@ public class HomeFragment extends Fragment {
         mediator.attach();
         return view;
     }
-    public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
 
-        return fragment;
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
 }
