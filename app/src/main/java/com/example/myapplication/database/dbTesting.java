@@ -119,6 +119,18 @@ public class dbTesting {
                 }
             });
 
+            databaseManager.getEventByLink("lnxoW5tHf7Vz7Jz", new DatabaseCallback<Event>() {
+                @Override
+                public void onSuccess(Event result) {
+                    Log.i("get event by link", String.valueOf(result.getEventName()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error Retrieving json", error);
+                }
+            });
+
             databaseManager.getAllEvents(new DatabaseCallback<ArrayList<Event>>() {
                 @Override
                 public void onSuccess(ArrayList<Event> result) {
