@@ -177,7 +177,7 @@ android:background="@drawable/rounded_white_bg">
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_alignParentEnd="true"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@color/grey"
     android:src="@drawable/close_40" /> <!-- Make sure you have a drawable named ic_close which is your close/cross icon -->
 
 </RelativeLayout>

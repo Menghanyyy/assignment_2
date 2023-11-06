@@ -32,8 +32,7 @@ public class NewLink extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(NewLink.this, Home.class);
-                startActivity(i);
+                finish();
             }
 
         });
