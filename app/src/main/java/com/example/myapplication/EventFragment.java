@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +55,8 @@ public class EventFragment extends Fragment{
     private ViewGroup eventsCardLayout;
 
     private ImageView empty_add;
+
+    private TextView searchBar;
 
     public EventFragment() {
         // Required empty public constructor
@@ -110,6 +114,26 @@ public class EventFragment extends Fragment{
         //return inflater.inflate(R.layout.fragment_event, container, false);
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
+        searchBar = getActivity().findViewById(R.id.search_bar);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                Log.i("textSearch", charSequence.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         emptyEventLayout = view.findViewById(R.id.emptyEventsView);
         eventsLayout = view.findViewById(R.id.eventsView);

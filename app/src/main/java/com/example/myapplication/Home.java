@@ -15,6 +15,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,13 @@ public class Home extends AppCompatActivity {
 
     DatabaseManager databaseManager;
 
+    ImageView headerSearchButton, search_close_btn;
+    LinearLayout headerButtons;
+    ImageView searchCloseBtn;
+    TextView headerTitle;
+    EditText searchBar;
+
+
     private int currentIndex = 0; //当前Frament索引
 
     @Override
@@ -51,6 +61,32 @@ public class Home extends AppCompatActivity {
         mMapFragment = MapFragment.newInstance("","");
         mProfileFragment = ProfileFragment.newInstance("","");
 
+        headerSearchButton = findViewById(R.id.header_search_button);
+        searchCloseBtn  = findViewById(R.id.search_close_btn);
+        headerButtons = findViewById(R.id.header_buttons);
+        headerTitle = findViewById(R.id.header_title);
+        searchBar = findViewById(R.id.search_bar);
+
+        headerSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set visibility for the views
+                headerButtons.setVisibility(View.GONE);
+                headerTitle.setVisibility(View.GONE);
+                searchBar.setVisibility(View.VISIBLE);
+                searchCloseBtn.setVisibility(View.VISIBLE);
+            }
+        });
+        searchCloseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set visibility for the views
+                headerButtons.setVisibility(View.VISIBLE);
+                headerTitle.setVisibility(View.VISIBLE);
+                searchBar.setVisibility(View.GONE);
+                searchCloseBtn.setVisibility(View.GONE);
+            }
+        });
 
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
