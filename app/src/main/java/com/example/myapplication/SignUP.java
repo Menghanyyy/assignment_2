@@ -45,21 +45,13 @@ public class SignUP extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String u = usernameView.getText().toString();
-                String e = emailView.getText().toString();
-
                 GeneralUser newUser = new GeneralUser(
                         null,
                         usernameView.getText().toString(),
+                        nameView.getText().toString(),
                         emailView.getText().toString(),
-                        passwordView.getText().toString(),
-                        nameView.getText().toString()
+                        passwordView.getText().toString()
                 );
-
-                Log.i("u", newUser.getUserName());
-                Log.i("e", newUser.getUserEmail());
-                Log.i("n", newUser.getName());
-                Log.i("p", newUser.getUserPin());
 
                 databaseManager.addUser(newUser, new DatabaseCallback<String>() {
                     @Override

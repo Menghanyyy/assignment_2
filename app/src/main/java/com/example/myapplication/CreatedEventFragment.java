@@ -183,13 +183,7 @@ public class CreatedEventFragment extends Fragment{
                     }
 
                     showEventsView(tmpEvents);
-
-
                 }
-
-
-
-
             }
 
             @Override
@@ -198,8 +192,6 @@ public class CreatedEventFragment extends Fragment{
                 showEmptyEventsView();
             }
         });
-
-
     }
 
     private void showEmptyEventsView() {

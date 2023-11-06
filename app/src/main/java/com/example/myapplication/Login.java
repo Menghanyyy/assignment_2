@@ -55,9 +55,16 @@ public class Login extends AppCompatActivity {
 
                         databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
                             @Override
-                            public void onSuccess(GeneralUser result) {
-                                Log.i("get User by ID", result.getUserId());
-                                MyApplication.setCurrentUser(result);
+                            public void onSuccess(GeneralUser returnedUser) {
+                                Log.i("get User by ID", returnedUser.getUserId());
+
+                                Log.i("uuu", returnedUser.getUserName());
+                                Log.i("eee", returnedUser.getUserEmail());
+                                Log.i("nnn", returnedUser.getName());
+//                                Log.i("ppp", returnedUser.getUserPin());
+
+
+                                MyApplication.setCurrentUser(returnedUser);
 
                                 Intent i = new Intent(Login.this, Home.class);
                                 startActivity(i);

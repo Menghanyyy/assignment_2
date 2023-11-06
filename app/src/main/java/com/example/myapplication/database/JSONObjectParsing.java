@@ -339,9 +339,9 @@ public class JSONObjectParsing {
             return new GeneralUser(
                     String.valueOf(userID),
                     username,
+                    name,
                     email,
-                    null,
-                    name
+                    null
             );
         } catch (JSONException e) {
             e.printStackTrace();

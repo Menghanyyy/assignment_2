@@ -100,6 +100,11 @@ public class ProfileFragment extends Fragment {
         TextView textView = getView().findViewById(R.id.user_name);
         textView.setText(name + "'s Progress");
         textView.setTextColor(Color.BLACK);
+
+        Log.i("uu", MyApplication.getCurrentUser().getUserName());
+        Log.i("ee", MyApplication.getCurrentUser().getUserEmail());
+        Log.i("nn", MyApplication.getCurrentUser().getName());
+//        Log.i("pp", MyApplication.getCurrentUser().getUserPin());
     }
 
     private void setProgressBarProgressThreaded() {
