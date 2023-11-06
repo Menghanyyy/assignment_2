@@ -62,7 +62,7 @@ public class NewLinkFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((Home)getActivity()).setTopNavigationVisibility(true);
+        ((Home)getActivity()).setTopNavigationVisibility(false);
     }
 
     @Override
@@ -82,12 +82,11 @@ public class NewLinkFragment extends Fragment {
                     @Override
                     public void onSuccess(String result) {
                         // back to home....
-
                     }
 
                     @Override
                     public void onError(String error) {
-                        ((Home)getActivity()).changeTable(0);
+                        ((Home)getActivity()).navigationChange(0);
 
                     }
                 });

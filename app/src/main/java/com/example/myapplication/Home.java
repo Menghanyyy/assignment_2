@@ -167,15 +167,15 @@ public class Home extends AppCompatActivity {
 //
 //    }
 
-    public void changeTable(Integer index) {
+    private void changeTable(Integer index) {
         Log.i("index", index + "");
         if (index == currentIndex) {
             // User tapped the same item that's already selected, let's reset to the event fragment
-            if (index == 1) { // If we are on the map tab, let's reset it to the event fragment
-                replaceFg(mEventFragment);
-                currentIndex = 0;
-                bottomNavigationView.setSelectedItemId(R.id.events); // You might need to reset the selected item in the bottom navigation
-            }
+//            if (index == 1) { // If we are on the map tab, let's reset it to the event fragment
+//                replaceFg(mEventFragment);
+//                currentIndex = 0;
+//                bottomNavigationView.setSelectedItemId(R.id.events); // You might need to reset the selected item in the bottom navigation
+//            }
             // You can handle other indices if needed.
         } else {
             // It's a different tab, we change to the new fragment
@@ -198,6 +198,23 @@ public class Home extends AppCompatActivity {
                     // handle default or error case
                     break;
             }
+        }
+    }
+
+    public void navigationChange(Integer index) {
+
+        if(index == 0) {
+            bottomNavigationView.setSelectedItemId(R.id.events);
+
+        }
+        else if(index == 1) {
+
+            bottomNavigationView.setSelectedItemId(R.id.join);
+
+        }else {
+
+            bottomNavigationView.setSelectedItemId(R.id.profile);
+
         }
     }
 
