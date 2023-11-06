@@ -70,6 +70,7 @@ public class JSONObjectParsing {
             jsonObject.put("organisationName", event.getOrganisationName());
             jsonObject.put("creatorID", event.getEventOrganiser().getUserId());
             jsonObject.put("description", event.getDescription());
+            jsonObject.put("locationName", event.getEventLocation());
 
             String imageString = event.getImage();
             imageString = imageString.replaceAll("\\n", "").
@@ -245,6 +246,7 @@ public class JSONObjectParsing {
             int creatorID = jsonEvent.getInt("creatorID");
             String organisationName = jsonEvent.getString("organisationName");
             String description = jsonEvent.getString("description");
+            String locationName = jsonEvent.getString("locationName");
             String image = jsonEvent.getString("backgroundPicture");
 
             if(image == null) {
@@ -260,7 +262,7 @@ public class JSONObjectParsing {
                     eventId,
                     eventName,
                     null,
-                    null,
+                    locationName,
                     bbox,
                     organisationName,
                     description,
