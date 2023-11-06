@@ -52,23 +52,6 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onSuccess(String result) {
 
-                        if (result.equalsIgnoreCase("false")) {
-
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.customise_toast, null, false);
-
-                            TextView text = layout.findViewById(R.id.toast_text);
-                            text.setText("Invalid password or user ID");
-
-                            Toast toast = new Toast(Login.this);
-                            toast.setView(layout);
-                            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.show();
-
-                            return;
-                        }
-
                         databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
                             @Override
                             public void onSuccess(GeneralUser result) {
@@ -95,7 +78,7 @@ public class Login extends AppCompatActivity {
                         View layout = inflater.inflate(R.layout.customise_toast, null, false);
 
                         TextView text = layout.findViewById(R.id.toast_text);
-                        text.setText("Failed Login");
+                        text.setText("Invalid password or user ID");
 
                         Toast toast = new Toast(Login.this);
                         toast.setView(layout);
