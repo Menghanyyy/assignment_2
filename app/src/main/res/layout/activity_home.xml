@@ -29,6 +29,7 @@
           android:layout_height="36dp"
           android:paddingHorizontal="15dp"
           android:background="@color/grey"
+          android:textColor="@color/white"
           android:visibility="gone"
           />
       <ImageView

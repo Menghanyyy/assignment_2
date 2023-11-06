@@ -113,6 +113,28 @@ public class EventFragment extends Fragment{
 
                 Log.i("textSearch", charSequence.toString());
 
+                if(charSequence.toString().isEmpty()) {
+                    showEventsView((ArrayList<Event>) events);
+
+                }
+                else {
+                    ArrayList <Event> tmpEvents = new ArrayList<>();
+                    for(Event e : events) {
+                        if(e.getEventName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    if(tmpEvents.size() > 0) {
+                        showEventsView(tmpEvents);
+                    }
+                    else if(tmpEvents.size() <= 0) {
+                        showEventsView(tmpEvents);
+                    }
+                }
+
+
+
             }
 
             @Override
@@ -143,7 +165,24 @@ public class EventFragment extends Fragment{
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
-                showEventsView(result);
+                String searhText = searchBar.getText().toString();
+                if(searhText.isEmpty()) {
+                    // send view
+                    showEventsView(result);
+
+                } else {
+
+                    ArrayList<Event> tmpEvents = new ArrayList<>();
+                    for(Event e : result) {
+                        if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    showEventsView(tmpEvents);
+
+
+                }
             }
 
             @Override
@@ -171,8 +210,10 @@ public class EventFragment extends Fragment{
         emptyEventLayout.setVisibility(View.GONE);
         eventsLayout.setVisibility(View.VISIBLE);
 
+
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
 
+        eventsCardLayout.removeAllViews();
         for (Event event : events) {
             // Inflate the card layout
             View cardView = inflater.inflate(R.layout.event_card, eventsCardLayout, false);

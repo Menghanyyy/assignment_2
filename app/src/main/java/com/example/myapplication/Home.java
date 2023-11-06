@@ -27,7 +27,8 @@ import com.example.myapplication.component.User;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
@@ -82,10 +83,16 @@ public class Home extends AppCompatActivity {
                 // Set visibility for the views
                 headerButtons.setVisibility(View.VISIBLE);
                 headerTitle.setVisibility(View.VISIBLE);
+                searchBar.setText("");
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
                 searchBar.setVisibility(View.GONE);
                 searchCloseBtn.setVisibility(View.GONE);
             }
         });
+
         mEventFragment = HomeFragment.newInstance();//EventFragment.newInstance("","");
         mProfileFragment = ProfileFragment.newInstance("","");
         mNewLinkFragment = NewLinkFragment.newInstance("","");

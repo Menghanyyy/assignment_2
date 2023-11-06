@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +55,7 @@ public class CreatedEventFragment extends Fragment{
     private ViewGroup eventsCardLayout;
 
     private ImageView empty_add;
+    private TextView searchBar;
 
     public CreatedEventFragment() {
         // Required empty public constructor
@@ -100,6 +103,49 @@ public class CreatedEventFragment extends Fragment{
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
 
+        searchBar = getActivity().findViewById(R.id.search_bar);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                Log.i("textSearch", charSequence.toString());
+
+                if(charSequence.toString().isEmpty()) {
+                    showEventsView((ArrayList<Event>) events);
+
+                }
+                else {
+                    ArrayList <Event> tmpEvents = new ArrayList<>();
+                    for(Event e : events) {
+                        if(e.getEventName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    if(tmpEvents.size() > 0) {
+                        showEventsView(tmpEvents);
+                    }
+                    else if(tmpEvents.size() <= 0){
+                        showEventsView(tmpEvents);
+
+                    }
+                }
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         return view;
     }
 
@@ -118,7 +164,30 @@ public class CreatedEventFragment extends Fragment{
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
-                showEventsView(result);
+
+                String searhText = searchBar.getText().toString();
+
+                if(searhText.isEmpty()) {
+                    // send view
+                    showEventsView(result);
+
+                } else {
+
+                    ArrayList<Event> tmpEvents = new ArrayList<>();
+                    for(Event e : result) {
+                        if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    showEventsView(tmpEvents);
+
+
+                }
+
+
+
+
             }
 
             @Override
@@ -150,6 +219,7 @@ public class CreatedEventFragment extends Fragment{
 
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
 
+        eventsCardLayout.removeAllViews();
         for (Event event : events) {
             // Inflate the card layout
             View cardView = inflater.inflate(R.layout.event_card, eventsCardLayout, false);
