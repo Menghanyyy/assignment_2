@@ -15,5 +15,9 @@
     <color name="light_skin_color">#FAD9C1</color>
     <color name="lighter_skin_color">#FDE0CD</color>
 
+    <color name="lighter_grey">#00B0B0B0</color>
+    <color name="light_grey">#66B0B0B0</color>
+    <color name="dark_grey">#707070</color>
+
 
 </resources>

@@ -23,6 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
+        android:windowSoftInputMode="adjustPan"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".NewLink"

@@ -115,19 +115,23 @@ public class EventFragment extends Fragment{
         super.onResume();
         ((Home)getActivity()).setTopNavigationVisibility(true);
 
-        databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
-            @Override
-            public void onSuccess(ArrayList<Event> result) {
-                events = result;
-                showEventsView(result);
-            }
+        if(MyApplication.getCurrentUser() != null) {
+            databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+                @Override
+                public void onSuccess(ArrayList<Event> result) {
+                    events = result;
+                    showEventsView(result);
+                }
 
-            @Override
-            public void onError(String error) {
-                Log.println(Log.ASSERT, "Error joined events", error);
-                showEmptyEventsView();
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error joined events", error);
+                    showEmptyEventsView();
+                }
+            });
+
+        }
+
     }
 
     private void showEmptyEventsView() {
@@ -148,6 +152,8 @@ public class EventFragment extends Fragment{
         eventsLayout.setVisibility(View.VISIBLE);
 
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
+
+        eventsCardLayout.removeAllViews();
 
         for (Event event : events) {
             // Inflate the card layout

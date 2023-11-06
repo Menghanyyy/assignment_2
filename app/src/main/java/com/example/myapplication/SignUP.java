@@ -41,6 +41,14 @@ public class SignUP extends AppCompatActivity {
         signUpBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String u = usernameView.getText().toString();
+                String e = emailView.getText().toString();
+
+                Log.i("u", u);
+                Log.i("e", e);
+
+
                 GeneralUser newUser = new GeneralUser(
                         null,
                         usernameView.getText().toString(),
@@ -48,6 +56,7 @@ public class SignUP extends AppCompatActivity {
                         passwordView.getText().toString(),
                         nameView.getText().toString()
                 );
+
                 databaseManager.addUser(newUser, new DatabaseCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
@@ -58,7 +67,7 @@ public class SignUP extends AppCompatActivity {
                             newUser.setUserId(result);
 
                             Log.i("On success (User ID)", String.valueOf(userID));
-                            Intent i = new Intent(SignUP.this, Home.class);
+                            Intent i = new Intent(SignUP.this, Login.class);
                             startActivity(i);
                         }
                         catch (Exception e){
@@ -91,8 +100,6 @@ public class SignUP extends AppCompatActivity {
         String text = "Already have an account? Log In";
         SpannableString ss= new SpannableString(text);
 
-//        MaterialButton signupButton =
-
         ClickableSpan clickableSpan1 = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
@@ -100,6 +107,7 @@ public class SignUP extends AppCompatActivity {
                 startActivity(i);
             }
         };
+
         ss.setSpan(clickableSpan1,25,31, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         textView.setText(ss);
