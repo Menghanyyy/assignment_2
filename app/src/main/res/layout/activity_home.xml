@@ -22,8 +22,26 @@
         android:gravity="center_vertical"
         >
 
-
+      <EditText
+          android:id="@+id/search_bar"
+          android:layout_width="330dp"
+          android:layout_marginLeft="10dp"
+          android:layout_height="36dp"
+          android:paddingHorizontal="15dp"
+          android:background="@color/grey"
+          android:textColor="@color/white"
+          android:visibility="gone"
+          />
+      <ImageView
+          android:id="@+id/search_close_btn"
+          android:layout_width="36dp"
+          android:layout_height="36dp"
+          android:layout_marginLeft="5dp"
+          android:src="@drawable/close_40"
+          android:visibility="gone"
+          />
       <TextView
+          android:id="@+id/header_title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textColor="#09264C"
@@ -32,9 +50,11 @@
           android:layout_marginLeft="10dp"
           android:text="Events Happening"
           android:layout_weight="1"
+          android:visibility="visible"
           />
 
       <LinearLayout
+          android:id="@+id/header_buttons"
           android:layout_width="88dp"
           android:layout_height="32dp"
           android:orientation="horizontal"
@@ -42,8 +62,10 @@
           android:background="@drawable/rounded_background"
           android:gravity="center"
           android:paddingLeft="10dp"
+          android:visibility="visible"
           >
         <ImageView
+            android:id="@+id/header_search_button"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/search1"
@@ -77,7 +99,6 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       >
-
   </FrameLayout>
 
   <com.google.android.material.bottomnavigation.BottomNavigationView
