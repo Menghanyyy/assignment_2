@@ -48,45 +48,50 @@
 
     </RelativeLayout>
 
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@mipmap/aaaa"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Jonathan Latti"
-            android:textColor="#09264C"
-            android:textStyle="bold"
-            android:textSize="18sp"
-
-
-            />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="#1293u140j"
+            android:textColor="#A5A9AC"
+            android:textSize="13sp"
+            android:layout_marginTop="5dp"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Jonathan Latti"
             android:textColor="#09264C"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="10dp"
-            
+            android:layout_marginTop="30px"
+            android:textSize="20sp"
+
+
             />
+
+
 
 
     </LinearLayout>
     
     
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@mipmap/aaaa"
-        android:scaleType="fitXY"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        />
+
 
 </LinearLayout>
