@@ -48,10 +48,6 @@ public class SignUP extends AppCompatActivity {
                 String u = usernameView.getText().toString();
                 String e = emailView.getText().toString();
 
-                Log.i("u", u);
-                Log.i("e", e);
-
-
                 GeneralUser newUser = new GeneralUser(
                         null,
                         usernameView.getText().toString(),
@@ -59,6 +55,11 @@ public class SignUP extends AppCompatActivity {
                         passwordView.getText().toString(),
                         nameView.getText().toString()
                 );
+
+                Log.i("u", newUser.getUserName());
+                Log.i("e", newUser.getUserEmail());
+                Log.i("n", newUser.getName());
+                Log.i("p", newUser.getUserPin());
 
                 databaseManager.addUser(newUser, new DatabaseCallback<String>() {
                     @Override
@@ -70,8 +71,23 @@ public class SignUP extends AppCompatActivity {
                             newUser.setUserId(result);
 
                             Log.i("On success (User ID)", String.valueOf(userID));
-                            Intent i = new Intent(SignUP.this, Login.class);
-                            startActivity(i);
+
+                            databaseManager.getUserByID(userID, new DatabaseCallback<GeneralUser>() {
+                                @Override
+                                public void onSuccess(GeneralUser result) {
+                                    Log.i("get User by ID", result.getUserId());
+                                    MyApplication.setCurrentUser(result);
+
+                                    Intent i = new Intent(SignUP.this, Home.class);
+                                    startActivity(i);
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    Log.println(Log.ASSERT, "Error getting user", error);
+                                }
+                            });
+
                         }
                         catch (Exception e){
                             Log.i("User bad string", result);
