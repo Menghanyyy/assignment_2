@@ -43,7 +43,7 @@ public class NewLink extends AppCompatActivity {
 
                 String link = linkField.getText().toString();
 
-                databaseManager.joinEvent(Home.currentUser.getUserId(), link, new DatabaseCallback<String>() {
+                databaseManager.joinEvent(Login.currentUser.getUserId(), link, new DatabaseCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         Log.i("join event success", result.toString());

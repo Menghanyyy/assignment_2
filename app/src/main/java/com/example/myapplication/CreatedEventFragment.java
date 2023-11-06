@@ -114,7 +114,7 @@ public class CreatedEventFragment extends Fragment{
 
         Log.i("Getting Creating Events", "get");
 
-        databaseManager.getCreatedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+        databaseManager.getCreatedEvents(Login.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;

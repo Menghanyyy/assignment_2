@@ -242,7 +242,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     final int currentIndex = i;
                                     Activity a = activitiesResult.get(currentIndex);
 
-                                    databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
+                                    databaseManager.getVisitByID(Integer.parseInt(Login.currentUser.getUserId()), Integer.parseInt(a.getActivityId()), new DatabaseCallback<Visit>() {
                                         @Override
                                         public void onSuccess(Visit result) {
                                             existingVisit.add(result);
@@ -658,7 +658,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                                 }
 
-                                Visit newVisit = new Visit(Home.currentUser.getUserId(), checkedInActivityId);
+                                Visit newVisit = new Visit(Login.currentUser.getUserId(), checkedInActivityId);
 
                                 databaseManager.addVisit(newVisit, new DatabaseCallback<String>() {
                                     @Override
@@ -678,7 +678,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         popupLayout.removeView(currentView);
                                         currentPopUp.remove(currentView);
 
-                                        databaseManager.getVisitByID(Integer.parseInt(Home.currentUser.getUserId()), Integer.parseInt(checkedInActivityId), new DatabaseCallback<Visit>() {
+                                        databaseManager.getVisitByID(Integer.parseInt(Login.currentUser.getUserId()), Integer.parseInt(checkedInActivityId), new DatabaseCallback<Visit>() {
                                             @Override
                                             public void onSuccess(Visit result) {
                                                 existingVisit.add(result);

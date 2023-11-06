@@ -87,7 +87,7 @@ public class EventFragment extends Fragment{
         events = new ArrayList<>();
 
 
-        databaseManager.getJoinedEvents(Home.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+        databaseManager.getJoinedEvents(Login.currentUser.getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;

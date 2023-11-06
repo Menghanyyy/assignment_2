@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 public class Home extends AppCompatActivity {
 
-    public static GeneralUser currentUser = null;
 
     BottomNavigationView bottomNavigationView ;
     HomeFragment mEventFragment;
@@ -118,11 +117,6 @@ public class Home extends AppCompatActivity {
         startActivity(intent);
     }
     private void replaceFg(Fragment myFragment){
-
-        Intent intent = getIntent();
-        currentUser = (GeneralUser) intent.getParcelableExtra("user");
-
-        Log.i("userId", currentUser.getUserId()+"");
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 

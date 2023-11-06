@@ -209,7 +209,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                         List<Point> testP = new ArrayList<Point>();
                         testP.add(Point.fromLngLat(0,0));
-                        Log.i("getcurretnuser", Home.currentUser.getName());
+                        Log.i("getcurretnuser", Login.currentUser.getName());
 
                         Bitmap bitmap = uploadImageView.getDrawingCache();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -220,7 +220,7 @@ public class CreateEditEvent extends AppCompatActivity {
                         createEvent = new Event(
                                 "0",
                                 eventName,
-                                Home.currentUser,
+                                Login.currentUser,
                                 eventAddress,
                                 testP,
                                 eventOrganisation, eventDescription, encodedImage);
@@ -254,34 +254,44 @@ public class CreateEditEvent extends AppCompatActivity {
                                             Integer eventID = Integer.parseInt(result);
                                             createEvent.setEventId(eventID+"");
 
-                                            for(int i=0 ; i < createEvent.getEventActivity().size(); i++) {
+                                            if(createEvent.getEventActivity().size() > 0) {
 
-                                                Activity activity = createEvent.getEventActivity().get(i);
-                                                activity.setHostedEvent(createEvent);
+                                                for(int i=0 ; i < createEvent.getEventActivity().size(); i++) {
 
-                                                databaseManager.addActivity(activity, new DatabaseCallback<String>() {
-                                                    @Override
-                                                    public void onSuccess(String result) {
-                                                        try{
-                                                            Integer activityID = Integer.parseInt(result);
-                                                            Log.i("Success (Activity ID)", String.valueOf(activityID));
+                                                    Activity activity = createEvent.getEventActivity().get(i);
+                                                    activity.setHostedEvent(createEvent);
 
-                                                            if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
-                                                                Intent i = new Intent(CreateEditEvent.this, Home.class);
-                                                                startActivity(i);
+                                                    databaseManager.addActivity(activity, new DatabaseCallback<String>() {
+                                                        @Override
+                                                        public void onSuccess(String result) {
+                                                            try{
+                                                                Integer activityID = Integer.parseInt(result);
+                                                                Log.i("Success (Activity ID)", String.valueOf(activityID));
+
+                                                                //at the end because it looping
+                                                                if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
+                                                                    Intent i = new Intent(CreateEditEvent.this, Home.class);
+                                                                    startActivity(i);
+                                                                }
+                                                            }
+                                                            catch (Exception e){
+                                                                Log.i("Activity bad string", result);
                                                             }
                                                         }
-                                                        catch (Exception e){
-                                                            Log.i("Activity bad string", result);
-                                                        }
-                                                    }
 
-                                                    @Override
-                                                    public void onError(String error) {
-                                                        Log.println(Log.ASSERT, "Error adding activity", error);
-                                                    }
-                                                });
+                                                        @Override
+                                                        public void onError(String error) {
+                                                            Log.println(Log.ASSERT, "Error adding activity", error);
+                                                        }
+                                                    });
+                                                }
+
+                                            } else {
+
+                                                Intent i = new Intent(CreateEditEvent.this, Home.class);
+                                                startActivity(i);
                                             }
+
                                         }
                                         catch (Exception e){
                                             Log.i("Event bad string", result);
@@ -344,7 +354,7 @@ public class CreateEditEvent extends AppCompatActivity {
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
         Activity tmpActivity = new Activity( name,
-                Home.currentUser,
+                Login.currentUser,
                 null,
                 center,
                 range,
