@@ -169,6 +169,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
 
+    private ImageView activeMapBack;
+
     private static final String[] COLORS = new String[]{
             "#008000", // Green
             "#0000FF", // Blue
@@ -206,12 +208,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         popupLayout = findViewById(R.id.check_in_popup_layout);
 
+
         rvView = findViewById(R.id.rvView);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
         this.databaseManager = new DatabaseManager(this);
+
+        activeMapBack = findViewById(R.id.active_map_back);
+        activeMapBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setResult(RESULT_OK, intent);
+
+                finish();
+            }
+        });
+
     }
 
     /**
