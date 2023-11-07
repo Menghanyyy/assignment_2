@@ -16,6 +16,8 @@ import com.example.myapplication.gestures.TiltDetector;
 
 import java.util.Random;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class CheckIn extends AppCompatActivity implements
         ShakeDetector.OnShakeListener,
         TiltDetector.OnTiltListener,
@@ -69,12 +71,16 @@ public class CheckIn extends AppCompatActivity implements
         Random random = new Random();
         int randomInt = random.nextInt(GESTURE_COUNT);
 
+        GifImageView gifImage = (GifImageView) findViewById(R.id.image);
+
+
         switch (randomInt) {
             case 0:
                 shakeDetector = new ShakeDetector(this);
                 if (accelerometer != null) {
                     sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
                     setInstructions("Shake Your Phone!");
+                    gifImage.setImageResource(R.drawable.shake);
                 }
                 break;
             case 1:
@@ -82,6 +88,7 @@ public class CheckIn extends AppCompatActivity implements
                 if (accelerometer != null) {
                     sensorManager.registerListener(tiltDetector, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
                     setInstructions("Tilt left, then tilt right");
+                    gifImage.setImageResource(R.drawable.tilt2);
                 }
                 break;
             case 2:
@@ -89,6 +96,7 @@ public class CheckIn extends AppCompatActivity implements
                 if (lightSensor != null) {
                     darknessDetector = new DarknessDetector(this);
                     setInstructions("Put your phone in your pocket");
+                    gifImage.setImageResource(R.drawable.pocket2);
                 }
                 break;
         }
