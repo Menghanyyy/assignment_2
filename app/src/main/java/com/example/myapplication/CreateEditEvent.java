@@ -473,7 +473,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
                     // If the drawable doesn't have intrinsic dimensions, create a default bitmap
                     bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
-                    
+
                 } else {
 
                     // Use the drawable's dimensions

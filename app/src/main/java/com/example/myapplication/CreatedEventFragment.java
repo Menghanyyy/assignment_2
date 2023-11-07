@@ -30,6 +30,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link EventFragment#newInstance} factory method to
@@ -60,6 +62,8 @@ public class CreatedEventFragment extends Fragment{
 
     private ImageView empty_add;
     private TextView searchBar;
+
+    private GifImageView gifImageView;
 
     public CreatedEventFragment() {
         // Required empty public constructor
@@ -106,6 +110,7 @@ public class CreatedEventFragment extends Fragment{
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
+        gifImageView=view.findViewById(R.id.loading_animation_layout);
 
         searchBar = getActivity().findViewById(R.id.search_bar);
         searchBar.addTextChangedListener(new TextWatcher() {
@@ -197,6 +202,7 @@ public class CreatedEventFragment extends Fragment{
     private void showEmptyEventsView() {
         emptyEventLayout.setVisibility(View.VISIBLE);
         eventsLayout.setVisibility(View.GONE);
+        gifImageView.setVisibility(View.GONE);
 
         empty_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,8 +214,10 @@ public class CreatedEventFragment extends Fragment{
     }
 
     private void showEventsView(ArrayList<Event> events) {
+
         emptyEventLayout.setVisibility(View.GONE);
         eventsLayout.setVisibility(View.VISIBLE);
+        gifImageView.setVisibility(View.GONE);
 
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
 
@@ -223,11 +231,12 @@ public class CreatedEventFragment extends Fragment{
             ImageView mainImage = cardView.findViewById(R.id.mainImage);  // Assuming you've given your ImageView an ID
             TextView title = cardView.findViewById(R.id.eventTitle);
             TextView location = cardView.findViewById(R.id.eventLocation);
-            TextView time = cardView.findViewById(R.id.eventTime);
+            TextView organisation = cardView.findViewById(R.id.eventOrganisation);
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
             title.setText(event.getEventName());
-            location.setText("Location: "+ event.getEventLocation());
+            location.setText(event.getEventLocation());
+            organisation.setText(event.getOrganisationName());
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {

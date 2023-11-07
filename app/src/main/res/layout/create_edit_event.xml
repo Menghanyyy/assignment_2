@@ -551,10 +551,8 @@
                 android:id="@+id/event_activity_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@drawable/divider2"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:showDividers="middle">
+                android:orientation="vertical">
                 <!-- Content of the event_activity_list goes here -->
             </LinearLayout>
 

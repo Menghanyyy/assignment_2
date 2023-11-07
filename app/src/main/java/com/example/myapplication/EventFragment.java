@@ -26,6 +26,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link EventFragment#newInstance} factory method to
@@ -57,6 +59,8 @@ public class EventFragment extends Fragment{
     private ImageView empty_add;
 
     private TextView searchBar;
+
+    private GifImageView gifImageView;
 
     public EventFragment() {
         // Required empty public constructor
@@ -99,6 +103,8 @@ public class EventFragment extends Fragment{
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_event, container, false);
         View view = inflater.inflate(R.layout.fragment_event, container, false);
+
+
 
         searchBar = getActivity().findViewById(R.id.search_bar);
 
@@ -147,6 +153,8 @@ public class EventFragment extends Fragment{
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
+        gifImageView=view.findViewById(R.id.loading_animation_layout);
+
 
         return view;
     }
@@ -163,10 +171,11 @@ public class EventFragment extends Fragment{
         ((Home)getActivity()).setTopNavigationVisibility(true);
 
         databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
-
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
+
+
                 String searhText = searchBar.getText().toString();
                 if(searhText.isEmpty()) {
                     // send view
@@ -190,6 +199,7 @@ public class EventFragment extends Fragment{
             @Override
             public void onError(String error) {
                 Log.println(Log.ASSERT, "Error joined events", error);
+
                 showEmptyEventsView();
             }
         });
@@ -202,6 +212,7 @@ public class EventFragment extends Fragment{
     private void showEmptyEventsView() {
         emptyEventLayout.setVisibility(View.VISIBLE);
         eventsLayout.setVisibility(View.GONE);
+        gifImageView.setVisibility(View.GONE);
 
         empty_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,8 +224,10 @@ public class EventFragment extends Fragment{
     }
 
     private void showEventsView(ArrayList<Event> events) {
+
         emptyEventLayout.setVisibility(View.GONE);
         eventsLayout.setVisibility(View.VISIBLE);
+        gifImageView.setVisibility(View.GONE);
 
 
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
@@ -229,10 +242,11 @@ public class EventFragment extends Fragment{
             ImageView mainImage = cardView.findViewById(R.id.mainImage);  // Assuming you've given your ImageView an ID
             TextView title = cardView.findViewById(R.id.eventTitle);
             TextView location = cardView.findViewById(R.id.eventLocation);
-            TextView time = cardView.findViewById(R.id.eventTime);
+            TextView organisation = cardView.findViewById(R.id.eventOrganisation);
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
             title.setText(event.getEventName());
+            organisation.setText(event.getOrganisationName());
 
             if(event.getEventLocation().isEmpty()) {
                 location.setText("Melbourne");
