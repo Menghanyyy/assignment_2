@@ -32,14 +32,6 @@ public class CheckIn extends AppCompatActivity implements
 
     // need to delete this is use to test the view of the map...
 
-    private Handler handler = new Handler();
-
-    private Runnable checkInRunnable = new Runnable() {
-        @Override
-        public void run() {
-            checkIn();
-        }
-    };
 
     private void setInstructions(String instructionString){
         TextView output = findViewById(R.id.instructions);
@@ -58,9 +50,6 @@ public class CheckIn extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        // use to test need to delete
-        handler.postDelayed(checkInRunnable, 3000);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
