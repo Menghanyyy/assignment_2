@@ -1,11 +1,13 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Space;
@@ -19,6 +21,7 @@ import com.example.myapplication.component.Activity;
 import com.example.myapplication.component.Event;
 import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +85,15 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         databaseManager = new DatabaseManager(getContext());
+
+        Button logoutBt = (Button) view.findViewById(R.id.signOutButton);
+        logoutBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), Login.class);
+                startActivity(i);
+            }
+        });
 
         return view;
     }

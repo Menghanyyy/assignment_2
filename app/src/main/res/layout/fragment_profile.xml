@@ -33,6 +33,7 @@
                 android:text="User's Progress"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
+
         </LinearLayout>
 
         <!-- Progress bars and event names container -->
@@ -45,6 +46,19 @@
             android:orientation="vertical"
             android:padding="16dp">
             <!-- Progress bars and event names will be added here dynamically -->
+
+            <Button
+                android:id="@+id/signOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="140dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/dark_blue"
+                android:text="Log out"
+                android:textColor="@color/white" />
         </LinearLayout>
 
     </LinearLayout>
