@@ -1,5 +1,8 @@
 package com.example.myapplication;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.activityLocation.setText(data.getLocationName());
         holder.activityDescription.setText(data.getDescription());
         holder.activityTime.setText(data.getStartTime() + " - " + data.getEndTime());
+
+        byte[] decodedImageBytes = Base64.decode(data.getImage(), Base64.DEFAULT);
+        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+        holder.activityImage.setImageBitmap(decodedBitmap);
+
+
 
         if(data.getActivityVisits().size() > 0 && data.getActivityVisits().get(0) != null){
 

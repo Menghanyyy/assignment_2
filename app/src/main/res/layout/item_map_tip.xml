@@ -23,8 +23,7 @@ android:background="@drawable/rounded_white_bg">
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/aaaa" />
+            android:scaleType="centerCrop" />
 
         <View
             android:layout_width="4dp"
