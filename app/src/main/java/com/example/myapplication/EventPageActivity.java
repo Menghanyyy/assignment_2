@@ -1,6 +1,9 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,11 +11,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -35,9 +41,8 @@ import java.util.List;
 
 public class EventPageActivity extends AppCompatActivity {
 
-    TextView tv_map;
+    ImageView copy_icon;
     ImageView iv_back;
-    BottomNavigationView bottomNavigationView;
 
     DatabaseManager databaseManager;
     TextView tv_gotomap;
@@ -94,12 +99,14 @@ public class EventPageActivity extends AppCompatActivity {
         });
 
         invite = findViewById(R.id.invite);
+        copy_icon = findViewById(R.id.link_copy_icon);
         link_view = findViewById(R.id.invite_link);
         invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Make the new TextView visible
                 link_view.setVisibility(View.VISIBLE);
+                copy_icon.setVisibility(View.VISIBLE);
                 link_view.setText("Loading ...");
 
                 databaseManager.getEventLinkByID(Integer.parseInt(eventId), new DatabaseCallback<String>() {
@@ -115,6 +122,38 @@ public class EventPageActivity extends AppCompatActivity {
                 });
             }
         });
+
+        copy_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get the text to be copied to the clipboard
+                String link = link_view.getText().toString();
+
+                // Get the ClipboardManager service by calling getSystemService
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+                // Create a ClipData with the text to copy
+                ClipData clip = ClipData.newPlainText("invite-link", link);
+
+                // Set the ClipData to the clipboard
+                clipboard.setPrimaryClip(clip);
+
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                TextView text = layout.findViewById(R.id.toast_text);
+                text.setText("Copied to clipboard");
+
+                Toast toast = new Toast(EventPageActivity.this);
+                toast.setView(layout);
+                toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.show();
+
+
+            }
+        });
+
 
         tv_gotomap = findViewById(R.id.tv_gotomap);
         tv_gotomap.setOnClickListener(new View.OnClickListener() {
@@ -154,18 +193,7 @@ public class EventPageActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
 
-    @Override
-    protected void onStart() {
-
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         TextView desc = findViewById(R.id.eventDescription);
         TextView textExpend = findViewById(R.id.eventDescriptionExpend);
 
@@ -183,6 +211,42 @@ public class EventPageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        link_view.setVisibility(View.GONE);
+        copy_icon.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        TextView desc = findViewById(R.id.eventDescription);
+//        TextView textExpend = findViewById(R.id.eventDescriptionExpend);
+//
+//        textExpend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (desc.getMaxLines() == 5) {
+//                    // If currently showing limited lines, show all
+//                    desc.setMaxLines(Integer.MAX_VALUE);
+//                    textExpend.setText("Read Less");
+//                } else {
+//                    // If currently showing all, revert back to limited lines
+//                    desc.setMaxLines(5);
+//                    textExpend.setText("Read More");
+//                }
+//            }
+//        });
     }
 
     private final ActivityResultLauncher<Intent> activityResultLauncher =

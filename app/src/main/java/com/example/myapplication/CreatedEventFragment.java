@@ -167,6 +167,8 @@ public class CreatedEventFragment extends Fragment{
     public void onResume() {
         super.onResume();
 
+        ((Home)getActivity()).setTopNavigationVisibility(true);
+
         databaseManager.getCreatedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {

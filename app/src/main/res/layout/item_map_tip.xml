@@ -23,7 +23,7 @@ android:background="@drawable/rounded_white_bg">
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:scaleType="centerCrop" />
+            android:scaleType="fitXY" />
 
         <View
             android:layout_width="4dp"
@@ -49,8 +49,7 @@ android:background="@drawable/rounded_white_bg">
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Colonial Conservation: "
-                    android:textColor="#1D428A"
+                    android:textColor="@color/dark_blue"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -72,8 +71,7 @@ android:background="@drawable/rounded_white_bg">
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="Ground Floor - Sydney Mayer"
-                        android:textColor="#818C99"
+                        android:textColor="@color/dark_grey"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -96,8 +94,7 @@ android:background="@drawable/rounded_white_bg">
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="13:00 - 14:30"
-                        android:textColor="#818C99"
+                        android:textColor="@color/dark_grey"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -119,8 +116,7 @@ android:background="@drawable/rounded_white_bg">
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="13:00 - 14:30"
-                        android:textColor="#818C99"
+                        android:textColor="@color/dark_grey"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -148,17 +144,17 @@ android:background="@drawable/rounded_white_bg">
                         android:gravity="center_vertical"
                         android:justificationMode="inter_word"
                         android:maxLines="5"
-                        android:text="Scientific etheir an be found in Scientific etheir an be found in ScientificScientific etheir an be found in  etheir an be found in  Indigenous tund und in Indigenous terrin Indigenous terrerritories. The best way to protect biodiversity is therefore..."
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
 
                     <TextView
+                        android:id="@+id/description_expand_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:text="Read More"
-                        android:textColor="#1D428A" />
+                        android:textColor="@color/red" />
 
 
                 </LinearLayout>
@@ -176,7 +172,7 @@ android:background="@drawable/rounded_white_bg">
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_alignParentEnd="true"
-    android:background="@color/grey"
+    android:background="@android:color/transparent"
     android:src="@drawable/close_40" /> <!-- Make sure you have a drawable named ic_close which is your close/cross icon -->
 
 </RelativeLayout>

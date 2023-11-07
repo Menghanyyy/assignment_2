@@ -44,7 +44,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.activityImage.setImageBitmap(decodedBitmap);
 
 
-
         if(data.getActivityVisits().size() > 0 && data.getActivityVisits().get(0) != null){
 
             Visit activityVisit = data.getActivityVisits().get(0);
@@ -64,6 +63,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             }
         });
 
+        holder.descriptionExpandBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.activityDescription.getMaxLines() == 5) {
+                    // If currently showing limited lines, show all
+                    holder.activityDescription.setMaxLines(Integer.MAX_VALUE);
+                    holder.descriptionExpandBtn.setText("Read Less");
+                } else {
+                    // If currently showing all, revert back to limited lines
+                    holder.activityDescription.setMaxLines(5);
+                    holder.descriptionExpandBtn.setText("Read More");
+                }
+            }
+        });
+
     }
 
     @Override
@@ -80,6 +94,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ImageButton closeActivityButton;
         public TextView activityVisitStatus;
 
+        public TextView descriptionExpandBtn;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,6 +106,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             activityDescription = itemView.findViewById(R.id.activity_description);
             closeActivityButton = itemView.findViewById(R.id.closeButton);
             activityVisitStatus = itemView.findViewById(R.id.activity_check_in_status);
+            descriptionExpandBtn = itemView.findViewById(R.id.description_expand_btn);
 
         }
     }

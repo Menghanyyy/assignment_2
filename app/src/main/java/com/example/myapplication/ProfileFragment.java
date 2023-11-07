@@ -95,11 +95,15 @@ public class ProfileFragment extends Fragment {
 
     private void addTitle(){
         String name = MyApplication.getCurrentUser().getName();
+        String username = MyApplication.getCurrentUser().getUserName();
 
         // Create TextView for eventName
-        TextView textView = getView().findViewById(R.id.user_name);
-        textView.setText(name + "'s Progress");
-        textView.setTextColor(Color.BLACK);
+        TextView userNameView = getView().findViewById(R.id.user_name);
+        userNameView.setText(username);
+        userNameView.setTextColor(Color.BLACK);
+
+        TextView nameView = getView().findViewById(R.id.name);
+        nameView.setText(name);
     }
 
     private void setProgressBarProgressThreaded() {

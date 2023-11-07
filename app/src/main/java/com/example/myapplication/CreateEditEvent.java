@@ -417,7 +417,6 @@ public class CreateEditEvent extends AppCompatActivity {
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
 
-
         LayoutInflater inflater = LayoutInflater.from(this);
 
         // Inflate the card layout
@@ -431,12 +430,15 @@ public class CreateEditEvent extends AppCompatActivity {
 
         String activityImageString = "";
 
+        Drawable drawable = null;
+        Bitmap bitmap = null;
+
         if(image.isEmpty()) {
 
             activityImage.setImageResource(R.drawable.img_placeholder);
 
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_placeholder);
-            Bitmap bitmap = null;
+            drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_placeholder);
+
             if (drawable instanceof BitmapDrawable) {
                 bitmap = ((BitmapDrawable) drawable).getBitmap();
             } else {
@@ -451,18 +453,17 @@ public class CreateEditEvent extends AppCompatActivity {
                 drawable.draw(canvas);
             }
 
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            activityImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+//            byte[] byteArray = byteArrayOutputStream.toByteArray();
+//            activityImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
         }
         else {
             Uri imageUri = Uri.parse(image);
             activityImage.setImageURI(imageUri);
 
-            Bitmap bitmap = null;
-            Drawable drawable = activityImage.getDrawable();
+           drawable = activityImage.getDrawable();
 
             if (drawable instanceof BitmapDrawable) {
                 bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -490,24 +491,19 @@ public class CreateEditEvent extends AppCompatActivity {
                 drawable.draw(canvas);
             }
 
-            if (bitmap != null) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                activityImageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-            }
+        }
 
-
+        if (bitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            activityImageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         }
 
         activityIndex.setText("0"+activityNum);
         activityNum += 1;
 
         activityName.setText(name);
-
-//        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
-//        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-//        activityImage.setImageBitmap(decodedBitmap);
 
 
         Activity tmpActivity = new Activity(name,
@@ -609,17 +605,6 @@ public class CreateEditEvent extends AppCompatActivity {
                                 Uri imageUri = imageIntent.getData();
                                 uploadImageView.setImageURI(imageUri);
 
-//                                Bitmap bitmap = uploadImageView.getDrawingCache();
-                                //ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                                byte[] imageBytes = baos.toByteArray();
-
-                                // this will pass to the db
-//                                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//
-//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-//                                uploadImageView.setImageBitmap(decodedBitmap);
 
                             }
                         }
