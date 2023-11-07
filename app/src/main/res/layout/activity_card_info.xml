@@ -88,7 +88,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="200dp"
                                     android:scaleType="centerCrop"
-                                    android:src="@mipmap/bbbb" />
+                                    />
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -102,7 +102,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginHorizontal="16dp"
-                                        android:text="Colonial Conservation: A Green assault on Indigenous Land"
                                         android:textColor="#1D428A"
                                         android:textSize="18sp"
                                         android:textStyle="bold" />
@@ -135,6 +134,7 @@
                                     android:layout_toStartOf="@+id/invite"
                                     android:text="New Text"
                                     android:textSize="15sp"
+                                    android:textColor="@color/black"
                                     android:layout_marginEnd= "20dp"
                                     android:visibility="gone" />
 
@@ -192,8 +192,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="end"
-                                    android:text="Ground Floor - Sydney Mayer"
                                     android:textSize="15sp"
+                                    android:textColor="#818C99"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
@@ -227,9 +227,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="end"
-                                    android:text="Australian Centre"
                                     android:textColor="#0057FF"
-                                    android:textSize="15sp"
+                                    android:textSize="16sp"
                                     android:textStyle="bold" />
 
                             </LinearLayout>
@@ -274,7 +273,6 @@
                                     android:justificationMode="inter_word"
                                     android:maxLines="5"
                                     android:minHeight="140dp"
-                                    android:text="Scientific evidence kmjnjnjnjnjnjnjnjnnjnjnjnk people understand and manage their environment better than anyone else: 80% of Earth’s biodiversity can be found in Indigenous territories. The best way to protect biodiversity is therefore to."
                                     android:textColor="#818C99"
                                     android:textSize="16sp" />
 

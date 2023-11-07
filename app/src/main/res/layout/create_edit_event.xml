@@ -551,10 +551,8 @@
                 android:id="@+id/event_activity_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@drawable/divider2"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:showDividers="middle">
+                android:orientation="vertical">
                 <!-- Content of the event_activity_list goes here -->
             </LinearLayout>
 
@@ -592,6 +590,16 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/creating_animation_layout"
+        android:src="@drawable/creating_loading_animation"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        android:visibility="gone"/>
 
 
 </FrameLayout>

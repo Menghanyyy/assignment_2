@@ -9,8 +9,8 @@
                 android:centerX="0.5"
                 android:centerY="0.5"
                 android:gradientRadius="80%"
-                android:startColor="#66B0B0B0"
-                android:endColor="#00B0B0B0"/>
+                android:startColor="@color/light_grey"
+                android:endColor="@color/lighter_grey"/>
             <corners android:radius="30dp"/>
 
             <padding
@@ -23,7 +23,7 @@
     <!-- Button Background Layer -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#707070"/> <!-- Dark Grey for the button background -->
+            <solid android:color="@color/dark_grey"/> <!-- Dark Grey for the button background -->
         </shape>
     </item>
 </layer-list>

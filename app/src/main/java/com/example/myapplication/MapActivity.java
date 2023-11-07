@@ -169,6 +169,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
 
+    private ImageView activeMapBack;
+
     private static final String[] COLORS = new String[]{
             "#008000", // Green
             "#0000FF", // Blue
@@ -206,12 +208,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         popupLayout = findViewById(R.id.check_in_popup_layout);
 
+
         rvView = findViewById(R.id.rvView);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
         this.databaseManager = new DatabaseManager(this);
+
+        activeMapBack = findViewById(R.id.active_map_back);
+        activeMapBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setResult(RESULT_OK, intent);
+
+                finish();
+            }
+        });
+
     }
 
     /**
@@ -225,7 +240,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         MapActivity.this.mapboxMap = mapboxMap;
 
-        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/light-v11"),
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v11"),
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
@@ -566,7 +581,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                 enableLocationComponent(mapboxMap.getStyle());
+
             } else {
 
                 LayoutInflater inflater = getLayoutInflater();
@@ -580,8 +597,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.show();
-
-                finish();
             }
         }
     }

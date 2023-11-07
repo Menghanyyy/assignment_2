@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -13,7 +14,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.component.Event;
@@ -62,14 +68,22 @@ public class EventPageActivity extends AppCompatActivity {
 
                 TextView organisation = findViewById(R.id.eventOrganisation);
 
-                byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
-                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-                image.setImageBitmap(decodedBitmap);
-
+                if(result.getImage().isEmpty()) {
+                    image.setImageResource(R.mipmap.aaaa);
+                }else {
+                    byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
+                    Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+                    image.setImageBitmap(decodedBitmap);
+                }
 
                 title.setText(result.getEventName());
                 desc.setText(result.getDescription());
-                location.setText("Melbourne");
+                if(result.getEventLocation().isEmpty()) {
+                    location.setText("Melbourne");
+                }
+                else {
+                    location.setText(result.getEventLocation());
+                }
                 organisation.setText(result.getOrganisationName());
             }
 
@@ -107,11 +121,14 @@ public class EventPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+
                 Intent  mapIntent = new Intent(EventPageActivity.this,MapActivity.class);
                 mapIntent.putExtra("eventId", eventId);
                 mapIntent.putExtra("bbox", pointsJson);
 
-                startActivity(mapIntent);
+                activityResultLauncher.launch(mapIntent);
+
+//                startActivity(mapIntent);
 
             }
         });
@@ -167,4 +184,26 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
     }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+
+                        /**
+                         * Called when result is available
+                         *
+                         * @param result
+                         */
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+
+                            if (result.getResultCode() == RESULT_OK) {
+
+                                Log.i("Return", "return");
+                            }
+                        }
+                    }
+            );
 }

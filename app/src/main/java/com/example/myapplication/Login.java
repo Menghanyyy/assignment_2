@@ -28,10 +28,15 @@ import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class Login extends AppCompatActivity {
 
     //MAPBOX TOKEN = sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw
     private DatabaseManager databaseManager;
+
+    private GifImageView gifImageView;
+    private ViewGroup rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class Login extends AppCompatActivity {
 
         databaseManager = new DatabaseManager(this);
 
+        gifImageView = findViewById(R.id.login_animation_layout);
+        rootView = findViewById(R.id.Root_Sign_In);
 
         TextView username = (TextView)findViewById(R.id.userName);
         TextView password = (TextView)findViewById(R.id.password);
@@ -49,15 +56,19 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                gifImageView.setVisibility(View.VISIBLE);
+                rootView.setVisibility(View.GONE);
+
                 databaseManager.verifyPassword(password.getText().toString().trim(),username.getText().toString().trim(), new DatabaseCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
 
                         databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
                             @Override
-                            public void onSuccess(GeneralUser result) {
-                                Log.i("get User by ID", result.getUserId());
-                                MyApplication.setCurrentUser(result);
+                            public void onSuccess(GeneralUser returnedUser) {
+                                Log.i("get User by ID", returnedUser.getUserId());
+
+                                MyApplication.setCurrentUser(returnedUser);
 
                                 Intent i = new Intent(Login.this, Home.class);
                                 startActivity(i);
@@ -74,6 +85,9 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onError(String error) {
                         Log.println(Log.ASSERT, "error verifying", error);
+
+                        gifImageView.setVisibility(View.GONE);
+                        rootView.setVisibility(View.VISIBLE);
 
                         LayoutInflater inflater = getLayoutInflater();
                         View layout = inflater.inflate(R.layout.customise_toast, null, false);

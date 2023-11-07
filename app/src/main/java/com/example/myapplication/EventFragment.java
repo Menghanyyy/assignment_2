@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,6 +57,10 @@ public class EventFragment extends Fragment{
     private ViewGroup eventsCardLayout;
 
     private ImageView empty_add;
+
+    private TextView searchBar;
+
+    private GifImageView gifImageView;
 
     public EventFragment() {
         // Required empty public constructor
@@ -97,10 +105,56 @@ public class EventFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_event, container, false);
 
 
+
+        searchBar = getActivity().findViewById(R.id.search_bar);
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                Log.i("textSearch", charSequence.toString());
+
+                if(charSequence.toString().isEmpty()) {
+                    showEventsView((ArrayList<Event>) events);
+
+                }
+                else {
+                    ArrayList <Event> tmpEvents = new ArrayList<>();
+                    for(Event e : events) {
+                        if(e.getEventName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    if(tmpEvents.size() > 0) {
+                        showEventsView(tmpEvents);
+                    }
+                    else if(tmpEvents.size() <= 0) {
+                        showEventsView(tmpEvents);
+                    }
+                }
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         emptyEventLayout = view.findViewById(R.id.emptyEventsView);
         eventsLayout = view.findViewById(R.id.eventsView);
         eventsCardLayout = view.findViewById(R.id.eventsCardView);
         empty_add = view.findViewById(R.id.iv_add);
+        gifImageView=view.findViewById(R.id.loading_animation_layout);
+
 
         return view;
     }
@@ -113,26 +167,52 @@ public class EventFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+
         ((Home)getActivity()).setTopNavigationVisibility(true);
 
         databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> result) {
                 events = result;
-                showEventsView(result);
+
+
+                String searhText = searchBar.getText().toString();
+                if(searhText.isEmpty()) {
+                    // send view
+                    showEventsView(result);
+
+                } else {
+
+                    ArrayList<Event> tmpEvents = new ArrayList<>();
+                    for(Event e : result) {
+                        if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
+                            tmpEvents.add(e);
+                        }
+                    }
+
+                    showEventsView(tmpEvents);
+
+
+                }
             }
 
             @Override
             public void onError(String error) {
                 Log.println(Log.ASSERT, "Error joined events", error);
+
                 showEmptyEventsView();
             }
         });
+
+
+    
+
     }
 
     private void showEmptyEventsView() {
         emptyEventLayout.setVisibility(View.VISIBLE);
         eventsLayout.setVisibility(View.GONE);
+        gifImageView.setVisibility(View.GONE);
 
         empty_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,10 +224,15 @@ public class EventFragment extends Fragment{
     }
 
     private void showEventsView(ArrayList<Event> events) {
+
         emptyEventLayout.setVisibility(View.GONE);
         eventsLayout.setVisibility(View.VISIBLE);
+        gifImageView.setVisibility(View.GONE);
+
 
         LayoutInflater inflater = LayoutInflater.from(this.getContext());
+
+        eventsCardLayout.removeAllViews();
 
         for (Event event : events) {
             // Inflate the card layout
@@ -157,11 +242,19 @@ public class EventFragment extends Fragment{
             ImageView mainImage = cardView.findViewById(R.id.mainImage);  // Assuming you've given your ImageView an ID
             TextView title = cardView.findViewById(R.id.eventTitle);
             TextView location = cardView.findViewById(R.id.eventLocation);
-            TextView time = cardView.findViewById(R.id.eventTime);
+            TextView organisation = cardView.findViewById(R.id.eventOrganisation);
             TextView desc = cardView.findViewById(R.id.eventDescription);
 
             title.setText(event.getEventName());
-            location.setText("Location: Melbourne");
+            organisation.setText(event.getOrganisationName());
+
+            if(event.getEventLocation().isEmpty()) {
+                location.setText("Melbourne");
+            }
+            else {
+                location.setText(event.getEventLocation());
+            }
+
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {

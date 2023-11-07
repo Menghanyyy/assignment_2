@@ -4,10 +4,16 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -18,6 +24,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -53,6 +60,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,8 +82,9 @@ public class CreateEditEvent extends AppCompatActivity {
 
     ImageView uploadImageView;
 
-    AutoCompleteTextView create_event_address;
+    GifImageView gifImageView;
 
+    AutoCompleteTextView create_event_address;
 
     private ArrayAdapter<String> adapter;
 
@@ -83,8 +92,10 @@ public class CreateEditEvent extends AppCompatActivity {
 
     private Event createEvent;
 
-    private int activityNum = 1;
+    private final Handler searchHandler = new Handler();
+    private Runnable searchRunnable;
 
+    private int activityNum = 1;
 
 
     @Override
@@ -115,6 +126,8 @@ public class CreateEditEvent extends AppCompatActivity {
                 //        Toast.LENGTH_LONG).show();
             }
         });
+
+        gifImageView = findViewById(R.id.creating_animation_layout);
 
         // Initialize views here for Create
         create_event_layout = findViewById(R.id.event_create_layout);
@@ -148,8 +161,10 @@ public class CreateEditEvent extends AppCompatActivity {
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"Loading..."});
         create_event_address.setAdapter(adapter);
+
+        create_event_address.setDropDownVerticalOffset(-3000);
 
         if(eventId != null){
 
@@ -190,14 +205,18 @@ public class CreateEditEvent extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // Perform search
-                    if (!s.toString().isEmpty()) {
-                        performSearch(s.toString());
-                    }
+
                 }
 
                 @Override
-                public void afterTextChanged(Editable s) {}
+                public void afterTextChanged(Editable s) {
+
+                    // Perform search
+                    if (s.toString().isEmpty() == false && s.length() >= 3) {
+                        performSearch(s.toString());
+                    }
+
+                }
             });
 
             uploadImageView.setOnClickListener(new View.OnClickListener() {
@@ -262,6 +281,11 @@ public class CreateEditEvent extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
 
+                                create_event_layout.setVisibility(View.GONE);
+                                edit_event_layout.setVisibility(View.GONE);
+                                activity_layout.setVisibility(View.GONE);
+                                gifImageView.setVisibility(View.VISIBLE);
+
                                 databaseManager.addEvent(createEvent, new DatabaseCallback<String>() {
                                     @Override
                                     public void onSuccess(String result) {
@@ -275,28 +299,31 @@ public class CreateEditEvent extends AppCompatActivity {
 
                                                     Activity activity = createEvent.getEventActivity().get(i);
                                                     activity.setHostedEvent(createEvent);
+                                                    Log.i("activity adding to db", activity.toString());
 
                                                     databaseManager.addActivity(activity, new DatabaseCallback<String>() {
                                                         @Override
                                                         public void onSuccess(String result) {
-                                                            try{
-                                                                Integer activityID = Integer.parseInt(result);
-                                                                Log.i("Success (Activity ID)", String.valueOf(activityID));
 
-                                                                //at the end because it looping
-                                                                if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
-                                                                    Intent i = new Intent(CreateEditEvent.this, Home.class);
-                                                                    startActivity(i);
-                                                                }
+                                                            Integer activityID = Integer.parseInt(result);
+                                                            Log.i("Success (Activity ID)", String.valueOf(activityID));
+
+                                                            //at the end because it looping
+                                                            if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
+                                                                Intent i = new Intent(CreateEditEvent.this, Home.class);
+                                                                startActivity(i);
                                                             }
-                                                            catch (Exception e){
-                                                                Log.i("Activity bad string", result);
-                                                            }
+
                                                         }
 
                                                         @Override
                                                         public void onError(String error) {
                                                             Log.println(Log.ASSERT, "Error adding activity", error);
+
+                                                            create_event_layout.setVisibility(View.GONE);
+                                                            edit_event_layout.setVisibility(View.GONE);
+                                                            activity_layout.setVisibility(View.VISIBLE);
+                                                            gifImageView.setVisibility(View.GONE);
                                                         }
                                                     });
                                                 }
@@ -316,6 +343,11 @@ public class CreateEditEvent extends AppCompatActivity {
                                     @Override
                                     public void onError(String error) {
                                         Log.println(Log.ASSERT, "Error adding event:", error);
+
+                                        create_event_layout.setVisibility(View.VISIBLE);
+                                        edit_event_layout.setVisibility(View.GONE);
+                                        activity_layout.setVisibility(View.GONE);
+                                        gifImageView.setVisibility(View.GONE);
                                     }
                                 });
 
@@ -335,6 +367,11 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onStart();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void performSearch(String query) {
         MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
                 .accessToken(Mapbox.getAccessToken())
@@ -345,17 +382,28 @@ public class CreateEditEvent extends AppCompatActivity {
             @Override
             public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
                 if (response.body() != null) {
+
                     List<CarmenFeature> results = response.body().features();
+
                     List<String> addresses = new ArrayList<>();
+
                     for (CarmenFeature feature : results) {
                         addresses.add(feature.placeName());
                     }
                     // Update the adapter and the dropdown list.
-                    runOnUiThread(() -> {
-                        adapter.clear();
-                        adapter.addAll(addresses);
-                        adapter.notifyDataSetChanged();
-                    });
+
+                    if(addresses.size() > 0) {
+                        runOnUiThread(() -> {
+                            adapter.clear();
+                            adapter.addAll(addresses);
+                            adapter.notifyDataSetChanged();
+                        });
+
+
+                    }
+
+//                    adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, addresses);
+
                 }
             }
 
@@ -368,20 +416,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
-        Activity tmpActivity = new Activity( name,
-                MyApplication.getCurrentUser(),
-                null,
-                center,
-                range,
-                description,
-                address,
-                organisation,
-                activity_start_time,
-                activity_end_time,
-                image);
-
-        // adding activity to event
-        createEvent.addEventActivity(tmpActivity);
 
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -395,14 +429,102 @@ public class CreateEditEvent extends AppCompatActivity {
         TextView activityIndex = cardView.findViewById(R.id.activity_num);
         TextView removeBtn = cardView.findViewById(R.id.activity_remove_button);
 
+        String activityImageString = "";
+
+        if(image.isEmpty()) {
+
+            activityImage.setImageResource(R.drawable.img_placeholder);
+
+            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_placeholder);
+            Bitmap bitmap = null;
+            if (drawable instanceof BitmapDrawable) {
+                bitmap = ((BitmapDrawable) drawable).getBitmap();
+            } else {
+                // Convert drawable to Bitmap manually if it's not a BitmapDrawable
+                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                } else {
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                }
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            activityImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        }
+        else {
+            Uri imageUri = Uri.parse(image);
+            activityImage.setImageURI(imageUri);
+
+            Bitmap bitmap = null;
+            Drawable drawable = activityImage.getDrawable();
+
+            if (drawable instanceof BitmapDrawable) {
+                bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+            } else {
+
+                // Create a bitmap to draw the Drawable into
+                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    // If the drawable doesn't have intrinsic dimensions, create a default bitmap
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+
+                } else {
+
+                    // Use the drawable's dimensions
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                }
+
+                // Create a canvas to draw onto the bitmap
+                Canvas canvas = new Canvas(bitmap);
+
+                // Set the bounds of the canvas to the size of the bitmap
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                // Draw the drawable onto the canvas (and thus into the bitmap)
+                drawable.draw(canvas);
+            }
+
+            if (bitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                activityImageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            }
+
+
+        }
+
         activityIndex.setText("0"+activityNum);
         activityNum += 1;
 
         activityName.setText(name);
 
-        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
-        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-        activityImage.setImageBitmap(decodedBitmap);
+//        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
+//        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+//        activityImage.setImageBitmap(decodedBitmap);
+
+
+        Activity tmpActivity = new Activity(name,
+                MyApplication.getCurrentUser(),
+                null,
+                center,
+                range,
+                description,
+                address+"",
+                organisation+"",
+                activity_start_time,
+                activity_end_time,
+                activityImageString);
+
+        // adding activity to event
+        Log.i("adding activity", tmpActivity.toString());
+        createEvent.addEventActivity(tmpActivity);
 
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -433,10 +555,8 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-//                                uploadImageView.setImageBitmap(decodedBitmap);
 
+                                Log.e("It go here", "here_1");
                                 Intent intent = result.getData();
                                 String activity_image = intent.getStringExtra("activityImage");
                                 String activity_name = intent.getStringExtra("activityName");
@@ -446,18 +566,22 @@ public class CreateEditEvent extends AppCompatActivity {
                                 String activity_start_time = intent.getStringExtra("activityStartTime");
                                 String activity_end_time = intent.getStringExtra("activityEndTime");
 
+                                Log.e("It go here", "here_2");
+
                                 LatLng activity_center = intent.getParcelableExtra("activityCenter");
                                 ArrayList<LatLng> activity_range = intent.getParcelableArrayListExtra("activityRange");
 
                                 Point activity_center_point = Point.fromLngLat(activity_center.getLongitude(), activity_center.getLatitude());
+
+                                Log.e("It go here", "here_3");
 
                                 ArrayList<Point> activity_range_points = new ArrayList<>();
                                 for(LatLng latlng: activity_range) {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
+                                Log.e("It go here", "here");
                                 AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_start_time, activity_end_time, activity_center_point, activity_range_points);
-
                             }
                         }
                     }
@@ -638,6 +762,11 @@ public class CreateEditEvent extends AppCompatActivity {
                 .create()
                 .show();
     }
+
+
+
+
+
 
 
 

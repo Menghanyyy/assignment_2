@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Permissions for Camera and Writing to External Storage (for devices below Android 10) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
 
     <uses-feature android:glEsVersion="0x00030001" android:required="true" />
@@ -23,6 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
+        android:windowSoftInputMode="adjustPan"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".NewLink"

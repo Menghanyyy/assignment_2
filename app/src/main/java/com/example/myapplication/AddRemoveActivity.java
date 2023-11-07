@@ -7,9 +7,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -34,6 +37,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -66,6 +70,9 @@ public class AddRemoveActivity extends AppCompatActivity {
 
     private Calendar dateTimeCalendar;
 
+    private Uri imageUri;
+
+
     ImageView activity_image;
     TextView activity_name;
     TextView activity_description;
@@ -93,11 +100,11 @@ public class AddRemoveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_activity);
 
+        imageUri = null;
+
         dateTimeCalendar = Calendar.getInstance();
 
         activity_image = findViewById(R.id.activity_image);
-        activity_image.setDrawingCacheEnabled(true);
-        activity_image.buildDrawingCache();
 
         activity_name = findViewById(R.id.activity_name);
         activity_description = findViewById(R.id.activity_description);
@@ -119,6 +126,8 @@ public class AddRemoveActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         activity_address.setAdapter(adapter);
+
+        activity_address.setDropDownVerticalOffset(-3000);
 
         activity_address.setOnItemClickListener((parent, view, position, id) -> {
             String selection = (String) parent.getItemAtPosition(position);
@@ -151,14 +160,17 @@ public class AddRemoveActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Perform search
-                if (!s.toString().isEmpty()) {
-                    performSearch(s.toString());
-                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+
+                // Perform search
+                if (s.toString().isEmpty() == false && s.length() >= 3) {
+                    performSearch(s.toString());
+                }
+
+            }
         });
 
 
@@ -236,11 +248,25 @@ public class AddRemoveActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Bitmap bitmap = activity_image.getDrawingCache();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+//                Log.e("Here", "jump to another_0");
+//
+//                String image = "pplp";
+//                Drawable d = activity_image.getDrawable();
+//                Bitmap bitmap = null;
+//
+//                if(d instanceof BitmapDrawable) {
+//                    bitmap = ((BitmapDrawable) d).getBitmap();
+//                }
+//
+//                if(bitmap!=null) {
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                    byte[] imageBytes = baos.toByteArray();
+//                    image = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+//
+//                }
+
+                Log.e("Here", "jump to another_1");
 
                 String activityName = activity_name.getText().toString().trim();
                 String activityDescription = activity_description.getText().toString().trim();
@@ -249,8 +275,14 @@ public class AddRemoveActivity extends AppCompatActivity {
                 String activityStartTime = activity_start_time.getText().toString();
                 String activityEndTime = activity_end_time.getText().toString();
 
+
+                Log.e("Here", "jump to another_2");
                 Intent intent = new Intent();
-                intent.putExtra("activityImage", encodedImage);
+                if(imageUri == null) {
+                    intent.putExtra("activityImage", "");
+                } else {
+                    intent.putExtra("activityImage", imageUri.toString());
+                }
                 intent.putExtra("activityName", activityName);
                 intent.putExtra("activityDescription", activityDescription);
                 intent.putExtra("activityOrganisation", activityOrganisation);
@@ -261,6 +293,7 @@ public class AddRemoveActivity extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("activityRange", activityRange);
 
                 setResult(RESULT_OK, intent);
+                Log.e("Here", "jump to another");
                 finish();
             }
         });
@@ -361,18 +394,9 @@ public class AddRemoveActivity extends AppCompatActivity {
                                 Log.i("image","image uploaded");
 
                                 Intent imageIntent = result.getData();
-                                Uri imageUri = imageIntent.getData();
+                                imageUri = imageIntent.getData();
                                 activity_image.setImageURI(imageUri);
 
-//                                Bitmap bitmap = uploadImageView.getDrawingCache();
-//                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                                byte[] imageBytes = baos.toByteArray();
-//                                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//
-//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-//                                uploadImageView.setImageBitmap(decodedBitmap);
 
                             }
                         }
@@ -383,36 +407,74 @@ public class AddRemoveActivity extends AppCompatActivity {
     private void galleryAccessPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
-
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user
+                showRationaleDialog();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+            }
         } else {
-
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageUploadResultLauncher.launch(intent);
+            // Permission has already been granted
+            openGallery();
         }
+    }
+
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to access your gallery for image selection.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        AddRemoveActivity.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS))
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imageUploadResultLauncher.launch(intent);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            imageUploadResultLauncher.launch(intent);
-        } else {
-
-            LayoutInflater inflater = getLayoutInflater();
-            View layout = inflater.inflate(R.layout.customise_toast, null, false);
-
-            TextView text = layout.findViewById(R.id.toast_text);
-            text.setText("Permission denied!");
-
-            Toast toast = new Toast(AddRemoveActivity.this);
-            toast.setView(layout);
-            toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.show();
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                openGallery();
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    // Permission denied without checking "Don't ask again", show rationale again
+                    showRationaleDialog();
+                } else {
+                    // User checked "Don't ask again", guide the user towards app settings
+                    showAppSettingsDialog();
+                }
+            }
         }
+    }
+
+    private void showAppSettingsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("Please enable access to storage in the app settings.")
+                .setPositiveButton("Settings", (dialog, which) -> {
+                    // Intent to open the app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {

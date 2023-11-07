@@ -59,7 +59,6 @@ public class DatabaseManager implements DatabaseInterface {
     ) {
 
         String url = baseUrl + urlExtension;
-        Log.println(Log.DEBUG, "Sending JSON", "Hee");
 
         // If jsonRequest is not null, convert it to a string and append as query parameter
         if (jsonRequest != null && method == Request.Method.GET) {
@@ -70,8 +69,6 @@ public class DatabaseManager implements DatabaseInterface {
                 Log.println(Log.DEBUG, "couldnt encode JSON", e.getMessage());
             }
         }
-
-        Log.println(Log.DEBUG, "encoded", "nice");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
             method,
@@ -216,6 +213,17 @@ public class DatabaseManager implements DatabaseInterface {
         sendJsonObjectRequest(
                 Request.Method.GET,
                 "/events/getByID/" + Integer.valueOf(eventID),
+                null,
+                callback,
+                ClassCodes.EVENT_CLASS
+        );
+    }
+
+    @Override
+    public void getEventByLink(String link, DatabaseCallback<Event> callback) {
+        sendJsonObjectRequest(
+                Request.Method.GET,
+                "/events/getByLink/" + link,
                 null,
                 callback,
                 ClassCodes.EVENT_CLASS
@@ -373,12 +381,12 @@ public class DatabaseManager implements DatabaseInterface {
     }
 
     @Override
-    public void visitCountForUserAtEvent(User user, Event event, DatabaseCallback<Integer> callback) {
+    public void visitCountForUserAtEvent(String userID, String eventID, DatabaseCallback<Integer> callback) {
         try{
             String url = "/activities/visitCountForUserAtEvent?userID="
-                    + Integer.toString(Integer.parseInt(user.getUserId()))
+                    + userID
                     + "&eventID="
-                    + Integer.toString(Integer.parseInt(event.getEventId()));
+                    + eventID;
 
             sendJsonObjectRequest(
                     Request.Method.GET,
