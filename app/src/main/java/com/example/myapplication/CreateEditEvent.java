@@ -7,7 +7,10 @@ import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -414,21 +417,6 @@ public class CreateEditEvent extends AppCompatActivity {
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
 
-        Activity tmpActivity = new Activity(name,
-                MyApplication.getCurrentUser(),
-                null,
-                center,
-                range,
-                description,
-                address+"",
-                organisation+"",
-                activity_start_time,
-                activity_end_time,
-                image);
-
-        // adding activity to event
-        Log.i("adding activity", tmpActivity.toString());
-        createEvent.addEventActivity(tmpActivity);
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -441,14 +429,102 @@ public class CreateEditEvent extends AppCompatActivity {
         TextView activityIndex = cardView.findViewById(R.id.activity_num);
         TextView removeBtn = cardView.findViewById(R.id.activity_remove_button);
 
+        String activityImageString = "";
+
+        if(image.isEmpty()) {
+
+            activityImage.setImageResource(R.drawable.img_placeholder);
+
+            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_placeholder);
+            Bitmap bitmap = null;
+            if (drawable instanceof BitmapDrawable) {
+                bitmap = ((BitmapDrawable) drawable).getBitmap();
+            } else {
+                // Convert drawable to Bitmap manually if it's not a BitmapDrawable
+                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                } else {
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                }
+                Canvas canvas = new Canvas(bitmap);
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawable.draw(canvas);
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            activityImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        }
+        else {
+            Uri imageUri = Uri.parse(image);
+            activityImage.setImageURI(imageUri);
+
+            Bitmap bitmap = null;
+            Drawable drawable = activityImage.getDrawable();
+
+            if (drawable instanceof BitmapDrawable) {
+                bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+            } else {
+
+                // Create a bitmap to draw the Drawable into
+                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    // If the drawable doesn't have intrinsic dimensions, create a default bitmap
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                    
+                } else {
+
+                    // Use the drawable's dimensions
+                    bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                }
+
+                // Create a canvas to draw onto the bitmap
+                Canvas canvas = new Canvas(bitmap);
+
+                // Set the bounds of the canvas to the size of the bitmap
+                drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+
+                // Draw the drawable onto the canvas (and thus into the bitmap)
+                drawable.draw(canvas);
+            }
+
+            if (bitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                activityImageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            }
+
+
+        }
+
         activityIndex.setText("0"+activityNum);
         activityNum += 1;
 
         activityName.setText(name);
 
-        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
-        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-        activityImage.setImageBitmap(decodedBitmap);
+//        byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
+//        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+//        activityImage.setImageBitmap(decodedBitmap);
+
+
+        Activity tmpActivity = new Activity(name,
+                MyApplication.getCurrentUser(),
+                null,
+                center,
+                range,
+                description,
+                address+"",
+                organisation+"",
+                activity_start_time,
+                activity_end_time,
+                activityImageString);
+
+        // adding activity to event
+        Log.i("adding activity", tmpActivity.toString());
+        createEvent.addEventActivity(tmpActivity);
 
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -479,9 +555,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-//                                byte[] decodedImageBytes = Base64.decode(encodedImage, Base64.DEFAULT);
-//                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
-//                                uploadImageView.setImageBitmap(decodedBitmap);
 
                                 Log.e("It go here", "here_1");
                                 Intent intent = result.getData();
@@ -507,7 +580,7 @@ public class CreateEditEvent extends AppCompatActivity {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
-                                Log.e("It go here", "here_4");
+                                Log.e("It go here", "here");
                                 AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_start_time, activity_end_time, activity_center_point, activity_range_points);
                             }
                         }
