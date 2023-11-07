@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -69,6 +70,7 @@ import retrofit2.Response;
 public class CreateEditEvent extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSIONS = 1001;
+    private static final int REQUEST_CAMERA_PERMISSION = 1002;
 
     // Views for Create, Edit, and Activity
     View create_event_layout, edit_event_layout, activity_layout;
@@ -222,7 +224,7 @@ public class CreateEditEvent extends AppCompatActivity {
             uploadImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    galleryAccessPermissions();
+                    cameraAccessPermissions();
                 }
             });
 
@@ -605,9 +607,13 @@ public class CreateEditEvent extends AppCompatActivity {
 
                                 Log.i("image","image uploaded");
 
-                                Intent imageIntent = result.getData();
-                                Uri imageUri = imageIntent.getData();
-                                uploadImageView.setImageURI(imageUri);
+                                Bundle extras = result.getData().getExtras();
+                                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                                uploadImageView.setImageBitmap(imageBitmap);
+
+//                                Intent imageIntent = result.getData();
+//                                Uri imageUri = imageIntent.getData();
+//                                uploadImageView.setImageURI(imageUri);
 
 //                                Bitmap bitmap = uploadImageView.getDrawingCache();
                                 //ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -690,67 +696,148 @@ public class CreateEditEvent extends AppCompatActivity {
 //
 
 
-    private void galleryAccessPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+//    private void galleryAccessPermissions() {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                // Show an explanation to the user
+//                showRationaleDialog();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                        REQUEST_PERMISSIONS);
+//            }
+//        } else {
+//            // Permission has already been granted
+//            openGallery();
+//        }
+//    }
+//
+//    private void showRationaleDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Permission Needed")
+//                .setMessage("This permission is needed to access your gallery for image selection.")
+//                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+//                        CreateEditEvent.this,
+//                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                        REQUEST_PERMISSIONS))
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .create()
+//                .show();
+//    }
+//
+//    private void openGallery() {
+//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        imageUploadResultLauncher.launch(intent);
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_PERMISSIONS) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission granted
+//                openGallery();
+//            } else {
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                    // Permission denied without checking "Don't ask again", show rationale again
+//                    showRationaleDialog();
+//                } else {
+//                    // User checked "Don't ask again", guide the user towards app settings
+//                    showAppSettingsDialog();
+//                }
+//            }
+//        }
+//    }
+//
+//    private void showAppSettingsDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Permission Denied")
+//                .setMessage("Please enable access to storage in the app settings.")
+//                .setPositiveButton("Settings", (dialog, which) -> {
+//                    // Intent to open the app settings
+//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                            Uri.fromParts("package", getPackageName(), null));
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                })
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .create()
+//                .show();
+//    }
+
+
+    private void cameraAccessPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Manifest.permission.CAMERA)) {
                 // Show an explanation to the user
                 showRationaleDialog();
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS);
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CAMERA_PERMISSION);
             }
         } else {
             // Permission has already been granted
-            openGallery();
+            openCamera();
         }
     }
 
-    private void showRationaleDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permission Needed")
-                .setMessage("This permission is needed to access your gallery for image selection.")
-                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
-                        CreateEditEvent.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS))
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
-    }
+    private void openCamera() {
+        try {
 
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        imageUploadResultLauncher.launch(intent);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            imageUploadResultLauncher.launch(intent);
+
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                openGallery();
+                // Permission was granted
+                openCamera();
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Permission denied without checking "Don't ask again", show rationale again
+                // Permission was denied or request was cancelled
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    // User has denied permission but not permanently
                     showRationaleDialog();
                 } else {
-                    // User checked "Don't ask again", guide the user towards app settings
+                    // User has denied permission permanently
                     showAppSettingsDialog();
                 }
             }
         }
     }
 
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to use your camera for taking pictures.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        CreateEditEvent.this,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CAMERA_PERMISSION))
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
     private void showAppSettingsDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Permission Denied")
-                .setMessage("Please enable access to storage in the app settings.")
+                .setMessage("Please enable access to the camera in the app settings.")
                 .setPositiveButton("Settings", (dialog, which) -> {
                     // Intent to open the app settings
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -762,6 +849,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 .create()
                 .show();
     }
+
 
 
 
