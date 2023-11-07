@@ -159,43 +159,42 @@ public class EventFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+
         ((Home)getActivity()).setTopNavigationVisibility(true);
 
-        if(MyApplication.getCurrentUser() != null) {
+        databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
 
-            databaseManager.getJoinedEvents(MyApplication.getCurrentUser().getUserId(), new DatabaseCallback<ArrayList<Event>>() {
+            @Override
+            public void onSuccess(ArrayList<Event> result) {
+                events = result;
+                String searhText = searchBar.getText().toString();
+                if(searhText.isEmpty()) {
+                    // send view
+                    showEventsView(result);
 
-                @Override
-                public void onSuccess(ArrayList<Event> result) {
-                    events = result;
-                    String searhText = searchBar.getText().toString();
-                    if(searhText.isEmpty()) {
-                        // send view
-                        showEventsView(result);
+                } else {
 
-                    } else {
-
-                        ArrayList<Event> tmpEvents = new ArrayList<>();
-                        for(Event e : result) {
-                            if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
-                                tmpEvents.add(e);
-                            }
+                    ArrayList<Event> tmpEvents = new ArrayList<>();
+                    for(Event e : result) {
+                        if(e.getEventName().toLowerCase().contains(searhText.toLowerCase())) {
+                            tmpEvents.add(e);
                         }
-
-                        showEventsView(tmpEvents);
-
-
                     }
-                }
 
-                @Override
-                public void onError(String error) {
-                    Log.println(Log.ASSERT, "Error joined events", error);
-                    showEmptyEventsView();
-                }
-            });
+                    showEventsView(tmpEvents);
 
-        }
+
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.println(Log.ASSERT, "Error joined events", error);
+                showEmptyEventsView();
+            }
+        });
+
+
     
 
     }

@@ -566,7 +566,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                 enableLocationComponent(mapboxMap.getStyle());
+
             } else {
 
                 LayoutInflater inflater = getLayoutInflater();
@@ -580,8 +582,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
                 toast.setDuration(Toast.LENGTH_LONG);
                 toast.show();
-
-                finish();
             }
         }
     }

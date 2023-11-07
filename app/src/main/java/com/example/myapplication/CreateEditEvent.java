@@ -286,23 +286,21 @@ public class CreateEditEvent extends AppCompatActivity {
 
                                                     Activity activity = createEvent.getEventActivity().get(i);
                                                     activity.setHostedEvent(createEvent);
+                                                    Log.i("activity adding to db", activity.toString());
 
                                                     databaseManager.addActivity(activity, new DatabaseCallback<String>() {
                                                         @Override
                                                         public void onSuccess(String result) {
-                                                            try{
-                                                                Integer activityID = Integer.parseInt(result);
-                                                                Log.i("Success (Activity ID)", String.valueOf(activityID));
 
-                                                                //at the end because it looping
-                                                                if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
-                                                                    Intent i = new Intent(CreateEditEvent.this, Home.class);
-                                                                    startActivity(i);
-                                                                }
+                                                            Integer activityID = Integer.parseInt(result);
+                                                            Log.i("Success (Activity ID)", String.valueOf(activityID));
+
+                                                            //at the end because it looping
+                                                            if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
+                                                                Intent i = new Intent(CreateEditEvent.this, Home.class);
+                                                                startActivity(i);
                                                             }
-                                                            catch (Exception e){
-                                                                Log.i("Activity bad string", result);
-                                                            }
+
                                                         }
 
                                                         @Override
@@ -395,6 +393,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
+
         Activity tmpActivity = new Activity( name,
                 MyApplication.getCurrentUser(),
                 null,
@@ -408,6 +407,7 @@ public class CreateEditEvent extends AppCompatActivity {
                 image);
 
         // adding activity to event
+        Log.i("adding activity", tmpActivity.toString());
         createEvent.addEventActivity(tmpActivity);
 
 
