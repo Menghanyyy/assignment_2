@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
@@ -22,6 +23,7 @@
         <entry key="app/src/main/res/drawable/info_24.xml" value="0.144" />
         <entry key="app/src/main/res/drawable/location_pointer.xml" value="0.1835" />
         <entry key="app/src/main/res/drawable/map_40.xml" value="0.144" />
+        <entry key="app/src/main/res/drawable/profile_log_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/round.xml" value="0.2075" />
         <entry key="app/src/main/res/drawable/round_btn_background.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/rounded_background 2.xml" value="0.1" />
@@ -30,20 +32,22 @@
         <entry key="app/src/main/res/drawable/rounded_btn_background.xml" value="0.218" />
         <entry key="app/src/main/res/drawable/rounded_btn_background_2.xml" value="0.1945" />
         <entry key="app/src/main/res/drawable/rounded_white_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/top_rounded_background.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_Login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_card_info.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.14311043566362716" />
         <entry key="app/src/main/res/layout/activity_insert_link.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.20147082822542664" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.17863616943359376" />
         <entry key="app/src/main/res/layout/activity_main2.xml" value="0.21014492753623187" />
         <entry key="app/src/main/res/layout/activity_map.xml" value="0.14417724609375" />
-        <entry key="app/src/main/res/layout/activity_new_link.xml" value="0.21014492753623187" />
+        <entry key="app/src/main/res/layout/activity_new_link.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.21014492753623187" />
         <entry key="app/src/main/res/layout/add_activity.xml" value="0.22714742024739584" />
-        <entry key="app/src/main/res/layout/check_in.xml" value="0.14311043566362716" />
+        <entry key="app/src/main/res/layout/check_in.xml" value="0.1" />
         <entry key="app/src/main/res/layout/create_edit_event.xml" value="0.19399538106235567" />
         <entry key="app/src/main/res/layout/create_event.xml" value="0.4674331665039063" />
+        <entry key="app/src/main/res/layout/customise_toast.xml" value="0.11879432624113476" />
         <entry key="app/src/main/res/layout/detected_activity_card.xml" value="0.2905059814453125" />
         <entry key="app/src/main/res/layout/editable_activity_map.xml" value="0.1" />
         <entry key="app/src/main/res/layout/empty_event_view.xml" value="0.1" />
@@ -55,8 +59,8 @@
         <entry key="app/src/main/res/layout/fragment_event.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.17320067493628122" />
         <entry key="app/src/main/res/layout/fragment_my.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.15070921985815602" />
-        <entry key="app/src/main/res/layout/item_map_tip.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.2639751552795031" />
+        <entry key="app/src/main/res/layout/item_map_tip.xml" value="0.20921783447265627" />
         <entry key="app/src/main/res/menu/buttom_navmenu.xml" value="0.1111111111111111" />
       </map>
     </option>
@@ -65,7 +69,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
