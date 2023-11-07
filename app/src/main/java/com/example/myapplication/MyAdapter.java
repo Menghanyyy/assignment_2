@@ -91,7 +91,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public TextView activityLocation;
         public TextView activityTime;
         public TextView activityDescription;
-        public ImageButton closeActivityButton;
+        public TextView closeActivityButton;
         public TextView activityVisitStatus;
 
         public TextView descriptionExpandBtn;

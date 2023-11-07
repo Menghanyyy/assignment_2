@@ -6,6 +6,8 @@ android:layout_height="250dp"
 android:padding="16dp"
 android:background="@drawable/rounded_white_bg">
 
+    <!-- Close ImageButton -->
+
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -165,15 +167,18 @@ android:background="@drawable/rounded_white_bg">
 
     </LinearLayout>
 
-<!-- Close ImageButton -->
-<ImageButton
-    android:id="@+id/closeButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentEnd="true"
-    android:background="@android:color/transparent"
-    android:src="@drawable/close_40" /> <!-- Make sure you have a drawable named ic_close which is your close/cross icon -->
+    <TextView
+        android:id="@+id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@color/grey"
+        android:drawableEnd="@drawable/close_40"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
 
 </RelativeLayout>
 

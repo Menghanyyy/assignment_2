@@ -250,6 +250,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             public void onSuccess(ArrayList<Activity> activitiesResult) {
 
                                 eventsActivities = activitiesResult;
+
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
 
@@ -263,16 +264,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
 
-                                            // To remove the layer with ID "maine"
-                                            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
-                                            if (layer != null) {
-                                                String color = COLORS[currentIndex % COLORS.length]; // Cycle through the COLORS array
-
-                                                layer.setProperties(
-                                                        PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
-                                                        PropertyFactory.fillOpacity(0.5f)
-                                                );
+                                            if(currentIndex == activitiesResult.size()-1)
+                                            {
+                                                drawPolygon_Geojson(style);
+                                                addMarker(style);
                                             }
+
+//                                            // To remove the layer with ID "maine"
+//                                            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
+//                                            if (layer != null) {
+//                                                String color = COLORS[currentIndex % COLORS.length]; // Cycle through the COLORS array
+//
+//                                                layer.setProperties(
+//                                                        PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+//                                                        PropertyFactory.fillOpacity(0.5f)
+//                                                );
+//                                            }
                                         }
 
                                         @Override
@@ -421,11 +428,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // Adding fill layer to the map
             FillLayer fillLayer = new FillLayer(ACTIVITY_FILL_LAYER_ID + eventsActivities.indexOf(activity), ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity));
-            String color = COLORS[eventsActivities.indexOf(activity) % COLORS.length]; // Cycle through the COLORS array
-            fillLayer.setProperties(
-                    PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
-                    PropertyFactory.fillOpacity(0.5f)
-            );
+
+            if(avoidPopUp.contains(activity.getActivityId())) {
+
+                String color = COLORS[eventsActivities.indexOf(activity) % COLORS.length]; // Cycle through the COLORS array
+
+                fillLayer.setProperties(
+                PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                        PropertyFactory.fillOpacity(0.5f)
+                );
+
+            } else {
+
+                fillLayer.setProperties(
+                        PropertyFactory.fillColor(Color.parseColor("#0080ff")), // blue color fill
+                        PropertyFactory.fillOpacity(0.5f)
+                );
+            }
+
             style.addLayer(fillLayer);
 
             // Adding outline layer to the map
@@ -650,28 +670,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 toast.setDuration(Toast.LENGTH_LONG);
                                 toast.show();
 
-                                int indexOfCheckInActivity = -1;
-
-                                for (Activity a : eventsActivities) {
-                                    if (a.getActivityId().equals(checkedInActivityId)) {
-                                        indexOfCheckInActivity = Integer.parseInt(a.getActivityId());
-                                        break;
-                                    }
-                                }
-
-                                if (indexOfCheckInActivity >= 0) {
-
-                                    Layer layer = mapboxMap.getStyle().getLayer(ACTIVITY_FILL_LAYER_ID + indexOfCheckInActivity);
-                                    if (layer != null) {
-                                        String color = COLORS[indexOfCheckInActivity % COLORS.length]; // Cycle through the COLORS array
-
-                                        layer.setProperties(
-                                                PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
-                                                PropertyFactory.fillOpacity(0.5f)
-                                        );
-                                    }
-
-                                }
 
                                 Visit newVisit = new Visit(MyApplication.getCurrentUser().getUserId(), checkedInActivityId);
 
@@ -680,6 +678,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     public void onSuccess(String result) {
 
                                         avoidPopUp.add(checkedInActivityId);
+                                        drawPolygon_Geojson(mapboxMap.getStyle());
+                                        addMarker(mapboxMap.getStyle());
 
                                         View currentView = null;
 

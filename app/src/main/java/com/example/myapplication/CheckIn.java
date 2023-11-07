@@ -32,6 +32,9 @@ public class CheckIn extends AppCompatActivity implements
 
     private static final int GESTURE_COUNT = 3;
 
+    private Handler handle = new Handler();
+    private Runnable run;
+
     // need to delete this is use to test the view of the map...
 
 
@@ -47,6 +50,15 @@ public class CheckIn extends AppCompatActivity implements
 
         Intent intent = getIntent();
         activityId = intent.getStringExtra("activityId");
+
+        run = new Runnable() {
+            @Override
+            public void run() {
+                checkIn();
+            }
+        };
+
+        handle.postDelayed(run, 3000);
     }
 
     @Override
@@ -139,5 +151,11 @@ public class CheckIn extends AppCompatActivity implements
     @Override
     public void onDarknessDetected() {
         checkIn();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handle.removeCallbacks(run);
     }
 }
