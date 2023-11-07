@@ -57,6 +57,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,6 +78,8 @@ public class CreateEditEvent extends AppCompatActivity {
     ViewGroup activity_list;
 
     ImageView uploadImageView;
+
+    GifImageView gifImageView;
 
     AutoCompleteTextView create_event_address;
 
@@ -120,6 +123,8 @@ public class CreateEditEvent extends AppCompatActivity {
                 //        Toast.LENGTH_LONG).show();
             }
         });
+
+        gifImageView = findViewById(R.id.creating_animation_layout);
 
         // Initialize views here for Create
         create_event_layout = findViewById(R.id.event_create_layout);
@@ -273,6 +278,11 @@ public class CreateEditEvent extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
 
+                                create_event_layout.setVisibility(View.GONE);
+                                edit_event_layout.setVisibility(View.GONE);
+                                activity_layout.setVisibility(View.GONE);
+                                gifImageView.setVisibility(View.VISIBLE);
+
                                 databaseManager.addEvent(createEvent, new DatabaseCallback<String>() {
                                     @Override
                                     public void onSuccess(String result) {
@@ -306,6 +316,11 @@ public class CreateEditEvent extends AppCompatActivity {
                                                         @Override
                                                         public void onError(String error) {
                                                             Log.println(Log.ASSERT, "Error adding activity", error);
+
+                                                            create_event_layout.setVisibility(View.GONE);
+                                                            edit_event_layout.setVisibility(View.GONE);
+                                                            activity_layout.setVisibility(View.VISIBLE);
+                                                            gifImageView.setVisibility(View.GONE);
                                                         }
                                                     });
                                                 }
@@ -325,6 +340,11 @@ public class CreateEditEvent extends AppCompatActivity {
                                     @Override
                                     public void onError(String error) {
                                         Log.println(Log.ASSERT, "Error adding event:", error);
+
+                                        create_event_layout.setVisibility(View.VISIBLE);
+                                        edit_event_layout.setVisibility(View.GONE);
+                                        activity_layout.setVisibility(View.GONE);
+                                        gifImageView.setVisibility(View.GONE);
                                     }
                                 });
 
@@ -394,14 +414,14 @@ public class CreateEditEvent extends AppCompatActivity {
     private void AddingActivity(String image, String name, String description, String organisation, String address, String activity_start_time, String activity_end_time, Point center, ArrayList<Point> range) {
 
 
-        Activity tmpActivity = new Activity( name,
+        Activity tmpActivity = new Activity(name,
                 MyApplication.getCurrentUser(),
                 null,
                 center,
                 range,
                 description,
-                address,
-                organisation,
+                address+"",
+                organisation+"",
                 activity_start_time,
                 activity_end_time,
                 image);
@@ -409,7 +429,6 @@ public class CreateEditEvent extends AppCompatActivity {
         // adding activity to event
         Log.i("adding activity", tmpActivity.toString());
         createEvent.addEventActivity(tmpActivity);
-
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -464,6 +483,7 @@ public class CreateEditEvent extends AppCompatActivity {
 //                                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
 //                                uploadImageView.setImageBitmap(decodedBitmap);
 
+                                Log.e("It go here", "here_1");
                                 Intent intent = result.getData();
                                 String activity_image = intent.getStringExtra("activityImage");
                                 String activity_name = intent.getStringExtra("activityName");
@@ -473,18 +493,22 @@ public class CreateEditEvent extends AppCompatActivity {
                                 String activity_start_time = intent.getStringExtra("activityStartTime");
                                 String activity_end_time = intent.getStringExtra("activityEndTime");
 
+                                Log.e("It go here", "here_2");
+
                                 LatLng activity_center = intent.getParcelableExtra("activityCenter");
                                 ArrayList<LatLng> activity_range = intent.getParcelableArrayListExtra("activityRange");
 
                                 Point activity_center_point = Point.fromLngLat(activity_center.getLongitude(), activity_center.getLatitude());
+
+                                Log.e("It go here", "here_3");
 
                                 ArrayList<Point> activity_range_points = new ArrayList<>();
                                 for(LatLng latlng: activity_range) {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
+                                Log.e("It go here", "here_4");
                                 AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_start_time, activity_end_time, activity_center_point, activity_range_points);
-
                             }
                         }
                     }

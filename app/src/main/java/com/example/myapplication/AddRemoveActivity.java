@@ -241,11 +241,25 @@ public class AddRemoveActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Bitmap bitmap = activity_image.getDrawingCache();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] imageBytes = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                Log.e("Here", "jump to another_0");
+                String encodedImage = "";
+
+                try{
+
+                    Bitmap bitmap = activity_image.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] imageBytes = baos.toByteArray();
+                    encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                } catch (Exception e){
+
+                    Log.e("error image", e.toString());
+
+                }
+
+
+                Log.e("Here", "jump to another_1");
 
                 String activityName = activity_name.getText().toString().trim();
                 String activityDescription = activity_description.getText().toString().trim();
@@ -254,6 +268,8 @@ public class AddRemoveActivity extends AppCompatActivity {
                 String activityStartTime = activity_start_time.getText().toString();
                 String activityEndTime = activity_end_time.getText().toString();
 
+
+                Log.e("Here", "jump to another_2");
                 Intent intent = new Intent();
                 intent.putExtra("activityImage", encodedImage);
                 intent.putExtra("activityName", activityName);
@@ -266,6 +282,7 @@ public class AddRemoveActivity extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("activityRange", activityRange);
 
                 setResult(RESULT_OK, intent);
+                Log.e("Here", "jump to another");
                 finish();
             }
         });

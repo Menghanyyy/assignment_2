@@ -593,5 +593,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/creating_animation_layout"
+        android:src="@drawable/creating_loading_animation"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        android:visibility="gone"/>
+
 
 </FrameLayout>
