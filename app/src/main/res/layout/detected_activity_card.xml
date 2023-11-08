@@ -21,34 +21,36 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
+        android:gravity="start"
         android:orientation="vertical"
-        android:layout_marginStart="10dp"
-        android:paddingTop="10dp"
-        android:divider="@drawable/divider"
+        android:layout_marginStart="18dp"
+        android:paddingTop="4dp"
+        android:divider="@drawable/divider3"
         android:showDividers="middle"
+
         >
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:gravity="start">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You currently at: "
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"/>
+                android:text="Activity"
+                android:textColor="#ececec"
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/check_in_activity_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:text="abc activity"
                 android:textColor="#FFFFFF"
+                android:gravity="center"
                 android:textSize="18sp"/>
 
         </LinearLayout>
@@ -59,16 +61,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Do you want to check In ?"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:textSize="16sp"/>
+            android:textColor="#ececec"
+            android:gravity="start"
+            android:textSize="12sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="start"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="4dp">
 
             <TextView
                 android:id="@+id/cancel_check_in_btn"
@@ -83,13 +85,13 @@
                 android:paddingRight="10dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:layout_marginEnd="20dp"/>
 
             <TextView
                 android:id="@+id/activity_check_in_btn"
                 android:gravity="center"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:layout_height="35dp"
                 android:background="@drawable/rounded_background_2"
                 android:backgroundTint="@color/dark_blue"
@@ -99,7 +101,7 @@
                 android:paddingRight="10dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:textSize="12sp"/>
+                android:textSize="14sp"/>
 
         </LinearLayout>
 
