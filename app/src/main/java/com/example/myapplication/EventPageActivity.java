@@ -61,6 +61,7 @@ public class EventPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String eventId = intent.getStringExtra("eventId");
         String pointsJson = intent.getStringExtra("bbox");
+        String source = intent.getStringExtra("source");
 
         databaseManager = new DatabaseManager(this);
 
@@ -174,14 +175,22 @@ public class EventPageActivity extends AppCompatActivity {
         });
 
 
-        iv_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent eventInfo = new Intent(EventPageActivity.this, CreateEditEvent.class);//src to tagactivity
-                eventInfo.putExtra("eventId", eventId);
-                startActivity(eventInfo);
-            }
-        });
+        if(source.equals("join")) {
+
+            iv_edit.setVisibility(View.GONE);
+        }
+        else {
+
+            iv_edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent eventInfo = new Intent(EventPageActivity.this, CreateEditEvent.class);//src to tagactivity
+                    eventInfo.putExtra("eventId", eventId);
+                    startActivity(eventInfo);
+                }
+            });
+
+        }
 
 
         iv_back = findViewById(R.id.iv_back);

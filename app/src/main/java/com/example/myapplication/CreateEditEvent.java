@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -70,15 +71,21 @@ import retrofit2.Response;
 public class CreateEditEvent extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSIONS = 1001;
+    private static final int REQUEST_CAMERA_PERMISSION = 2001;
 
     // Views for Create, Edit, and Activity
 
     private View create_event_layout, edit_event_layout, activity_layout;
-    private TextView create_event_name, create_event_description, create_event_organisation;
+    private TextView create_event_name, create_event_description, create_event_organisation, create_event_btn;
     private TextView edit_event_name, edit_event_description, edit_event_organisation, edit_event_address;
     private TextView event_activity_name, activity_event_confirm_button, activity_add_button;
     private Button edit_event_btn;
-    private TextView create_event_btn;
+
+    private ViewGroup upload_image_request;
+
+    private TextView camera_btn;
+
+    private TextView gallery_btn;
 
     private ViewGroup activity_list;
 
@@ -161,6 +168,12 @@ public class CreateEditEvent extends AppCompatActivity {
         uploadImageView = findViewById(R.id.create_eventImage);
         uploadImageView.setDrawingCacheEnabled(true);
         uploadImageView.buildDrawingCache();
+
+        //Permission view
+        upload_image_request = findViewById(R.id.upload_request_layout);
+        camera_btn = findViewById(R.id.camera);
+        gallery_btn = findViewById(R.id.gallery);
+
 
         databaseManager = new DatabaseManager(this);
 
@@ -335,7 +348,25 @@ public class CreateEditEvent extends AppCompatActivity {
             uploadImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    galleryAccessPermissions();
+
+                    upload_image_request.setVisibility(View.VISIBLE);
+
+                    camera_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            upload_image_request.setVisibility(View.GONE);
+                            cameraAccessPermissions();
+                        }
+                    });
+
+                    gallery_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            upload_image_request.setVisibility(View.GONE);
+                            galleryAccessPermissions();
+                        }
+                    });
+
                 }
             });
 
@@ -742,6 +773,32 @@ public class CreateEditEvent extends AppCompatActivity {
                     }
             );
 
+    // Define an ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> imageCameraUploadResultLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult> () {
+
+                        /**
+                         * Called when result is available
+                         *
+                         * @param result
+                         */
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+
+                            if(result.getResultCode() == RESULT_OK) {
+
+                                Bundle extras = result.getData().getExtras();
+                                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                                uploadImageView.setImageBitmap(imageBitmap);
+
+
+                            }
+                        }
+                    }
+            );
+
 
     private void galleryAccessPermissions() {
 
@@ -792,6 +849,32 @@ public class CreateEditEvent extends AppCompatActivity {
         }
     }
 
+    private void cameraAccessPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+                // Show an explanation to the user
+                showCameraRationaleDialog();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CAMERA_PERMISSION);
+            }
+        } else {
+            // Permission has already been granted
+            openCamera();
+        }
+    }
+
+    private void openCamera() {
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        imageCameraUploadResultLauncher.launch(intent);
+    }
+
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         imageUploadResultLauncher.launch(intent);
@@ -808,6 +891,21 @@ public class CreateEditEvent extends AppCompatActivity {
                     showRationaleDialog();
                 } else {
                     showAppSettingsDialog();
+                }
+            }
+        }
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted
+                openCamera();
+            } else {
+                // Permission was denied or request was cancelled
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    // User has denied permission but not permanently
+                    showCameraRationaleDialog();
+                } else {
+                    // User has denied permission permanently
+                    showCameraAppSettingsDialog();
                 }
             }
         }
@@ -843,83 +941,33 @@ public class CreateEditEvent extends AppCompatActivity {
     }
 
 
-//    private void cameraAccessPermissions() {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                    Manifest.permission.CAMERA)) {
-//                // Show an explanation to the user
-//                showRationaleDialog();
-//            } else {
-//                // No explanation needed, we can request the permission.
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.CAMERA},
-//                        REQUEST_CAMERA_PERMISSION);
-//            }
-//        } else {
-//            // Permission has already been granted
-//            openCamera();
-//        }
-//    }
-//
-//    private void openCamera() {
-//        try {
-//
-//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//            imageUploadResultLauncher.launch(intent);
-//
-//        } catch (ActivityNotFoundException e) {
-//            // display error state to the user
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Permission was granted
-//                openCamera();
-//            } else {
-//                // Permission was denied or request was cancelled
-//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-//                    // User has denied permission but not permanently
-//                    showRationaleDialog();
-//                } else {
-//                    // User has denied permission permanently
-//                    showAppSettingsDialog();
-//                }
-//            }
-//        }
-//    }
-//
-//    private void showRationaleDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Permission Needed")
-//                .setMessage("This permission is needed to use your camera for taking pictures.")
-//                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
-//                        CreateEditEvent.this,
-//                        new String[]{Manifest.permission.CAMERA},
-//                        REQUEST_CAMERA_PERMISSION))
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .create()
-//                .show();
-//    }
-//
-//    private void showAppSettingsDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Permission Denied")
-//                .setMessage("Please enable access to the camera in the app settings.")
-//                .setPositiveButton("Settings", (dialog, which) -> {
-//                    // Intent to open the app settings
-//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                            Uri.fromParts("package", getPackageName(), null));
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                })
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .create()
-//                .show();
-//    }
+
+    private void showCameraRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to use your camera for taking pictures.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        CreateEditEvent.this,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CAMERA_PERMISSION))
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void showCameraAppSettingsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("Please enable access to the camera in the app settings.")
+                .setPositiveButton("Settings", (dialog, which) -> {
+                    // Intent to open the app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", getPackageName(), null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
 }

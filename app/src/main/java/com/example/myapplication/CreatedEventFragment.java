@@ -260,6 +260,8 @@ public class CreatedEventFragment extends Fragment{
                     String pointsJson = new Gson().toJson(event.getEventRange());
                     cardInfo.putExtra("bbox", pointsJson);
 
+                    cardInfo.putExtra("source", "create");
+
                     getActivity().startActivity(cardInfo);
                 }
             });
