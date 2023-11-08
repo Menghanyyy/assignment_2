@@ -26,31 +26,31 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/instructions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="124dp"
-        android:text="Shake Your Phone"
-        android:gravity="center_horizontal"
-        android:textSize="24sp"
-        android:textColor="@color/dark_grey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
         android:id="@+id/gestureOutput"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageFrame"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="110dp"
+        android:gravity="center"
         android:textColor="@color/dark_grey"
         android:text="Waiting Response..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageFrame"
         tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="124dp"
+        android:text="Shake Your Phone"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="@color/dark_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

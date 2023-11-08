@@ -256,6 +256,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 drawPolygon_Geojson(style);
                                 addMarker(style);
 
+
                                 for (int i = 0; i < activitiesResult.size(); i++) {
                                     final int currentIndex = i;
                                     Activity a = activitiesResult.get(currentIndex);
@@ -266,10 +267,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             existingVisit.add(result);
                                             avoidPopUp.add(result.getVisitActivityId());
 
-                                            if(currentIndex == activitiesResult.size()-1)
-                                            {
-                                                drawPolygon_Geojson(style);
-                                                addMarker(style);
+
+//                                            if(activitiesResult.indexOf(a) == activitiesResult.size()-1)
+//                                            {
+//                                                Log.i("In", "change color");
+//                                                drawPolygon_Geojson(style);
+//                                                addMarker(style);
+//                                            }
+
+                                            // To remove the layer with ID "maine"
+                                            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
+                                            if (layer != null) {
+                                                String color = COLORS[currentIndex % COLORS.length]; // Cycle through the COLORS array
+                                                layer.setProperties(
+                                                        PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                                                        PropertyFactory.fillOpacity(0.5f)
+                                                );
                                             }
                                         }
 
@@ -424,7 +437,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String color = COLORS[eventsActivities.indexOf(activity) % COLORS.length]; // Cycle through the COLORS array
 
                 fillLayer.setProperties(
-                PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
+                PropertyFactory.fillColor(Color.parseColor(color)),
                         PropertyFactory.fillOpacity(0.5f)
                 );
 
