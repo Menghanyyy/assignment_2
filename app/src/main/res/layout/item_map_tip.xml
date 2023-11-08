@@ -173,7 +173,6 @@ android:background="@drawable/rounded_white_bg">
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:background="@color/grey"
         android:drawableEnd="@drawable/close_40"
         android:gravity="center"
         android:clickable="true"

@@ -49,6 +49,8 @@ public class EventPageActivity extends AppCompatActivity {
     TextView invite;
     TextView link_view;
 
+    ImageView iv_edit;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -101,6 +103,10 @@ public class EventPageActivity extends AppCompatActivity {
         invite = findViewById(R.id.invite);
         copy_icon = findViewById(R.id.link_copy_icon);
         link_view = findViewById(R.id.invite_link);
+        tv_gotomap = findViewById(R.id.tv_gotomap);
+        iv_edit = findViewById(R.id.eventEdit);
+
+
         invite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,8 +157,6 @@ public class EventPageActivity extends AppCompatActivity {
             }
         });
 
-
-        tv_gotomap = findViewById(R.id.tv_gotomap);
         tv_gotomap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,8 +174,6 @@ public class EventPageActivity extends AppCompatActivity {
         });
 
 
-
-        ImageView iv_edit = findViewById(R.id.eventEdit);
         iv_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -98,6 +98,9 @@ public class CreateEditEvent extends AppCompatActivity {
 
     private int activityNum = 1;
 
+    // Passing event Id;
+    private String eventId;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +108,9 @@ public class CreateEditEvent extends AppCompatActivity {
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
         setContentView(R.layout.create_edit_event);
+
+        Intent intent = getIntent();
+        eventId = intent.getStringExtra("eventId");
 
         findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,8 +164,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
         databaseManager = new DatabaseManager(this);
 
-        Intent intent = getIntent();
-        String eventId = intent.getStringExtra("eventId");
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new String[]{"Loading..."});
         create_event_address.setAdapter(adapter);
@@ -168,7 +172,115 @@ public class CreateEditEvent extends AppCompatActivity {
 
         if(eventId != null){
 
+            create_event_layout.setVisibility(View.GONE);
+            edit_event_layout.setVisibility(View.GONE);
+            activity_layout.setVisibility(View.GONE);
+            gifImageView.setVisibility(View.VISIBLE);
+
             //Log.i("check id", "is not empty should be edit");
+
+            databaseManager.getEventByID(Integer.parseInt(eventId), new DatabaseCallback<Event>() {
+                @Override
+                public void onSuccess(Event result) {
+
+                    Log.i("get event by id", String.valueOf(result.getEventName()));
+
+                    createEvent = result;
+
+                    create_event_layout.setVisibility(View.GONE);
+                    edit_event_layout.setVisibility(View.GONE);
+                    activity_layout.setVisibility(View.VISIBLE);
+                    gifImageView.setVisibility(View.GONE);
+
+
+                    event_activity_name.setText(result.getEventName());
+
+                    databaseManager.getAllActivities(result.getEventId(), new DatabaseCallback<ArrayList<Activity>>() {
+                        @Override
+                        public void onSuccess(ArrayList<Activity> result) {
+
+                            Log.i("get activities", String.valueOf(result.get(0).getActivityLocation()));
+
+                            //Add Activity
+                            for(Activity a :  result) {
+                                AddingActivityForDB(a.getImage(), a.getActivityName());
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Log.println(Log.ASSERT, "Error get activities", error);
+                        }
+                    });
+
+                    activity_add_button.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(CreateEditEvent.this, AddRemoveActivity.class);
+                            activityResultLauncher.launch(intent);
+
+                        }
+                    });
+
+                    activity_event_confirm_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            create_event_layout.setVisibility(View.GONE);
+                            edit_event_layout.setVisibility(View.GONE);
+                            activity_layout.setVisibility(View.GONE);
+                            gifImageView.setVisibility(View.VISIBLE);
+
+                            if(createEvent.getEventActivity().size() > 0) {
+
+                                for(int i=0 ; i < createEvent.getEventActivity().size(); i++) {
+
+                                    Activity activity = createEvent.getEventActivity().get(i);
+                                    activity.setHostedEvent(createEvent);
+                                    Log.i("activity adding to db", activity.toString());
+
+                                    databaseManager.addActivity(activity, new DatabaseCallback<String>() {
+                                        @Override
+                                        public void onSuccess(String result) {
+
+                                            //at the end because it looping
+                                            if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
+                                                finish();
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Log.println(Log.ASSERT, "Error adding activity", error);
+
+                                            create_event_layout.setVisibility(View.GONE);
+                                            edit_event_layout.setVisibility(View.GONE);
+                                            activity_layout.setVisibility(View.VISIBLE);
+                                            gifImageView.setVisibility(View.GONE);
+                                        }
+                                    });
+                                }
+
+                            } else {
+
+                               finish();
+                            }
+
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.println(Log.ASSERT, "Error Retrieving json", error);
+                    finish();
+                }
+            });
 
 
         }
@@ -515,6 +627,7 @@ public class CreateEditEvent extends AppCompatActivity {
         Log.i("adding activity", tmpActivity.toString());
         createEvent.addEventActivity(tmpActivity);
 
+
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -523,6 +636,39 @@ public class CreateEditEvent extends AppCompatActivity {
             }
         });
 
+
+        activity_list.addView(cardView);
+    }
+
+    private void AddingActivityForDB(String image, String name) {
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        // Inflate the card layout
+        View cardView = inflater.inflate(R.layout.event_activity_item, activity_list, false);
+
+        // Find views within the card and populate them
+        ImageView activityImage = cardView.findViewById(R.id.activity_image);
+        TextView activityName = cardView.findViewById(R.id.activity_name);
+        TextView activityIndex = cardView.findViewById(R.id.activity_num);
+        TextView removeBtn = cardView.findViewById(R.id.activity_remove_button);
+
+        if(image.isEmpty()) {
+
+            activityImage.setImageResource(R.drawable.img_placeholder);
+
+        } else {
+            byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
+            Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
+            activityImage.setImageBitmap(decodedBitmap);
+        }
+
+        activityIndex.setText("0"+activityNum);
+        activityNum += 1;
+
+        activityName.setText(name);
+
+        removeBtn.setVisibility(View.GONE);
 
         activity_list.addView(cardView);
     }
@@ -695,4 +841,85 @@ public class CreateEditEvent extends AppCompatActivity {
                 .create()
                 .show();
     }
+
+
+//    private void cameraAccessPermissions() {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Should we show an explanation?
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.CAMERA)) {
+//                // Show an explanation to the user
+//                showRationaleDialog();
+//            } else {
+//                // No explanation needed, we can request the permission.
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.CAMERA},
+//                        REQUEST_CAMERA_PERMISSION);
+//            }
+//        } else {
+//            // Permission has already been granted
+//            openCamera();
+//        }
+//    }
+//
+//    private void openCamera() {
+//        try {
+//
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            imageUploadResultLauncher.launch(intent);
+//
+//        } catch (ActivityNotFoundException e) {
+//            // display error state to the user
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission was granted
+//                openCamera();
+//            } else {
+//                // Permission was denied or request was cancelled
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+//                    // User has denied permission but not permanently
+//                    showRationaleDialog();
+//                } else {
+//                    // User has denied permission permanently
+//                    showAppSettingsDialog();
+//                }
+//            }
+//        }
+//    }
+//
+//    private void showRationaleDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Permission Needed")
+//                .setMessage("This permission is needed to use your camera for taking pictures.")
+//                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+//                        CreateEditEvent.this,
+//                        new String[]{Manifest.permission.CAMERA},
+//                        REQUEST_CAMERA_PERMISSION))
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .create()
+//                .show();
+//    }
+//
+//    private void showAppSettingsDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Permission Denied")
+//                .setMessage("Please enable access to the camera in the app settings.")
+//                .setPositiveButton("Settings", (dialog, which) -> {
+//                    // Intent to open the app settings
+//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                            Uri.fromParts("package", getPackageName(), null));
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                })
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .create()
+//                .show();
+//    }
 }
