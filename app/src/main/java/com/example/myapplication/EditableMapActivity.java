@@ -44,7 +44,6 @@ import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -146,7 +145,7 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                     toast.setDuration(Toast.LENGTH_LONG);
                     toast.show();
 
-                    // Optional: If you want to open the app settings
+                    // Open setting permission issue
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                             Uri.fromParts("package", getPackageName(), null));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -255,7 +254,6 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
 
     private void drawPolygon_Geojson(Style style) {
 
-        Log.i("polygonpl", String.valueOf(pointsList));
 
         for (List<Point> p : pointsList)
         {
@@ -281,7 +279,6 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
 
         List<Point> points = new ArrayList<>();
         for (LatLng latLng : polygonVertices) {
-            Log.i("in", latLng+"");
             points.add(Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude()));
         }
 
@@ -293,7 +290,6 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
 
             // Create a Polygon
             Polygon polygon = Polygon.fromLngLats(Collections.singletonList(p));
-            Log.i("poly", polygon.toString()+"");
 
             // Create a GeoJsonSource
             GeoJsonSource geoJsonSource_2 = new GeoJsonSource("maine" + pointsList.indexOf(p), Feature.fromGeometry(polygon));

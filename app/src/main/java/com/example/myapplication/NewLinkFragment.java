@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myapplication.component.Event;
 import com.example.myapplication.database.DatabaseCallback;
@@ -86,8 +88,6 @@ public class NewLinkFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Log.i("Button clicked", "OK");
-
                 String link = linkField.getText().toString();
 
                 // Try to get the event ID from the link
@@ -95,22 +95,31 @@ public class NewLinkFragment extends Fragment {
                     @Override
                     public void onSuccess(Event result) {
 
-                        Log.i("Success link", link);
-
                         // Use event ID to join the event
                         databaseManager.joinEvent(MyApplication.getCurrentUser().getUserId(),
                                 result.getEventId(), new DatabaseCallback<String>() {
 
                                     @Override
                                     public void onSuccess(String result) {
-                                        Log.i("join event success", result.toString());
+
+                                        LayoutInflater inflater = getLayoutInflater();
+                                        View layout = inflater.inflate(R.layout.customise_toast, null, false);
+
+                                        TextView text = layout.findViewById(R.id.toast_text);
+                                        text.setText("Joined Success");
+
+                                        Toast toast = new Toast(getContext());
+                                        toast.setView(layout);
+                                        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
+                                        toast.setDuration(Toast.LENGTH_LONG);
+                                        toast.show();
+
                                         ((Home)getActivity()).navigationChange(0);
                                     }
 
                                     @Override
                                     public void onError(String error) {
                                         Log.println(Log.ASSERT, "Error joining", error);
-//                                        ((Home)getActivity()).navigationChange(0);
                                     }
                                 });
                     }

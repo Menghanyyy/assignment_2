@@ -142,25 +142,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapView mapView;
     private MapboxMap mapboxMap;
 
+
+    // Runtime field
     private DatabaseManager databaseManager;
 
     private ArrayList<Activity> eventsActivities;
     private ArrayList<String> activitiesMarkerId;
 
-    private boolean isLocationEnabled = false;
+    private ImageView activeMapBack;
     private RecyclerView rvView;
     private MyAdapter rvAdapter;
+
+    private boolean isLocationEnabled = false;
 
     private LocationComponent locationComponent;
     private LocationEngine locationEngine;
 
-    private Detect testDetect = new Detect(this);
+    private Detect testDetect;
 
     private ViewGroup popupLayout;
 
     private ArrayList<String> avoidPopUp;
     private ArrayList<View> currentPopUp;
-
     private ArrayList<Visit> existingVisit;
 
     private String eventId;
@@ -169,7 +172,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Handler locationHandler = new Handler();
     private Runnable locationRunnable;
 
-    private ImageView activeMapBack;
 
     private static final String[] COLORS = new String[]{
             "#008000", // Green
@@ -189,6 +191,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+
+        setContentView(R.layout.activity_map);
+
         Intent intent = getIntent();
         eventId = intent.getStringExtra("eventId");
         pointsJson = intent.getStringExtra("bbox");
@@ -202,19 +208,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         avoidPopUp = new ArrayList<>();
         currentPopUp = new ArrayList<>();
 
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-
-        setContentView(R.layout.activity_map);
+        testDetect = new Detect(this);
+        this.databaseManager = new DatabaseManager(this);
 
         popupLayout = findViewById(R.id.check_in_popup_layout);
-
-
-        rvView = findViewById(R.id.rvView);
-        mapView = (MapView) findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-
-        this.databaseManager = new DatabaseManager(this);
 
         activeMapBack = findViewById(R.id.active_map_back);
         activeMapBack.setOnClickListener(new View.OnClickListener() {
@@ -226,6 +223,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 finish();
             }
         });
+
+        rvView = findViewById(R.id.rvView);
+        mapView = (MapView) findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
     }
 
@@ -269,17 +271,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                                 drawPolygon_Geojson(style);
                                                 addMarker(style);
                                             }
-
-//                                            // To remove the layer with ID "maine"
-//                                            Layer layer = style.getLayer(ACTIVITY_FILL_LAYER_ID + currentIndex);
-//                                            if (layer != null) {
-//                                                String color = COLORS[currentIndex % COLORS.length]; // Cycle through the COLORS array
-//
-//                                                layer.setProperties(
-//                                                        PropertyFactory.fillColor(Color.parseColor(color)), // blue color fill
-//                                                        PropertyFactory.fillOpacity(0.5f)
-//                                                );
-//                                            }
                                         }
 
                                         @Override
@@ -418,7 +409,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             // Create a Polygon
             Polygon polygon = Polygon.fromLngLats(Collections.singletonList(activity.getActivityRange()));
-            Log.i("poly", polygon.toString() + "");
 
             // Create a GeoJsonSource
             GeoJsonSource geoJsonSource_2 = new GeoJsonSource(ACTIVITY_SOURCE_ID + eventsActivities.indexOf(activity), Feature.fromGeometry(polygon));
@@ -626,7 +616,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         public void onSuccess(LocationEngineResult result) {
             Location userLocation = result.getLastLocation();
-            Log.i("Location", userLocation.getLongitude() + " " + userLocation.getLatitude() + "");
             if (userLocation != null) {
                 testDetect.nearActivities(userLocation.getLongitude(), userLocation.getLatitude());
             }
@@ -762,15 +751,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onPause();
         mapView.onPause();
 
-        toggleUserLocation();
-
-        if (locationEngine != null) {
-            locationEngine.removeLocationUpdates(callback);
-        }
-
-        if(locationHandler != null && locationRunnable != null) {
-            locationHandler.removeCallbacks(locationRunnable);
-        }
     }
 
     @Override
@@ -815,7 +795,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             for(Features f : featureList) {
 
-                Log.i("detectedId", f.getActivityID()+"");
 
                 ArrayList<Activity> tmpActivityList = new ArrayList<>();
 
@@ -828,10 +807,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(tmpActivityList.size() > 0) {
 
-                    Log.i("getting activity", tmpActivityList.size()+"");
-
                     for(Activity a : tmpActivityList) {
-                        Log.i("activity detected", a.getActivityId());
 
                         Activity tmpActivity = a;
 
@@ -891,7 +867,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                         }
                         else {
-                            Log.i("features", "No Matching Event");
+
+                            Log.e("Features Detected", "No Matching Activity For Event");
                         }
 
                     }

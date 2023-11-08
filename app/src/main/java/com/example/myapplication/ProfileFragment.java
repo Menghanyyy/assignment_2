@@ -121,13 +121,11 @@ public class ProfileFragment extends Fragment {
     private void setProgressBarProgressThreaded() {
 
         String userID = MyApplication.getCurrentUser().getUserId();
-        Log.i("User ID", userID);
 
         databaseManager.getJoinedEvents(userID, new DatabaseCallback<ArrayList<Event>>() {
             @Override
             public void onSuccess(ArrayList<Event> joinedEvents) {
 
-                Log.i("get joined events", Integer.toString(joinedEvents.size()));
                 LinearLayout progressBarContainer = getView().findViewById(R.id.progressContainer);
 
                 for (Event event : joinedEvents){
@@ -135,13 +133,10 @@ public class ProfileFragment extends Fragment {
                     databaseManager.visitCountForUserAtEvent(userID, event.getEventId(), new DatabaseCallback<Integer>() {
                         @Override
                         public void onSuccess(Integer completedActivities) {
-                            Log.i("user at event count:", completedActivities.toString());
 
                             databaseManager.getAllActivities(event.getEventId(), new DatabaseCallback<ArrayList<Activity>>() {
                                 @Override
                                 public void onSuccess(ArrayList<Activity> activities) {
-
-                                    Log.i("get activities", String.valueOf(activities.size()));
 
                                     int totalActivities = activities.size();
 

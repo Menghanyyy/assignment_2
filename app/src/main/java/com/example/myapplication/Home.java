@@ -37,20 +37,19 @@ public class Home extends AppCompatActivity {
     ViewGroup topNavigationView;
     BottomNavigationView bottomNavigationView ;
     HomeFragment mEventFragment;
-    MapFragment mMapFragment;
     NewLinkFragment mNewLinkFragment;
     ProfileFragment mProfileFragment;
 
     DatabaseManager databaseManager;
 
-    ImageView headerSearchButton, search_close_btn;
+    ImageView headerSearchButton;
     LinearLayout headerButtons;
     ImageView searchCloseBtn;
     TextView headerTitle;
     EditText searchBar;
 
 
-    private int currentIndex = 0; //当前Frament索引
+    private int currentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +92,7 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        mEventFragment = HomeFragment.newInstance();//EventFragment.newInstance("","");
+        mEventFragment = HomeFragment.newInstance();
         mProfileFragment = ProfileFragment.newInstance("","");
         mNewLinkFragment = NewLinkFragment.newInstance("","");
 
@@ -163,82 +162,45 @@ public class Home extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // 开始一个Fragment事务
+        // Start a new fragment transition
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.addToBackStack(null); // Add this transaction to the back stack
 
-        // 将新的Fragment添加到Activity的布局中
+        // Replaceing fragment content
         fragmentTransaction.replace(R.id.fragment_container, myFragment);
 
-        // 提交事务
+        // apply fragment
         fragmentTransaction.commit();
     }
 
 
-//    public void changeTable(Integer index){//导航栏切换方法
-//        Log.i("index", index+"");
-//        if(0==index){
-//            if(0==currentIndex){
-//                //iflycode
-//
-//            }else{
-//                replaceFg(mEventFragment);
-//                currentIndex = 0;
-//
-//            }
-//
-//        }else if(1 == index){
-//            if(1==currentIndex){
-//
-//
-//            }else{
-//                Intent intent = new Intent(this, NewLink.class);
-//                startActivity(intent);
-//                currentIndex = 1;
-//
-//            }
-//        }else{
-//            if(2==currentIndex){
-//
-//            }else{
-//                replaceFg(mProfileFragment);
-//                currentIndex = 2;
-//            }
-//
-//        }
-//
-//    }
-
     private void changeTable(Integer index) {
-        Log.i("index", index + "");
         if (index == currentIndex) {
-            // User tapped the same item that's already selected, let's reset to the event fragment
-//            if (index == 1) { // If we are on the map tab, let's reset it to the event fragment
-//                replaceFg(mEventFragment);
-//                currentIndex = 0;
-//                bottomNavigationView.setSelectedItemId(R.id.events); // You might need to reset the selected item in the bottom navigation
-//            }
-            // You can handle other indices if needed.
+
+            //Do nothing
+
         } else {
+
             // It's a different tab, we change to the new fragment
             switch (index) {
+
                 case 0:
                     replaceFg(mEventFragment);
                     currentIndex = 0;
                     break;
+
                 case 1:
-//                    Intent intent = new Intent(this, NewLink.class);
-//                    startActivity(intent);
                     replaceFg(mNewLinkFragment);
                     currentIndex = 1;
                     break;
+
                 case 2:
                     replaceFg(mProfileFragment);
                     currentIndex = 2;
                     break;
+
                 default:
-                    // handle default or error case
                     break;
             }
         }
@@ -261,21 +223,6 @@ public class Home extends AppCompatActivity {
         }
     }
 
-
-
-
-    public void setBottomNavigationVisibility(boolean b) {
-
-        if(b) {
-            bottomNavigationView.setVisibility(View.VISIBLE);
-        }
-        else {
-
-            bottomNavigationView.setVisibility(View.GONE);
-
-        }
-
-    }
 
     public void setTopNavigationVisibility(boolean b) {
 

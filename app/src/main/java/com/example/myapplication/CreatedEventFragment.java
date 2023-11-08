@@ -39,8 +39,6 @@ import pl.droidsonroids.gif.GifImageView;
  */
 public class CreatedEventFragment extends Fragment{
 
-    ImageView imageView;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -242,12 +240,10 @@ public class CreatedEventFragment extends Fragment{
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {
-                Log.i("Image", "No" );
 
                 mainImage.setImageResource(R.mipmap.aaaa);
 
             } else {
-                Log.i("Image", "Yes" );
 
                 byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
@@ -268,14 +264,6 @@ public class CreatedEventFragment extends Fragment{
                 }
             });
 
-
-            // and similarly for other views...
-            // Populate the views with data from the event
-            // mainImage.setImageResource(event.getImageResource());  // Assuming Event has a method to provide image resource
-            // title.setText(event.getTitle());
-            // ... similarly, populate other views ...
-
-            // Add the populated card to the parent layout
             eventsCardLayout.addView(cardView);
         }
     }

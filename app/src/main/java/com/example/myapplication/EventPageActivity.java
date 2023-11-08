@@ -126,16 +126,13 @@ public class EventPageActivity extends AppCompatActivity {
         copy_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get the text to be copied to the clipboard
+
                 String link = link_view.getText().toString();
 
-                // Get the ClipboardManager service by calling getSystemService
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-                // Create a ClipData with the text to copy
                 ClipData clip = ClipData.newPlainText("invite-link", link);
 
-                // Set the ClipData to the clipboard
                 clipboard.setPrimaryClip(clip);
 
                 LayoutInflater inflater = getLayoutInflater();

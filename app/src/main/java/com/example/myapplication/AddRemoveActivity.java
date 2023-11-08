@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -248,26 +249,6 @@ public class AddRemoveActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-//                Log.e("Here", "jump to another_0");
-//
-//                String image = "pplp";
-//                Drawable d = activity_image.getDrawable();
-//                Bitmap bitmap = null;
-//
-//                if(d instanceof BitmapDrawable) {
-//                    bitmap = ((BitmapDrawable) d).getBitmap();
-//                }
-//
-//                if(bitmap!=null) {
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                    byte[] imageBytes = baos.toByteArray();
-//                    image = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//
-//                }
-
-                Log.e("Here", "jump to another_1");
-
                 String activityName = activity_name.getText().toString().trim();
                 String activityDescription = activity_description.getText().toString().trim();
                 String activityOrganisation = activity_organisation.getText().toString().trim();
@@ -276,7 +257,6 @@ public class AddRemoveActivity extends AppCompatActivity {
                 String activityEndTime = activity_end_time.getText().toString();
 
 
-                Log.e("Here", "jump to another_2");
                 Intent intent = new Intent();
                 if(imageUri == null) {
                     intent.putExtra("activityImage", "");
@@ -293,7 +273,6 @@ public class AddRemoveActivity extends AppCompatActivity {
                 intent.putParcelableArrayListExtra("activityRange", activityRange);
 
                 setResult(RESULT_OK, intent);
-                Log.e("Here", "jump to another");
                 finish();
             }
         });
@@ -391,8 +370,6 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-                                Log.i("image","image uploaded");
-
                                 Intent imageIntent = result.getData();
                                 imageUri = imageIntent.getData();
                                 activity_image.setImageURI(imageUri);
@@ -405,36 +382,52 @@ public class AddRemoveActivity extends AppCompatActivity {
 
 
     private void galleryAccessPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user
-                showRationaleDialog();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS);
-            }
-        } else {
-            // Permission has already been granted
-            openGallery();
-        }
-    }
 
-    private void showRationaleDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permission Needed")
-                .setMessage("This permission is needed to access your gallery for image selection.")
-                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
-                        AddRemoveActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS))
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    showRationaleDialog();
+
+                } else {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{
+                                    Manifest.permission.READ_MEDIA_IMAGES
+                            },
+                            REQUEST_PERMISSIONS);
+                }
+            } else {
+
+                // Permission has already been granted
+                openGallery();
+            }
+
+        } else{
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    showRationaleDialog();
+
+                } else {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                            },
+                            REQUEST_PERMISSIONS);
+                }
+            } else {
+
+                openGallery();
+            }
+        }
     }
 
     private void openGallery() {
@@ -447,14 +440,11 @@ public class AddRemoveActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
                 openGallery();
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Permission denied without checking "Don't ask again", show rationale again
                     showRationaleDialog();
                 } else {
-                    // User checked "Don't ask again", guide the user towards app settings
                     showAppSettingsDialog();
                 }
             }
@@ -472,6 +462,19 @@ public class AddRemoveActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to access your gallery for image selection.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        AddRemoveActivity.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS))
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();

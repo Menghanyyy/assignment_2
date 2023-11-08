@@ -62,12 +62,10 @@ public class SignUP extends AppCompatActivity {
                             // Update ID since it is created by the DB
                             newUser.setUserId(result);
 
-                            Log.i("On success (User ID)", String.valueOf(userID));
-
                             databaseManager.getUserByID(userID, new DatabaseCallback<GeneralUser>() {
                                 @Override
                                 public void onSuccess(GeneralUser result) {
-                                    Log.i("get User by ID", result.getUserId());
+
                                     MyApplication.setCurrentUser(result);
 
                                     Intent i = new Intent(SignUP.this, Home.class);

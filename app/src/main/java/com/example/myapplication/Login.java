@@ -72,7 +72,6 @@ public class Login extends AppCompatActivity {
                         databaseManager.getUserByID(Integer.parseInt(result), new DatabaseCallback<GeneralUser>() {
                             @Override
                             public void onSuccess(GeneralUser returnedUser) {
-                                Log.i("get User by ID", returnedUser.getUserId());
 
                                 MyApplication.setCurrentUser(returnedUser);
 

@@ -35,7 +35,6 @@ import pl.droidsonroids.gif.GifImageView;
  */
 public class EventFragment extends Fragment{
 
-    ImageView imageView;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -117,7 +116,6 @@ public class EventFragment extends Fragment{
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                Log.i("textSearch", charSequence.toString());
 
                 if(charSequence.toString().isEmpty()) {
                     showEventsView((ArrayList<Event>) events);
@@ -217,8 +215,7 @@ public class EventFragment extends Fragment{
         empty_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), NewLink.class);
-                startActivity(i);
+                ((Home) getActivity()).navigationChange(1);
             }
         });
     }
@@ -258,12 +255,10 @@ public class EventFragment extends Fragment{
             desc.setText(event.getDescription());
 
             if(event.getImage().isEmpty()) {
-                Log.i("Image", "No" );
 
-                mainImage.setImageResource(R.mipmap.aaaa);
+                mainImage.setImageResource(R.drawable.img_placeholder);
 
             } else {
-                Log.i("Image", "Yes" );
 
                 byte[] decodedImageBytes = Base64.decode(event.getImage(), Base64.DEFAULT);
                 Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
@@ -275,7 +270,7 @@ public class EventFragment extends Fragment{
                 @Override
                 public void onClick(View view) {
 
-                    Intent cardInfo = new Intent(getActivity(), EventPageActivity.class);//src to tagactivity
+                    Intent cardInfo = new Intent(getActivity(), EventPageActivity.class);
                     cardInfo.putExtra("eventId", event.getEventId());
 
                     // Add bbox to intent as a String
@@ -287,13 +282,6 @@ public class EventFragment extends Fragment{
             });
 
 
-            // and similarly for other views...
-            // Populate the views with data from the event
-            // mainImage.setImageResource(event.getImageResource());  // Assuming Event has a method to provide image resource
-            // title.setText(event.getTitle());
-            // ... similarly, populate other views ...
-
-            // Add the populated card to the parent layout
             eventsCardLayout.addView(cardView);
         }
     }

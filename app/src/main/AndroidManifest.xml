@@ -10,8 +10,7 @@
     <!-- Permissions for Camera and Writing to External Storage (for devices below Android 10) -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-feature android:glEsVersion="0x00030001" android:required="true" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
@@ -29,9 +28,6 @@
         android:theme="@style/Theme.MyApplication"
         android:windowSoftInputMode="adjustPan"
         android:requestLegacyExternalStorage="true">
-        <activity
-            android:name=".NewLink"
-            android:exported="false" />
         <activity
             android:name=".SignUP"
             android:exported="false" />

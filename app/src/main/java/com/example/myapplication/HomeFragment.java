@@ -36,22 +36,23 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager2 = view.findViewById(R.id.view_pager);
-        // 在这里可以对布局视图中的 UI 元素进行初始化和操作
+
+        // fragment view
         fragments.add(EventFragment.newInstance("","")); // 0
         fragments.add(CreatedEventFragment.newInstance("","")); // 1
 
         viewPager2.setOffscreenPageLimit(1);
+
         //Adapter
         viewPager2.setAdapter(new FragmentStateAdapter(getChildFragmentManager(), getLifecycle()) {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
-                //FragmentStateAdapter内部自己会管理已实例化的fragment对象。
-                // 所以不需要考虑复用的问题
                 return fragments.get(position);
             }
 
@@ -68,7 +69,8 @@ public class HomeFragment extends Fragment {
                 tab.setText(tabs[position]);
             }
         });
-        //要执行这一句才是真正将两者绑定起来
+
+        
         mediator.attach();
         return view;
     }

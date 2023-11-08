@@ -72,32 +72,31 @@ public class CreateEditEvent extends AppCompatActivity {
     private static final int REQUEST_PERMISSIONS = 1001;
 
     // Views for Create, Edit, and Activity
-    View create_event_layout, edit_event_layout, activity_layout;
-    TextView create_event_name, create_event_description, create_event_organisation;
-    TextView edit_event_name, edit_event_description, edit_event_organisation, edit_event_address;
-    TextView event_activity_name, activity_event_confirm_button, activity_add_button;
-    Button edit_event_btn;
-    TextView create_event_btn;
 
-    ViewGroup activity_list;
+    private View create_event_layout, edit_event_layout, activity_layout;
+    private TextView create_event_name, create_event_description, create_event_organisation;
+    private TextView edit_event_name, edit_event_description, edit_event_organisation, edit_event_address;
+    private TextView event_activity_name, activity_event_confirm_button, activity_add_button;
+    private Button edit_event_btn;
+    private TextView create_event_btn;
 
-    ImageView uploadImageView;
+    private ViewGroup activity_list;
 
-    GifImageView gifImageView;
+    private ImageView uploadImageView;
 
-    AutoCompleteTextView create_event_address;
+    private GifImageView gifImageView;
+
+    private AutoCompleteTextView create_event_address;
 
     private ArrayAdapter<String> adapter;
+
+    // Runtime field
 
     private DatabaseManager databaseManager;
 
     private Event createEvent;
 
-    private final Handler searchHandler = new Handler();
-    private Runnable searchRunnable;
-
     private int activityNum = 1;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -169,12 +168,13 @@ public class CreateEditEvent extends AppCompatActivity {
 
         if(eventId != null){
 
-            Log.i("check id", "is not empty should be edit");
+            //Log.i("check id", "is not empty should be edit");
 
 
         }
         else {
-            Log.i("check id", "is empty should be create");
+
+            //Log.i("check id", "is empty should be create");
 
             create_event_address.setOnItemClickListener((parent, view, position, id) -> {
                 String selection = (String) parent.getItemAtPosition(position);
@@ -230,6 +230,7 @@ public class CreateEditEvent extends AppCompatActivity {
             create_event_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     // Retrieve the text from each TextView and trim extra spaces
                     String eventName = create_event_name.getText().toString().trim();
                     String eventDescription = create_event_description.getText().toString().trim();
@@ -306,9 +307,6 @@ public class CreateEditEvent extends AppCompatActivity {
                                                         @Override
                                                         public void onSuccess(String result) {
 
-                                                            Integer activityID = Integer.parseInt(result);
-                                                            Log.i("Success (Activity ID)", String.valueOf(activityID));
-
                                                             //at the end because it looping
                                                             if(createEvent.getEventActivity().indexOf(activity) + 1 >= createEvent.getEventActivity().size()) {
                                                                 Intent i = new Intent(CreateEditEvent.this, Home.class);
@@ -343,6 +341,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                                     @Override
                                     public void onError(String error) {
+
                                         Log.println(Log.ASSERT, "Error adding event:", error);
 
                                         create_event_layout.setVisibility(View.VISIBLE);
@@ -391,7 +390,8 @@ public class CreateEditEvent extends AppCompatActivity {
                     for (CarmenFeature feature : results) {
                         addresses.add(feature.placeName());
                     }
-                    // Update the adapter and the dropdown list.
+
+                    // Update the dropdown list.
 
                     if(addresses.size() > 0) {
                         runOnUiThread(() -> {
@@ -402,8 +402,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
 
                     }
-
-//                    adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, addresses);
 
                 }
             }
@@ -441,9 +439,11 @@ public class CreateEditEvent extends AppCompatActivity {
             drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_placeholder);
 
             if (drawable instanceof BitmapDrawable) {
+
                 bitmap = ((BitmapDrawable) drawable).getBitmap();
+
             } else {
-                // Convert drawable to Bitmap manually if it's not a BitmapDrawable
+
                 if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
                     bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
                 } else {
@@ -454,10 +454,6 @@ public class CreateEditEvent extends AppCompatActivity {
                 drawable.draw(canvas);
             }
 
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-//            byte[] byteArray = byteArrayOutputStream.toByteArray();
-//            activityImageString = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
         }
         else {
@@ -471,10 +467,9 @@ public class CreateEditEvent extends AppCompatActivity {
 
             } else {
 
-                // Create a bitmap to draw the Drawable into
                 if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-                    // If the drawable doesn't have intrinsic dimensions, create a default bitmap
-                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+
+                    bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
 
                 } else {
 
@@ -482,13 +477,10 @@ public class CreateEditEvent extends AppCompatActivity {
                     bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
                 }
 
-                // Create a canvas to draw onto the bitmap
                 Canvas canvas = new Canvas(bitmap);
 
-                // Set the bounds of the canvas to the size of the bitmap
                 drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 
-                // Draw the drawable onto the canvas (and thus into the bitmap)
                 drawable.draw(canvas);
             }
 
@@ -552,8 +544,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-
-                                Log.e("It go here", "here_1");
                                 Intent intent = result.getData();
                                 String activity_image = intent.getStringExtra("activityImage");
                                 String activity_name = intent.getStringExtra("activityName");
@@ -563,21 +553,17 @@ public class CreateEditEvent extends AppCompatActivity {
                                 String activity_start_time = intent.getStringExtra("activityStartTime");
                                 String activity_end_time = intent.getStringExtra("activityEndTime");
 
-                                Log.e("It go here", "here_2");
-
                                 LatLng activity_center = intent.getParcelableExtra("activityCenter");
                                 ArrayList<LatLng> activity_range = intent.getParcelableArrayListExtra("activityRange");
 
                                 Point activity_center_point = Point.fromLngLat(activity_center.getLongitude(), activity_center.getLatitude());
 
-                                Log.e("It go here", "here_3");
 
                                 ArrayList<Point> activity_range_points = new ArrayList<>();
                                 for(LatLng latlng: activity_range) {
                                     activity_range_points.add(Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude()));
                                 }
 
-                                Log.e("It go here", "here");
                                 AddingActivity(activity_image, activity_name, activity_description, activity_organisation, activity_address, activity_start_time, activity_end_time, activity_center_point, activity_range_points);
                             }
                         }
@@ -600,8 +586,6 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
-                                Log.i("image","image uploaded");
-
                                 Intent imageIntent = result.getData();
                                 Uri imageUri = imageIntent.getData();
                                 uploadImageView.setImageURI(imageUri);
@@ -613,81 +597,19 @@ public class CreateEditEvent extends AppCompatActivity {
             );
 
 
-//    private void galleryAccessPermissions() {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
-//
-//        } else {
-//
-//            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//            imageUploadResultLauncher.launch(intent);
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == REQUEST_PERMISSIONS) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Permission granted, proceed with accessing gallery
-//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                imageUploadResultLauncher.launch(intent);
-//            } else {
-//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-//                    // Permission denied without checking "Don't ask again"
-//
-//                    LayoutInflater inflater = getLayoutInflater();
-//                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
-//
-//                    TextView text = layout.findViewById(R.id.toast_text);
-//                    text.setText("Permission denied!");
-//
-//                    Toast toast = new Toast(CreateEditEvent.this);
-//                    toast.setView(layout);
-//                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-//                    toast.setDuration(Toast.LENGTH_LONG);
-//                    toast.show();
-//
-//                } else {
-//                    // User checked "Don't ask again"
-//
-//                    LayoutInflater inflater = getLayoutInflater();
-//                    View layout = inflater.inflate(R.layout.customise_toast, null, false);
-//
-//                    TextView text = layout.findViewById(R.id.toast_text);
-//                    text.setText("Permission denied. Please enable it in app settings!");
-//
-//                    Toast toast = new Toast(CreateEditEvent.this);
-//                    toast.setView(layout);
-//                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 100);
-//                    toast.setDuration(Toast.LENGTH_LONG);
-//                    toast.show();
-//
-//                    // Optional: If you want to open the app settings
-//                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                            Uri.fromParts("package", getPackageName(), null));
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                }
-//            }
-//        }
-//    }
-//
-
-
     private void galleryAccessPermissions() {
 
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                // Should we show an explanation?
+
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Show an explanation to the user
+
                     showRationaleDialog();
+
                 } else {
-                    // No explanation needed, we can request the permission.
+
                     ActivityCompat.requestPermissions(this,
                             new String[]{
                                     Manifest.permission.READ_MEDIA_IMAGES
@@ -695,19 +617,22 @@ public class CreateEditEvent extends AppCompatActivity {
                             REQUEST_PERMISSIONS);
                 }
             } else {
+
                 // Permission has already been granted
                 openGallery();
             }
+
         } else{
+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Show an explanation to the user
+
                     showRationaleDialog();
+
                 } else {
-                    // No explanation needed, we can request the permission.
+
                     ActivityCompat.requestPermissions(this,
                             new String[]{
                                     Manifest.permission.READ_EXTERNAL_STORAGE
@@ -715,23 +640,10 @@ public class CreateEditEvent extends AppCompatActivity {
                             REQUEST_PERMISSIONS);
                 }
             } else {
-                // Permission has already been granted
+
                 openGallery();
             }
         }
-    }
-
-    private void showRationaleDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Permission Needed")
-                .setMessage("This permission is needed to access your gallery for image selection.")
-                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
-                        CreateEditEvent.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS))
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
     }
 
     private void openGallery() {
@@ -744,14 +656,11 @@ public class CreateEditEvent extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
                 openGallery();
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    // Permission denied without checking "Don't ask again", show rationale again
                     showRationaleDialog();
                 } else {
-                    // User checked "Don't ask again", guide the user towards app settings
                     showAppSettingsDialog();
                 }
             }
@@ -769,6 +678,19 @@ public class CreateEditEvent extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Permission Needed")
+                .setMessage("This permission is needed to access your gallery for image selection.")
+                .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(
+                        CreateEditEvent.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS))
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();

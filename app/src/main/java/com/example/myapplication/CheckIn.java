@@ -1,10 +1,14 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -27,6 +31,7 @@ public class CheckIn extends AppCompatActivity implements
     private TiltDetector tiltDetector;
     private DarknessDetector darknessDetector;
     private SensorManager sensorManager;
+    private Vibrator vibrator;
 
     private String activityId;
 
@@ -34,9 +39,6 @@ public class CheckIn extends AppCompatActivity implements
 
     private Handler handle = new Handler();
     private Runnable run;
-
-    // need to delete this is use to test the view of the map...
-
 
     private void setInstructions(String instructionString){
         TextView output = findViewById(R.id.instructions);
@@ -74,7 +76,6 @@ public class CheckIn extends AppCompatActivity implements
 
         GifImageView gifImage = (GifImageView) findViewById(R.id.image);
 
-
         switch (randomInt) {
             case 0:
                 shakeDetector = new ShakeDetector(this);
@@ -102,9 +103,9 @@ public class CheckIn extends AppCompatActivity implements
                 break;
         }
 
-//        if (lightSensor != null) {
-//            sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-//        }
+        if (lightSensor != null) {
+            sensorManager.registerListener(darknessDetector, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
@@ -126,6 +127,23 @@ public class CheckIn extends AppCompatActivity implements
     private void checkIn(){
         TextView output = findViewById(R.id.gestureOutput);
         output.setText("Checked In");
+
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        if (vibrator != null && vibrator.hasVibrator()) {
+
+            long[] vibration_pattern = {0, 100, 100, 100}; // start -> play 100m -> stop 100m -> play 100m
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                VibrationEffect effect = VibrationEffect.createWaveform(vibration_pattern, -1);
+                vibrator.vibrate(effect);
+
+            } else {
+
+                vibrator.vibrate(vibration_pattern, -1);
+            }
+        }
 
         Intent intent = new Intent();
         intent.putExtra("activityId", activityId);
