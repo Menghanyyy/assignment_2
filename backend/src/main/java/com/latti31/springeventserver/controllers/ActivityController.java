@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/activities")
@@ -34,9 +36,19 @@ public class ActivityController {
         this.databaseChecker = new DatabaseChecker(jdbcTemplate);
     }
 
+    private void asyncRebalance(int eventID){
+        CompletableFuture.runAsync(() -> {
+
+            rebalanceEvent(eventID);
+
+        }, executorService);
+
+    }
+
     private void asyncUpdateMapbox(int activityID, int eventID, int visited, String polygonString){
         CompletableFuture.runAsync(() -> {
             try {
+
                 MapboxUploader.makePutRequest(activityID, eventID, visited, polygonString);
 
                 int attemptsRemaining = UPLOAD_ATTEMPTS_LIMIT;
@@ -196,14 +208,12 @@ public class ActivityController {
                     creatorID
             );
 
-            // Potentially widening the event bbox
-            rebalanceEvent(eventID);
-
             try {
                 int generatedID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
 
                 // Assumes these functions will always work
                 // Call the makePostRequest and makePutRequest asynchronously
+                asyncRebalance(eventID);
                 asyncUpdateMapbox(generatedID, eventID, 0, polygonLocation);
 
                 return jsonWrapper.wrapString(true, Integer.toString(generatedID));
@@ -221,25 +231,69 @@ public class ActivityController {
 
     private void rebalanceEvent(int eventID) {
 
-        System.out.println("Rebalancing events (not implemented)");
+        System.out.println("Re-balancing events");
 
         String query = "SELECT " +
-                "eventID, " +
-                "name, " +
-                "organisationName, " +
-                "creatorID, " +
-                "description " +
-                "FROM Event WHERE eventID = ?";
+                "ST_AsText(polygonLocation) AS polygonLocation " +
+                "FROM Activity WHERE eventID = ?";
+
         try {
-            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, eventID);
-            if (!events.isEmpty()) {
-                Map<String, Object> event = events.get(0);
-                ObjectMapper objectMapper = new ObjectMapper();
-            } else {
+            List<Map<String, Object>> activities = jdbcTemplate.queryForList(query, eventID);
 
+            double minX = 180;
+            double minY = 180;
+            double maxX = -180;
+            double maxY = -180;
+
+            for (Map<String, Object> activity : activities) {
+
+                String polygonText = activity.get("polygonLocation").toString();
+
+                Pattern pattern = Pattern.compile("-?\\d+\\.?\\d* -?\\d+\\.?\\d*");
+                Matcher matcher = pattern.matcher(polygonText);
+
+                while (matcher.find()) {
+                    String[] parts = matcher.group().split("\\s+");
+                    if (parts.length == 2) {
+                        double x = Double.parseDouble(parts[0]);
+                        double y = Double.parseDouble(parts[1]);
+
+                        if (x < minX){
+                            minX = x;
+                        }
+                        if (x > maxX){
+                            maxX = x;
+                        }
+                        if (y < minY){
+                            minY = y;
+                        }
+                        if (y > maxY){
+                            maxY = y;
+                        }
+                    }
+                }
             }
-        } catch (Exception e){
 
+            // Default to the bounding box for all of Australia
+            String newBBox = LocationController.getSQLBBOX(
+                    minX,
+                    maxX,
+                    minY,
+                    maxY
+            );
+
+            try {
+                String updateQuery = "UPDATE Event SET bbox = ST_PolygonFromText(?) WHERE eventID = ?";
+                jdbcTemplate.update(updateQuery, newBBox, eventID);
+                System.out.println("Successfully balanced event!");
+
+            } catch (Exception e){
+                System.out.println("Could not insert new bbox into event table: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if there are no activities for the specified event
+            System.out.println("Failed to re-balance");
         }
     }
 

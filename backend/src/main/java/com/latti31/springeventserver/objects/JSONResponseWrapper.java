@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public class JSONResponseWrapper {
 
     public static String ERROR_KEY = "error";
@@ -23,11 +26,35 @@ public class JSONResponseWrapper {
             }
             rootNode.set(MESSAGE, jsonNode);
 
-            System.out.println("Returning object: " + objectMapper.writeValueAsString(rootNode));
+            ObjectNode truncatedRootNode = truncateJsonNode(rootNode, 250); // Set the truncation length as needed
+
+            System.out.println("Returning object: " + objectMapper.writeValueAsString(truncatedRootNode));
+
             return objectMapper.writeValueAsString(rootNode);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private ObjectNode truncateJsonNode(ObjectNode node, int maxLength) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode truncatedNode = objectMapper.createObjectNode();
+
+        Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            String key = entry.getKey();
+            JsonNode value = entry.getValue();
+
+            String truncatedValue = value.toString();
+            if (truncatedValue.length() > maxLength) {
+                truncatedValue = truncatedValue.substring(0, maxLength) + "...";
+            }
+
+            truncatedNode.put(key, truncatedValue);
+        }
+
+        return truncatedNode;
     }
 
     public String wrapString(boolean isSuccess, String messageString){
@@ -70,3 +97,4 @@ public class JSONResponseWrapper {
         }
     }
 }
+

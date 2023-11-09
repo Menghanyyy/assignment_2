@@ -3,7 +3,6 @@ package com.latti31.springeventserver.objects;
 import java.security.SecureRandom;
 
 public class RandomStringGenerator {
-
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom random = new SecureRandom();
 

@@ -85,7 +85,7 @@ public class MapboxUploader {
             String[] latLong = pair.split(" ");
 
             // Format latitude and longitude and add to the list
-            String formattedCoordinate = "[ " + latLong[1] + ", " + latLong[0] + " ]";
+            String formattedCoordinate = "[ " + latLong[0] + ", " + latLong[1] + " ]";
             formattedCoordinates.add(formattedCoordinate);
         }
 

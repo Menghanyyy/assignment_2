@@ -2,12 +2,15 @@ package com.latti31.springeventserver.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.latti31.springeventserver.objects.DatabaseChecker;
 import com.latti31.springeventserver.objects.JSONResponseWrapper;
 import com.latti31.springeventserver.objects.RandomStringGenerator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -36,14 +39,93 @@ public class EventController {
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
                 "creatorID, " +
-                "description " +
+                "description, " +
+                "backgroundPicture, " +
+                "locationName " +
                 "FROM Event WHERE eventID = ?";
         try {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, id);
             if (!events.isEmpty()) {
                 Map<String, Object> event = events.get(0);
                 ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode jsonObject = objectMapper.createObjectNode();
+
+                jsonObject.put("eventID", (Integer) event.get("eventID"));
+                jsonObject.put("name", (String) event.get("name"));
+                jsonObject.put("bbox", (String) event.get("bbox"));
+                jsonObject.put("organisationName", (String) event.get("organisationName"));
+                jsonObject.put("creatorID", (Integer) event.get("creatorID"));
+                jsonObject.put("description", (String) event.get("description"));
+                jsonObject.put("locationName", (String) event.get("locationName"));
+
+                // Retrieve the BLOB data as a byte array
+                byte[] backgroundPictureData = (byte[]) event.get("backgroundPicture");
+
+                if (backgroundPictureData != null) {
+                    // Convert the byte array to Base64 encoding
+                    String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                            backgroundPictureData
+                    );
+
+                    jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                } else{
+                    jsonObject.put("backgroundPicture", "");
+                }
+
                 return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(event));
+
+            } else {
+                return jsonWrapper.wrapString(false, "Event not found");
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., if the event with the specified ID doesn't exist
+            return jsonWrapper.wrapString(false, "Error retrieving event: " +
+                    e.getMessage());
+        }
+    }
+
+    @GetMapping("/getByLink/{link}")
+    public String getEventByLink(@PathVariable String link) {
+        String query = "SELECT " +
+                "eventID, " +
+                "name, " +
+                "ST_AsText(bbox) AS bbox, " +
+                "organisationName, " +
+                "creatorID, " +
+                "description, " +
+                "backgroundPicture, " +
+                "locationName " +
+                "FROM Event WHERE link = ?";
+        try {
+            List<Map<String, Object>> events = jdbcTemplate.queryForList(query, link);
+            if (!events.isEmpty()) {
+                Map<String, Object> event = events.get(0);
+                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode jsonObject = objectMapper.createObjectNode();
+
+                jsonObject.put("eventID", (Integer) event.get("eventID"));
+                jsonObject.put("name", (String) event.get("name"));
+                jsonObject.put("bbox", (String) event.get("bbox"));
+                jsonObject.put("organisationName", (String) event.get("organisationName"));
+                jsonObject.put("creatorID", (Integer) event.get("creatorID"));
+                jsonObject.put("description", (String) event.get("description"));
+                jsonObject.put("locationName", (String) event.get("locationName"));
+
+                // Retrieve the BLOB data as a byte array
+                byte[] backgroundPictureData = (byte[]) event.get("backgroundPicture");
+
+                if (backgroundPictureData != null) {
+                    // Convert the byte array to Base64 encoding
+                    String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                            backgroundPictureData
+                    );
+                    jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                } else{
+                    jsonObject.put("backgroundPicture", "");
+                }
+
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(event));
+
             } else {
                 return jsonWrapper.wrapString(false, "Event not found");
             }
@@ -82,7 +164,9 @@ public class EventController {
                 "organisationName, " +
                 "creatorID, " +
                 "description, " +
-                "link) VALUES (ST_PolygonFromText(?), ?, ?, ?, ?, ?)";
+                "link, " +
+                "backgroundPicture, " +
+                "locationName) VALUES (ST_PolygonFromText(?), ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -100,6 +184,13 @@ public class EventController {
             String name = jsonNode.get("name").asText();
             String organisationName = jsonNode.get("organisationName").asText();
             String description = jsonNode.get("description").asText();
+            String backgroundPictureBase64 = jsonNode.get("backgroundPicture").asText();
+
+
+            // Convert Base64 string to byte array
+            byte[] backgroundPictureData = Base64.getDecoder().decode(backgroundPictureBase64);
+
+            String locationName = jsonNode.get("locationName").asText();
 
             // Ensure creator exists in database
             int creatorID = jsonNode.get("creatorID").asInt();
@@ -130,7 +221,9 @@ public class EventController {
                     organisationName,
                     creatorID,
                     description,
-                    link
+                    link,
+                    backgroundPictureData,
+                    locationName
             );
 
             try {
@@ -143,6 +236,8 @@ public class EventController {
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the event creation fails
+//            System.out.println();
+            e.printStackTrace();
             return jsonWrapper.wrapString(false, "Error creating event: " + e.getMessage());
         }
     }
@@ -156,14 +251,46 @@ public class EventController {
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
                 "creatorID, " +
-                "description " +
+                "description, " +
+                "backgroundPicture, " +
+                "locationName " +
                 "FROM Event";
 
         try {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query);
             if (!events.isEmpty()) {
+
                 ObjectMapper objectMapper = new ObjectMapper();
-                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
+                List<JsonNode> jsonNodes = new ArrayList<>();
+
+                for (Map<String, Object> event : events){
+
+                    ObjectNode jsonObject = objectMapper.createObjectNode();
+                    jsonObject.put("eventID", (Integer) event.get("eventID"));
+                    jsonObject.put("name", (String) event.get("name"));
+                    jsonObject.put("bbox", (String) event.get("bbox"));
+                    jsonObject.put("organisationName", (String) event.get("organisationName"));
+                    jsonObject.put("creatorID", (Integer) event.get("creatorID"));
+                    jsonObject.put("description", (String) event.get("description"));
+                    jsonObject.put("locationName", (String) event.get("locationName"));
+
+                    // Retrieve the BLOB data as a byte array
+                    byte[] backgroundPictureData = (byte[]) event.get("backgroundPicture");
+
+                    if (backgroundPictureData != null) {
+                        // Convert the byte array to Base64 encoding
+                        String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                                backgroundPictureData
+                        );
+                        jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                    } else{
+                        jsonObject.put("backgroundPicture", "");
+                    }
+
+                    jsonNodes.add(jsonObject);
+                }
+
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(jsonNodes));
             } else {
                 return jsonWrapper.wrapString(false, "No events found");
             }
@@ -281,7 +408,9 @@ public class EventController {
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
                 "creatorID, " +
-                "description " +
+                "description, " +
+                "backgroundPicture, " +
+                "locationName " +
                 "FROM Event e " +
                 "JOIN `Joined Events` je ON e.eventID = je.eventID " +
                 "WHERE je.userID = ?";
@@ -299,7 +428,36 @@ public class EventController {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
             if (!events.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
+                List<JsonNode> jsonNodes = new ArrayList<>();
+
+                for (Map<String, Object> event : events){
+
+                    ObjectNode jsonObject = objectMapper.createObjectNode();
+                    jsonObject.put("eventID", (Integer) event.get("eventID"));
+                    jsonObject.put("name", (String) event.get("name"));
+                    jsonObject.put("bbox", (String) event.get("bbox"));
+                    jsonObject.put("organisationName", (String) event.get("organisationName"));
+                    jsonObject.put("creatorID", (Integer) event.get("creatorID"));
+                    jsonObject.put("description", (String) event.get("description"));
+                    jsonObject.put("locationName", (String) event.get("locationName"));
+
+                    // Retrieve the BLOB data as a byte array
+                    byte[] backgroundPictureData = (byte[]) event.get("backgroundPicture");
+
+                    if (backgroundPictureData != null) {
+                        // Convert the byte array to Base64 encoding
+                        String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                                backgroundPictureData
+                        );
+                        jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                    } else{
+                        jsonObject.put("backgroundPicture", "");
+                    }
+
+                    jsonNodes.add(jsonObject);
+                }
+
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(jsonNodes));
             } else {
                 return jsonWrapper.wrapString(false, "No events found");
             }
@@ -319,7 +477,9 @@ public class EventController {
                 "ST_AsText(bbox) AS bbox, " +
                 "organisationName, " +
                 "creatorID, " +
-                "description " +
+                "description, " +
+                "backgroundPicture, " +
+                "locationName " +
                 "FROM Event " +
                 "WHERE creatorID = ?";
 
@@ -336,7 +496,36 @@ public class EventController {
             List<Map<String, Object>> events = jdbcTemplate.queryForList(query, user_id);
             if (!events.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(events));
+                List<JsonNode> jsonNodes = new ArrayList<>();
+
+                for (Map<String, Object> event : events){
+
+                    ObjectNode jsonObject = objectMapper.createObjectNode();
+                    jsonObject.put("eventID", (Integer) event.get("eventID"));
+                    jsonObject.put("name", (String) event.get("name"));
+                    jsonObject.put("bbox", (String) event.get("bbox"));
+                    jsonObject.put("organisationName", (String) event.get("organisationName"));
+                    jsonObject.put("creatorID", (Integer) event.get("creatorID"));
+                    jsonObject.put("description", (String) event.get("description"));
+                    jsonObject.put("locationName", (String) event.get("locationName"));
+
+                    // Retrieve the BLOB data as a byte array
+                    byte[] backgroundPictureData = (byte[]) event.get("backgroundPicture");
+
+                    if (backgroundPictureData != null) {
+                        // Convert the byte array to Base64 encoding
+                        String backgroundPictureBase64 = Base64.getEncoder().encodeToString(
+                                backgroundPictureData
+                        );
+                        jsonObject.put("backgroundPicture", backgroundPictureBase64);
+                    } else{
+                        jsonObject.put("backgroundPicture", "");
+                    }
+
+                    jsonNodes.add(jsonObject);
+                }
+
+                return jsonWrapper.wrapJsonNode(true, objectMapper.valueToTree(jsonNodes));
             } else {
                 return jsonWrapper.wrapString(false, "No events found");
             }
@@ -346,6 +535,4 @@ public class EventController {
                     e.getMessage());
         }
     }
-
-
 }

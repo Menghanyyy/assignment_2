@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("getByID/{user_id}")
     public String getUserByID(@PathVariable int user_id) {
-        String query = "SELECT userID, name, email FROM `User` WHERE userID = ?";
+        String query = "SELECT userID, name, email, userName FROM `User` WHERE userID = ?";
 
         try {
             List<Map<String, Object>> users = jdbcTemplate.queryForList(query, user_id);
@@ -45,7 +45,7 @@ public class UserController {
 
     @GetMapping("/getAll")
     public String getAll() {
-        String query = "SELECT userID, name, email FROM `User`";
+        String query = "SELECT userID, name, email, userName FROM `User`";
 
         try {
             List<Map<String, Object>> users = jdbcTemplate.queryForList(query);
@@ -125,14 +125,14 @@ public class UserController {
                     return jsonWrapper.wrapString(true, Integer.toString(userID));
                 }
 
-                return jsonWrapper.wrapString(true, "false");
+                return jsonWrapper.wrapString(false, "Password Incorrect");
             }
 
             // Should be prevented by SQL regardless
             else if (passwords.size() > 1) {
                 return jsonWrapper.wrapString(false, "User not unique in system");
             } else {
-                return jsonWrapper.wrapString(false, "User not found");
+                return jsonWrapper.wrapString(false, "Username not found");
             }
         } catch (Exception e) {
             // Handle exceptions, e.g., if the account creation fails
