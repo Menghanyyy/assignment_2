@@ -16,7 +16,11 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
+/**
+ * Handle the join event and create event fragment transfer at the home page
+ */
 public class HomeFragment extends Fragment {
+
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private ArrayList<Fragment> fragments = new ArrayList<>();

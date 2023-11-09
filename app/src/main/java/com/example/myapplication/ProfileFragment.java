@@ -31,6 +31,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * Fragment to show of the information in profile page
  */
 public class ProfileFragment extends Fragment {
 

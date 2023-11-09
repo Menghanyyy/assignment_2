@@ -6,13 +6,11 @@ import androidx.annotation.RequiresApi;
 
 import java.time.LocalDateTime;
 
+/** Visit Object Class **/
 public class Visit {
 
+    /** Class Field **/
     private String userId;
-
-    public void setVisitingTime(LocalDateTime visitingTime) {
-        this.visitingTime = visitingTime;
-    }
 
     private LocalDateTime visitingTime;
     private String visitActivityId;
@@ -20,6 +18,7 @@ public class Visit {
 
     private String visitOrganisationId;
 
+    /** Constructors **/
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Visit(String UserId, String VisitActivityId, String VisitEventId, String VisitOrganisationId) {
         this.userId = UserId;
@@ -46,6 +45,10 @@ public class Visit {
         this.userId = userId;
     }
 
+    public void setVisitingTime(LocalDateTime visitingTime) {
+        this.visitingTime = visitingTime;
+    }
+
     public LocalDateTime getVisitingTime() {
         return this.visitingTime;
     }
@@ -61,6 +64,7 @@ public class Visit {
     public String getVisitEventId() {
         return this.visitEventId;
     }
+
 
     public void setVisitEventId(String visitEventId) {
         this.visitEventId = visitEventId;

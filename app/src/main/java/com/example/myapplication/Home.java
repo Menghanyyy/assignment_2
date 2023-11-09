@@ -31,22 +31,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 import java.util.ArrayList;
 
+/**
+ * Class that use to handle navigation of the application.
+ * Handle the fragment switching across the application.
+ */
 public class Home extends AppCompatActivity {
 
 
-    ViewGroup topNavigationView;
-    BottomNavigationView bottomNavigationView ;
-    HomeFragment mEventFragment;
-    NewLinkFragment mNewLinkFragment;
-    ProfileFragment mProfileFragment;
+    private ViewGroup topNavigationView;
+    private BottomNavigationView bottomNavigationView ;
+    private HomeFragment mEventFragment;
+    private NewLinkFragment mNewLinkFragment;
+    private ProfileFragment mProfileFragment;
 
-    DatabaseManager databaseManager;
+    private DatabaseManager databaseManager;
 
-    ImageView headerSearchButton;
-    LinearLayout headerButtons;
-    ImageView searchCloseBtn;
-    TextView headerTitle;
-    EditText searchBar;
+    private ImageView headerSearchButton;
+    private LinearLayout headerButtons;
+    private ImageView searchCloseBtn;
+    private TextView headerTitle;
+    private EditText searchBar;
 
 
     private int currentIndex = 0;

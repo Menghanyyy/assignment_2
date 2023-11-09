@@ -31,6 +31,9 @@ import com.google.android.material.snackbar.Snackbar;
 
 import pl.droidsonroids.gif.GifImageView;
 
+/**
+ * Class that handle user login process in the application
+ */
 public class Login extends AppCompatActivity {
 
     //MAPBOX TOKEN = sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw

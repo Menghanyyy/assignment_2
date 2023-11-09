@@ -4,7 +4,11 @@ import com.mapbox.geojson.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Event Object Class **/
+
 public class Event {
+
+    /** Class Field **/
 
     private String eventId;
     private String eventName;
@@ -19,6 +23,7 @@ public class Event {
     private String description;
     private String image;
 
+    /** Event Constructor **/
     public Event(String EventID, String EventName, User EventOrganiser, String EventLocation,
                  List<Point> EventRange, String organisationName, String description, String image) {
 
@@ -38,6 +43,8 @@ public class Event {
             this.image = image;
         }
     }
+
+    /** Getter adn Setter**/
 
     public String getImage() {
         return image;

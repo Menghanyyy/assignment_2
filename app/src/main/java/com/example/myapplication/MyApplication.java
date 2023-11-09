@@ -30,7 +30,6 @@ public class MyApplication extends Application {
 
 
     public Object getSystemService(String name) {
-        // 在这里可以添加自己的逻辑来处理系统服务
         return super.getSystemService(name);
     }
 

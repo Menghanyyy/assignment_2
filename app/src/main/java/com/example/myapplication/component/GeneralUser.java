@@ -8,12 +8,17 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User Object Class
+ * Child Class of the User
+ */
 public class GeneralUser extends User{
 
+    /** Class Field **/
     private List<Visit> visitedLocation;
     private List<String> subscribedOrganisation;
 
-
+    /** Constructor **/
     public GeneralUser(String UserId, String UserName, String UserEmail, String UserPin, String Name) {
         super(UserId, UserName, UserEmail, UserPin, Name);
 
@@ -21,33 +26,9 @@ public class GeneralUser extends User{
         this.subscribedOrganisation = new ArrayList<String>();
     }
 
-    // Parcelable implementation
+    /** Parcelable implementation **/
     protected GeneralUser(Parcel in) {
         super(in.readString(), in.readString(), in.readString(), in.readString(), in.readString());
-    }
-
-    public List<Visit> getVisitedLocation() {
-        return this.visitedLocation;
-    }
-
-    public boolean addVisitedLocation (Visit visit) {
-        return this.visitedLocation.add(visit);
-    }
-
-    public List<String> getSubscribedOrganisation() {
-        return this.subscribedOrganisation;
-    }
-
-    public boolean addSubscribedOrganisation(String subscribeLink) {
-        return this.subscribedOrganisation.add(subscribeLink);
-    }
-
-    @Override
-    public String toString() {
-        return "GeneralUser{" +
-                "visitedLocation=" + visitedLocation +
-                ", subscribedOrganisation=" + subscribedOrganisation +
-                '}';
     }
 
     @Override
@@ -77,4 +58,31 @@ public class GeneralUser extends User{
             return new GeneralUser[size];
         }
     };
+
+    /** Getter and Setter **/
+
+    public List<Visit> getVisitedLocation() {
+        return this.visitedLocation;
+    }
+
+    public boolean addVisitedLocation (Visit visit) {
+        return this.visitedLocation.add(visit);
+    }
+
+    public List<String> getSubscribedOrganisation() {
+        return this.subscribedOrganisation;
+    }
+
+    public boolean addSubscribedOrganisation(String subscribeLink) {
+        return this.subscribedOrganisation.add(subscribeLink);
+    }
+
+    @Override
+    public String toString() {
+        return "GeneralUser{" +
+                "visitedLocation=" + visitedLocation +
+                ", subscribedOrganisation=" + subscribedOrganisation +
+                '}';
+    }
+
 }

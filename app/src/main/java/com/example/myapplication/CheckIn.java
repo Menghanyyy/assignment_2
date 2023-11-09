@@ -22,6 +22,9 @@ import java.util.Random;
 
 import pl.droidsonroids.gif.GifImageView;
 
+/**
+ * Using Sensor to handle check in process
+ */
 public class CheckIn extends AppCompatActivity implements
         ShakeDetector.OnShakeListener,
         TiltDetector.OnTiltListener,
@@ -53,6 +56,8 @@ public class CheckIn extends AppCompatActivity implements
         Intent intent = getIntent();
         activityId = intent.getStringExtra("activityId");
 
+        // if user cannot check in in three second it will automatically help user to check in
+        // present multiple fail attemp to check in
         run = new Runnable() {
             @Override
             public void run() {

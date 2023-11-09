@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/** Editable Map that allow user to register activity location and range **/
 
 public class EditableMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -161,7 +162,7 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
     /**
      * Called when the map is ready to be used.
      *
-     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     * @param mapboxMap An instance of MapboxMap associated with the
      *                  {@link MapView} that defines the callback.
      */
     @Override
@@ -341,7 +342,10 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
                 addMarker = false;
 
                 if(drawCircle) {
+
                     mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+
+                    // allow user to draw polygon on map
                     drawCircleTouchListener = new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -390,6 +394,7 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
             }
         });
 
+        // Allow user to add marker to the map
         ImageButton  addMarkerButton = findViewById(R.id.marker_btn);
         addMarkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,6 +441,7 @@ public class EditableMapActivity extends AppCompatActivity implements OnMapReady
         });
 
 
+        // Allow user to move and zoom teh map
         ImageButton  moveMapButton = findViewById(R.id.move_btn);
         moveMapButton.setOnClickListener(new View.OnClickListener() {
             @Override

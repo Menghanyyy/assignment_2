@@ -18,6 +18,8 @@ import com.example.myapplication.component.Visit;
 
 import java.util.List;
 
+/** Class that showing the map marker's activity information after on click **/
+
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private Activity data;
 

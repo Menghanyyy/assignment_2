@@ -32,6 +32,8 @@ import pl.droidsonroids.gif.GifImageView;
  * A simple {@link Fragment} subclass.
  * Use the {@link EventFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ *  This Fragment handle the create event of the home page
  */
 public class EventFragment extends Fragment{
 

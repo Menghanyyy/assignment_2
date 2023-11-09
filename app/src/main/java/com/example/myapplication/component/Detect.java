@@ -18,11 +18,12 @@ import retrofit2.Response;
 
 import com.google.gson.JsonObject;
 
+/** Detection Object Class**/
 
 public class Detect {
+
+    /** Class Field **/
     private String tilesetId;
-//    private double longitude;
-//    private double latitude;
     private int radiusInMeters;
     private String geoJsonGeometryString;
     private boolean dedupe;
@@ -34,6 +35,7 @@ public class Detect {
 
 
 
+    /** Constructor **/
     public Detect(OnDetectResultListener listener) {
         this.resultListener = listener;
         this.tilesetId = "adrianteo1121.clnd78cu6336p2no1j6lxfh3e-4w0gm";
@@ -43,13 +45,17 @@ public class Detect {
         this.geoJsonGeometryString = "polygon";
     }
 
-    // dont know if JSONObject would work or not
+    /**
+     * Detect the activity around user
+     * @param longitude User longitude
+     * @param latitude User latitude
+     */
     public void nearActivities(double longitude, double latitude) {
         featureList = new ArrayList<>();
 
-        //do i need to create a new call everytime?
+        // Map box api call to retrieve activity near user for check in
+
         MapboxTilequery tilequery = MapboxTilequery.builder()
-//                .accessToken(String.valueOf(R.string.mapbox_access_token))
                 .accessToken("sk.eyJ1IjoiYWRyaWFudGVvMTEyMSIsImEiOiJjbG1uZXU3bzQwMmRtMmtwMmQ3cWV5d2M2In0.9ddhigLDMQFkY_Inz6f_Vw")
                 .tilesetIds(tilesetId)
                 .query(Point.fromLngLat(longitude, latitude))
@@ -63,16 +69,11 @@ public class Detect {
         tilequery.enqueueCall(new Callback<FeatureCollection>() {
             public void onResponse(Call<FeatureCollection> call, Response<FeatureCollection> response)
             {
-//                                List<Feature> featureList = response.body().features();
-//                Log.i("rFeedback", response.body().features().toString());
-//                String responseString = response.body().features().toString();
 
-                // Loop through the features
                 for (Feature feature : response.body().features()) {
                      JsonObject properties = feature.properties();
                     int activityID = properties.get("activityID").getAsInt();
                     int eventID = properties.get("eventID").getAsInt();
-//                    int visited = properties.get("visited").getAsInt();
                     double distance = (properties.get("tilequery").getAsJsonObject().get("distance")).getAsDouble();
                     Log.i("distance", String.valueOf(activityID));
                     Features newFeature = new Features(distance, activityID, eventID, 0);
@@ -90,11 +91,11 @@ public class Detect {
     }
 
 
+    /** Getter and Setter **/
     public List<Features> getFeatureList() {
         return featureList;
     }
 
-    // Getter and Setter for 'tilesetId'
     public String getTilesetId() {
         return tilesetId;
     }
@@ -103,7 +104,6 @@ public class Detect {
         this.tilesetId = tilesetId;
     }
 
-    // Getter and Setter for 'radiusInMeters'
     public int getRadiusInMeters() {
         return radiusInMeters;
     }
@@ -112,7 +112,6 @@ public class Detect {
         this.radiusInMeters = radiusInMeters;
     }
 
-    // Getter and Setter for 'geoJsonGeometryString'
     public String getGeoJsonGeometryString() {
         return geoJsonGeometryString;
     }
@@ -121,7 +120,6 @@ public class Detect {
         this.geoJsonGeometryString = geoJsonGeometryString;
     }
 
-    // Getter and Setter for 'dedupe'
     public boolean isDedupe() {
         return dedupe;
     }
@@ -130,7 +128,6 @@ public class Detect {
         this.dedupe = dedupe;
     }
 
-    // Getter and Setter for 'singleOrListOfMapLayerIds'
     public String getSingleOrListOfMapLayerIds() {
         return singleOrListOfMapLayerIds;
     }

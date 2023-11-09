@@ -41,15 +41,15 @@ import java.util.List;
 
 public class EventPageActivity extends AppCompatActivity {
 
-    ImageView copy_icon;
-    ImageView iv_back;
+    private ImageView copy_icon;
+    private ImageView iv_back;
 
-    DatabaseManager databaseManager;
-    TextView tv_gotomap;
-    TextView invite;
-    TextView link_view;
+    private DatabaseManager databaseManager;
+    private TextView tv_gotomap;
+    private TextView invite;
+    private TextView link_view;
 
-    ImageView iv_edit;
+    private ImageView iv_edit;
 
 
     @SuppressLint("MissingInflatedId")
@@ -79,6 +79,8 @@ public class EventPageActivity extends AppCompatActivity {
                 if(result.getImage().isEmpty()) {
                     image.setImageResource(R.mipmap.aaaa);
                 }else {
+
+                    // decompress string to image and show
                     byte[] decodedImageBytes = Base64.decode(result.getImage(), Base64.DEFAULT);
                     Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
                     image.setImageBitmap(decodedBitmap);

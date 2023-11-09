@@ -65,7 +65,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Class that handle the Add and Remove activity of the event
+ */
 public class AddRemoveActivity extends AppCompatActivity {
+
 
     private static final int REQUEST_PERMISSIONS = 1001;
 
@@ -74,23 +78,23 @@ public class AddRemoveActivity extends AppCompatActivity {
     private Uri imageUri;
 
 
-    ImageView activity_image;
-    TextView activity_name;
-    TextView activity_description;
-    TextView activity_organisation;
-    AutoCompleteTextView activity_address;
-    TextView activity_start_time;
-    TextView activity_end_time;
+    private ImageView activity_image;
+    private TextView activity_name;
+    private TextView activity_description;
+    private TextView activity_organisation;
+    private AutoCompleteTextView activity_address;
+    private TextView activity_start_time;
+    private TextView activity_end_time;
 
-    TextView add_activity_button;
+    private TextView add_activity_button;
 
-    TextView confirm_activity_button;
+    private TextView confirm_activity_button;
 
-    ViewGroup registerMapCenterStatus;
-    ViewGroup registerMapRangeStatus;
+    private ViewGroup registerMapCenterStatus;
+    private ViewGroup registerMapRangeStatus;
 
-    LatLng activityCenter;
-    ArrayList<LatLng> activityRange;
+    private LatLng activityCenter;
+    private ArrayList<LatLng> activityRange;
 
     private ArrayAdapter<String> adapter;
 
@@ -136,6 +140,7 @@ public class AddRemoveActivity extends AppCompatActivity {
         });
 
 
+        // Make sure that the address only be able to select from available option.
         activity_address.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 String enteredText = activity_address.getText().toString();
@@ -168,12 +173,13 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                 // Perform search
                 if (s.toString().isEmpty() == false && s.length() >= 3) {
+
+                    // getting the available address according to the suer input
                     performSearch(s.toString());
                 }
 
             }
         });
-
 
 
         activity_start_time.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +188,7 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                 timeStatusSelect = 0;
 
+                // calender register
                 new DatePickerDialog(AddRemoveActivity.this, dateSetListener,
                         dateTimeCalendar.get(Calendar.YEAR),
                         dateTimeCalendar.get(Calendar.MONTH),
@@ -195,6 +202,7 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                 timeStatusSelect = 1;
 
+                // calender register
                 new DatePickerDialog(AddRemoveActivity.this, dateSetListener,
                         dateTimeCalendar.get(Calendar.YEAR),
                         dateTimeCalendar.get(Calendar.MONTH),
@@ -203,7 +211,7 @@ public class AddRemoveActivity extends AppCompatActivity {
         });
 
 
-
+        // open gallery to upload image
         activity_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,6 +245,7 @@ public class AddRemoveActivity extends AppCompatActivity {
                 }
                 else {
 
+                    // register activity on the map
                     Intent intent = new Intent(AddRemoveActivity.this, EditableMapActivity.class);
                     intent.putExtra("activityName", activityName);
                     activityResultLauncher.launch(intent);
@@ -255,7 +264,6 @@ public class AddRemoveActivity extends AppCompatActivity {
                 String activityAddress = activity_address.getText().toString().trim();
                 String activityStartTime = activity_start_time.getText().toString();
                 String activityEndTime = activity_end_time.getText().toString();
-
 
                 Intent intent = new Intent();
                 if(imageUri == null) {
@@ -334,6 +342,8 @@ public class AddRemoveActivity extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
+                                // Process the result once user registered the activity on the map
+
                                 add_activity_button.setVisibility(View.GONE);
                                 registerMapCenterStatus.setVisibility(View.VISIBLE);
                                 registerMapRangeStatus.setVisibility(View.VISIBLE);
@@ -369,6 +379,8 @@ public class AddRemoveActivity extends AppCompatActivity {
                         public void onActivityResult(ActivityResult result) {
 
                             if(result.getResultCode() == RESULT_OK) {
+
+                                // upload the image from gallery to activity
 
                                 Intent imageIntent = result.getData();
                                 imageUri = imageIntent.getData();

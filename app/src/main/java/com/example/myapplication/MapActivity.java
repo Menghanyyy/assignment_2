@@ -234,7 +234,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /**
      * Called when the map is ready to be used.
      *
-     * @param mapboxMap An instance of MapboxMap associated with the {@link MapFragment} or
+     * @param mapboxMap An instance of MapboxMap associated with the
      *                  {@link MapView} that defines the callback.
      */
     @Override
@@ -558,6 +558,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
 
+            // Using a customise location engine to achieve the high accuracy of gps.
             locationEngine = LocationEngineProvider.getBestLocationEngine(this);
 
             LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
@@ -640,7 +641,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
-    // Define an ActivityResultLauncher
+    // Define an ActivityResultLauncher that use to handle check in
     private final ActivityResultLauncher<Intent> activityResultLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -654,6 +655,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
                         public void onActivityResult(ActivityResult result) {
+
+                            // manage the result after check in
 
                             if (result.getResultCode() == RESULT_OK) {
 
@@ -851,6 +854,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                             activityName.setText(tmpActivity.getActivityName());
 
+                            // decompress string to image
                             byte[] decodedImageBytes = Base64.decode(tmpActivity.getImage(), Base64.DEFAULT);
                             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
                             activityImage.setImageBitmap(decodedBitmap);

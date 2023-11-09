@@ -5,8 +5,12 @@ import com.mapbox.geojson.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity Object Class
+ */
 public class Activity {
 
+    /** Class Field **/
     private String activityId;
     private String activityName;
     private User activityCreator;
@@ -29,7 +33,7 @@ public class Activity {
     public int creatorID;
 
 
-    // when creating
+    /** Constructor **/
     public Activity(String ActivityName, User ActivityCreator,
                     Event HostedEvent, Point ActivityLocation, List<Point> ActivityRange,
                     String description, String LocationName, String ActivityOrganisation,
@@ -52,7 +56,6 @@ public class Activity {
         this.creatorID = Integer.parseInt(ActivityCreator.getUserId());
     }
 
-    // use to call back from api
     public Activity(String ActivityId, String ActivityName,
                     Point ActivityLocation, List<Point> ActivityRange,
                     String description, String locationName,
@@ -74,6 +77,7 @@ public class Activity {
         this.creatorID = CreatorID;
     }
 
+    /** Getter and Setter **/
     public String getActivityId() {
         return this.activityId;
     }
@@ -182,6 +186,7 @@ public class Activity {
     public void setImage(String image) {
         this.image = image;
     }
+
 
     @Override
     public String toString() {

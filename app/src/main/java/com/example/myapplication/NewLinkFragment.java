@@ -24,6 +24,9 @@ import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
+/**
+ * Fragment that use to handle the event join page and process for the user
+ */
 public class NewLinkFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match

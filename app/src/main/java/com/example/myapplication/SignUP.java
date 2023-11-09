@@ -23,6 +23,9 @@ import com.example.myapplication.database.DatabaseCallback;
 import com.example.myapplication.database.DatabaseManager;
 import com.google.android.material.button.MaterialButton;
 
+/**
+ * Class that handle user sign up of the application
+ */
 public class SignUP extends AppCompatActivity {
 
     private DatabaseManager databaseManager;

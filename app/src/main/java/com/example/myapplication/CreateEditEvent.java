@@ -67,7 +67,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ * Class that handle Create Event Process
+ */
 public class CreateEditEvent extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSIONS = 1001;
@@ -390,6 +392,7 @@ public class CreateEditEvent extends AppCompatActivity {
                         testP.add(Point.fromLngLat(0,0));
                         Log.i("getcurretnuser", MyApplication.getCurrentUser().getName());
 
+                        // Compress the image to String so it can be store in the database
                         Bitmap bitmap = uploadImageView.getDrawingCache();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -630,6 +633,9 @@ public class CreateEditEvent extends AppCompatActivity {
         }
 
         if (bitmap != null) {
+
+            //compress the image to string so that it can store in database.
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageBytes = baos.toByteArray();
@@ -689,6 +695,9 @@ public class CreateEditEvent extends AppCompatActivity {
             activityImage.setImageResource(R.drawable.img_placeholder);
 
         } else {
+
+            // decompress image from string to image
+
             byte[] decodedImageBytes = Base64.decode(image, Base64.DEFAULT);
             Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedImageBytes, 0, decodedImageBytes.length);
             activityImage.setImageBitmap(decodedBitmap);
@@ -719,6 +728,7 @@ public class CreateEditEvent extends AppCompatActivity {
                         @Override
                         public void onActivityResult(ActivityResult result) {
 
+                            // handle the result of adding activity
                             if(result.getResultCode() == RESULT_OK) {
 
                                 Intent intent = result.getData();
@@ -763,6 +773,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
+                                // upload the image from gallery to event
                                 Intent imageIntent = result.getData();
                                 Uri imageUri = imageIntent.getData();
                                 uploadImageView.setImageURI(imageUri);
@@ -789,6 +800,7 @@ public class CreateEditEvent extends AppCompatActivity {
 
                             if(result.getResultCode() == RESULT_OK) {
 
+                                // upload the image from camera to event
                                 Bundle extras = result.getData().getExtras();
                                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                                 uploadImageView.setImageBitmap(imageBitmap);
@@ -852,13 +864,14 @@ public class CreateEditEvent extends AppCompatActivity {
     private void cameraAccessPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
+
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.CAMERA)) {
-                // Show an explanation to the user
+
                 showCameraRationaleDialog();
+
             } else {
-                // No explanation needed, we can request the permission.
+
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA},
                         REQUEST_CAMERA_PERMISSION);

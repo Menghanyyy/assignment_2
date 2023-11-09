@@ -2,8 +2,12 @@ package com.example.myapplication.component;
 
 import android.os.Parcelable;
 
+/**
+ * A Abstract User Object Class
+ * **/
 public abstract class User implements Parcelable {
 
+    /** Class Field **/
     private String userId;
     private String userName;
     private String userEmail;
@@ -11,6 +15,7 @@ public abstract class User implements Parcelable {
 
     private String name;
 
+    /** Constructor **/
     public User(String UserId, String UserName, String Name, String UserEmail, String UserPin) {
         this.userId = UserId;
         this.userName = UserName;
@@ -19,6 +24,7 @@ public abstract class User implements Parcelable {
         this.name = Name;
     }
 
+    /** Getter and Setter **/
     public String getName() {
         return name;
     }
