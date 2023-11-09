@@ -44,7 +44,7 @@ Select 'Open an Existing Project'.
 Navigate to the cloned repository and select the project directory.
 
 To test attending an event on map, the code below can be used for an event that has already been created. Simply click 'join new event' and paste in the code to explore that event and its activities (Otherwise, you can create your own event and join this to explore):
-Local Parks Initiate: s7y07s42MeySsN9
+Local Parks Initiative: s7y07s42MeySsN9
 
 
 
